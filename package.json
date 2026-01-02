@@ -6,7 +6,8 @@
     "dev": "next dev",
     "dev:api": "ts-node --project tsconfig.server.json src/api/server.ts",
     "start:api": "tsx src/api/server.ts",
-    "build": "next build",
+    "postinstall": "prisma generate",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint"
   },
