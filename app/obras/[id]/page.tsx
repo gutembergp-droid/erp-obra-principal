@@ -50,6 +50,7 @@ function ObraDetailContent() {
   
   // Formulário de nova medição
   const [medicaoForm, setMedicaoForm] = useState({
+    tipo: 'MP' as 'MP' | 'MC', // FASE 1: Tipo de medição (MP = Medição de Produção, MC = Medição do Cliente)
     eap_id: '',
     periodo_referencia: '',
     data_medicao: new Date().toISOString().split('T')[0],
@@ -68,10 +69,14 @@ function ObraDetailContent() {
       const data = await getObraById(obraId);
       setObra(data);
       
-      // Busca baseline ativa
+      // Busca baseline homologada e ativa (v2.1)
       if (data.baseline_comercial && data.baseline_comercial.length > 0) {
-        const baselineAtiva = data.baseline_comercial.find(b => b.is_ativo) || data.baseline_comercial[0];
-        setBaselineId(baselineAtiva.id);
+        const baselineAtiva = data.baseline_comercial.find(
+          b => b.status === 'homologada' && b.is_ativo
+        ) || data.baseline_comercial.find(b => b.status === 'homologada') || data.baseline_comercial[0];
+        if (baselineAtiva) {
+          setBaselineId(baselineAtiva.id);
+        }
       }
     } catch (err: any) {
       setError(err.message || 'Erro ao carregar obra');
@@ -168,6 +173,7 @@ function ObraDetailContent() {
   const handleOpenDrawerMedicao = () => {
     setIsDrawerMedicaoOpen(true);
     setMedicaoForm({
+      tipo: 'MP' as 'MP' | 'MC', // FASE 1: Padrão é MP (Medição de Produção)
       eap_id: '',
       periodo_referencia: '',
       data_medicao: new Date().toISOString().split('T')[0],
@@ -227,6 +233,7 @@ function ObraDetailContent() {
 
       const medicaoData = {
         obra_id: obraId,
+        tipo: medicaoForm.tipo, // FASE 1: Tipo obrigatório (MP ou MC)
         eap_id: medicaoForm.eap_id,
         periodo_referencia: medicaoForm.periodo_referencia,
         data_medicao: new Date(medicaoForm.data_medicao),

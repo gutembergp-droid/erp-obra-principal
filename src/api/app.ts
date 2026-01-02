@@ -6,6 +6,7 @@ import medicoesRoutes from './routes/medicoes.routes';
 import authRoutes from './routes/auth.routes';
 import dashboardRoutes from './routes/dashboard.routes';
 import gatesRoutes from './routes/gates.routes';
+import competenciasRoutes from './routes/competencias.routes'; // Backend Mínimo: Competências e Gates
 import { errorHandler } from './middleware/errorHandler';
 
 /**
@@ -35,6 +36,9 @@ export function createApp(): Express {
   app.use('/api/medicoes', medicoesRoutes);
   app.use('/api/dashboard', dashboardRoutes);
   app.use('/api/gates', gatesRoutes);
+  
+  // Backend Mínimo: Competências e Gates
+  app.use('/api', competenciasRoutes);
 
   // Middleware de tratamento de erros (deve ser o último)
   app.use(errorHandler);

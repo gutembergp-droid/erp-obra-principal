@@ -24,8 +24,10 @@ export async function validateObraAccess(
     // Extrai obra_id de diferentes fontes
     let obraId: string | undefined;
 
-    // 1. Dos parâmetros da rota
-    if (req.params.obra_id) {
+    // 1. Dos parâmetros da rota (obraId ou obra_id)
+    if (req.params.obraId) {
+      obraId = req.params.obraId;
+    } else if (req.params.obra_id) {
       obraId = req.params.obra_id;
     }
 

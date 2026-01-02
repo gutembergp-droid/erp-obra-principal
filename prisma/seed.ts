@@ -79,20 +79,27 @@ async function main() {
   });
   console.log('✅ Permissões criadas');
 
-  // Criar Baseline Comercial
+  // Criar Baseline Comercial (v2.1: com status de homologação)
   console.log('📊 Criando Baseline Comercial...');
   const baseline = await prisma.baselineComercial.create({
     data: {
       obra_id: obra.id,
       versao: 1,
       descricao: 'Baseline Inicial - Infraestrutura',
+      valor_total: 45000000.00,
+      // v2.1: Campos de homologação
+      status: 'homologada', // Baseline já homologada no seed
+      proposta_por: admin.id,
+      proposta_em: new Date('2025-01-10'),
+      homologada_por: admin.id,
+      homologada_em: new Date('2025-01-15'),
+      is_ativo: true, // Apenas baselines homologadas podem estar ativas
+      // Campos legados (mantidos para compatibilidade)
       data_aprovacao: new Date('2025-01-15'),
       aprovado_por: admin.id,
-      valor_total: 45000000.00,
-      is_ativo: true,
     },
   });
-  console.log('✅ Baseline criada');
+  console.log('✅ Baseline criada e homologada');
 
   // Criar EAP Hierárquica
   console.log('📋 Criando EAP...');
@@ -282,6 +289,7 @@ async function main() {
       obra_id: obra.id,
       eap_id: eap21.id, // Escavação, Carga e Transporte
       usuario_id: engenheiro.id,
+      tipo: 'MP', // Medição de Produção
       periodo_referencia: '2025-11',
       data_medicao: dataMedicao1,
       quantidade_medida: 12000.0000, // 24% do planejado (50.000)
@@ -302,6 +310,7 @@ async function main() {
       obra_id: obra.id,
       eap_id: eap22.id, // Compactação de Aterros
       usuario_id: engenheiro.id,
+      tipo: 'MP', // Medição de Produção
       periodo_referencia: '2025-10',
       data_medicao: dataMedicao2,
       quantidade_medida: 10000.0000, // ~22% do planejado (45.000)

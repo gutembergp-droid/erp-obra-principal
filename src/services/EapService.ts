@@ -447,10 +447,11 @@ export class EapService {
     tipo?: 'comercial' | 'operacional',
     includeDeleted: boolean = false
   ): Promise<Eap[]> {
-    // Busca todas as baselines ativas da obra
+    // Busca todas as baselines homologadas e ativas da obra (v2.1)
     const baselines = await this.prisma.baselineComercial.findMany({
       where: {
         obra_id: obraId,
+        status: 'homologada', // v2.1: Apenas baselines homologadas podem estar ativas
         is_ativo: true,
         deleted_at: null,
       },
@@ -487,10 +488,11 @@ export class EapService {
     obraId: string,
     tipo?: 'comercial' | 'operacional'
   ): Promise<Eap[]> {
-    // Busca todas as baselines ativas da obra
+    // Busca todas as baselines homologadas e ativas da obra (v2.1)
     const baselines = await this.prisma.baselineComercial.findMany({
       where: {
         obra_id: obraId,
+        status: 'homologada', // v2.1: Apenas baselines homologadas podem estar ativas
         is_ativo: true,
         deleted_at: null,
       },

@@ -31,7 +31,12 @@ router.get('/obra/:obra_id', authMiddleware, validateObraAccess, async (req, res
       where: { id: obraId },
       include: {
         baseline_comercial: {
-          where: { is_ativo: true, deleted_at: null },
+          // v2.1: Buscar baseline homologada e ativa
+          where: { 
+            status: 'homologada',
+            is_ativo: true, 
+            deleted_at: null 
+          },
           take: 1,
         },
       },

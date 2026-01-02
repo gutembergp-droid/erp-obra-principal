@@ -17,6 +17,7 @@ function LoginContent() {
     email: '',
     senha: '',
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -86,8 +87,10 @@ function LoginContent() {
     <div className="login-page">
       <div className="login-container">
         <div className="login-header">
-          <h1>ERP G-NESIS</h1>
-          <p className="login-subtitle">Sistema de Gestão de Obras</p>
+          <h1 className="login-logo">
+            <span className="logo-g">G-</span>
+            <span className="logo-nesis">NESIS</span>
+          </h1>
         </div>
 
         <form className="login-form" onSubmit={handleSubmit}>
@@ -98,7 +101,7 @@ function LoginContent() {
           )}
 
           <div className="form-group">
-            <label htmlFor="email">Email</label>
+            <label htmlFor="email">E-mail</label>
             <input
               type="email"
               id="email"
@@ -115,7 +118,7 @@ function LoginContent() {
           <div className="form-group">
             <label htmlFor="senha">Senha</label>
             <input
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               id="senha"
               name="senha"
               value={formData.senha}
@@ -127,6 +130,21 @@ function LoginContent() {
             />
           </div>
 
+          <div className="form-options">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={showPassword}
+                onChange={(e) => setShowPassword(e.target.checked)}
+                disabled={loading}
+              />
+              <span>Mostrar a senha</span>
+            </label>
+            <a href="#" className="forgot-password" onClick={(e) => e.preventDefault()}>
+              Esqueci a senha
+            </a>
+          </div>
+
           <button
             type="submit"
             className="btn-login"
@@ -135,10 +153,6 @@ function LoginContent() {
             {loading ? 'Entrando...' : 'Entrar'}
           </button>
         </form>
-
-        <div className="login-footer">
-          <p>© 2026 ERP G-NESIS. Todos os direitos reservados.</p>
-        </div>
       </div>
     </div>
   );

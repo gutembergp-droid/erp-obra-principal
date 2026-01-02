@@ -28,6 +28,11 @@ model Usuario {
   medicoes_aprovadas Medicao[] @relation("MedicaoAprovadaPor")
   obras_permitidas  UsuarioObra[] // Obras que o usuário tem permissão de acessar
   eaps_criadas      Eap[]      @relation("EapCriadaPor") // EAPs criadas pelo usuário
+  baselines_propostas BaselineComercial[] @relation("BaselinePropostaPor")
+  baselines_homologadas BaselineComercial[] @relation("BaselineHomologadaPor")
+  baselines_rejeitadas BaselineComercial[] @relation("BaselineRejeitadaPor")
+  competencia_gates_aprovados CompetenciaGate[] @relation("CompetenciaGateAprovadoPor")
+  competencia_gates_rejeitados CompetenciaGate[] @relation("CompetenciaGateRejeitadoPor")
   
   // Timestamps
   created_at DateTime @default(now()) @map("created_at")
@@ -60,6 +65,8 @@ model Obra {
   gates              Gate[]
   medicoes           Medicao[]
   usuarios_permitidos UsuarioObra[] // Usuários que têm permissão nesta obra
+  competencias_mensais CompetenciaMensal[] // FASE 1: Competências mensais da obra
+  competencia_gates CompetenciaGate[] // Backend Mínimo: Gates de competências
   
   // Timestamps
   created_at DateTime @default(now()) @map("created_at")
@@ -101,18 +108,33 @@ model UsuarioObra {
 /// MODELO: Baseline Comercial
 /// ============================================
 model BaselineComercial {
-  id            String   @id @default(uuid())
-  obra_id       String   @map("obra_id")
-  versao        Int
-  descricao     String?
-  data_aprovacao DateTime? @map("data_aprovacao")
-  aprovado_por  String?  @map("aprovado_por")
-  valor_total   Decimal  @map("valor_total") @db.Decimal(15, 2)
-  is_ativo      Boolean  @default(true) @map("is_ativo")
+  id              String    @id @default(uuid())
+  obra_id         String    @map("obra_id")
+  versao          Int
+  descricao       String?
+  valor_total     Decimal   @map("valor_total") @db.Decimal(15, 2)
+  is_ativo        Boolean   @default(false) @map("is_ativo")
+  
+  // Status e Homologação (v2.1)
+  status          String    @default("proposta") @map("status") // "proposta" | "homologada" | "rejeitada"
+  proposta_por    String?   @map("proposta_por") // usuario_id que propôs
+  proposta_em     DateTime? @map("proposta_em")
+  homologada_por  String?   @map("homologada_por") // usuario_id que homologou
+  homologada_em   DateTime? @map("homologada_em")
+  rejeitada_por   String?   @map("rejeitada_por")
+  rejeitada_em    DateTime? @map("rejeitada_em")
+  motivo_rejeicao String?   @map("motivo_rejeicao")
+  
+  // Campos legados (mantidos para compatibilidade)
+  data_aprovacao  DateTime? @map("data_aprovacao") // Deprecated: usar homologada_em
+  aprovado_por    String?   @map("aprovado_por") // Deprecated: usar homologada_por
   
   // Relações
   obra Obra @relation(fields: [obra_id], references: [id], onDelete: Cascade)
   eap  Eap[]
+  usuario_proponente Usuario? @relation("BaselinePropostaPor", fields: [proposta_por], references: [id], onDelete: SetNull)
+  usuario_homologador Usuario? @relation("BaselineHomologadaPor", fields: [homologada_por], references: [id], onDelete: SetNull)
+  usuario_rejeitador Usuario? @relation("BaselineRejeitadaPor", fields: [rejeitada_por], references: [id], onDelete: SetNull)
   
   // Timestamps
   created_at DateTime @default(now()) @map("created_at")
@@ -120,6 +142,9 @@ model BaselineComercial {
   deleted_at DateTime? @map("deleted_at")
 
   @@unique([obra_id, versao])
+  @@index([status])
+  @@index([proposta_por])
+  @@index([homologada_por])
   @@map("baseline_comercial")
 }
 
@@ -204,25 +229,40 @@ model EapFatorConversao {
 }
 
 /// ============================================
+/// ENUM: Códigos dos Gates Oficiais
+/// ============================================
+enum GateCodigo {
+  G1  // Liberação da Obra (Corporativo)
+  G2  // Fechamento de Produção
+  G3  // Fechamento de Custos
+  G4  // Fechamento Comercial
+  G5  // Qualidade OK (TRAVA)
+  G6  // SST OK (TRAVA)
+  G7  // Financeiro OK
+  G8  // Gerencial OK
+  G9  // Competência Concluída
+}
+
+/// ============================================
 /// MODELO: Gates (Portões/Marcos do Projeto)
 /// ============================================
+/// FASE 1: Gates fixos (G1-G9) conforme conceito oficial
 model Gate {
-  id                  String    @id @default(uuid())
-  obra_id             String    @map("obra_id")
-  codigo              String
+  id                  String      @id @default(uuid())
+  obra_id             String      @map("obra_id")
+  codigo              GateCodigo  // Enum fixo: G1 a G9
   nome                String
   descricao           String?
-  tipo                String    @default("meio") // inicio, meio, fim, customizado
-  ordem               Int
-  data_prevista       DateTime? @map("data_prevista")
-  data_real           DateTime? @map("data_real")
-  status              String    @default("pendente") // pendente, em_analise, aprovado, rejeitado
-  usuario_id          String?   @map("usuario_id") // Usuário que criou/executou a ação
-  aprovado_por        String?   @map("aprovado_por") // Mantido para compatibilidade
-  usuario_aprovador_id String?  @map("usuario_aprovador_id") // Usuário que aprovou
-  data_aprovacao      DateTime? @map("data_aprovacao")
+  ordem               Int         // Ordem imutável: 1 a 9
+  data_prevista       DateTime?   @map("data_prevista")
+  data_real           DateTime?   @map("data_real")
+  status              String      @default("pendente") // pendente, em_analise, aprovado, rejeitado
+  usuario_id          String?     @map("usuario_id") // Usuário que criou/executou a ação
+  aprovado_por        String?     @map("aprovado_por") // Mantido para compatibilidade
+  usuario_aprovador_id String?     @map("usuario_aprovador_id") // Usuário que aprovou
+  data_aprovacao      DateTime?   @map("data_aprovacao")
   observacoes         String?
-  criterios_aprovacao String?   @map("criterios_aprovacao") // JSON ou texto
+  criterios_aprovacao String?     @map("criterios_aprovacao") // JSON ou texto
   
   // Relações
   obra Obra @relation(fields: [obra_id], references: [id], onDelete: Cascade)
@@ -240,26 +280,37 @@ model Gate {
   @@index([usuario_aprovador_id])
   @@index([status])
   @@index([ordem])
+  @@index([codigo])
   @@map("gates")
+}
+
+/// ============================================
+/// ENUM: Tipo de Medição
+/// ============================================
+enum TipoMedicao {
+  MP  // Medição de Produção (o que foi realmente executado)
+  MC  // Medição do Cliente (o que será faturado)
 }
 
 /// ============================================
 /// MODELO: Medição
 /// ============================================
+/// FASE 1: Separação MP/MC conforme conceito oficial
 /// Representa medições realizadas em uma obra
 model Medicao {
-  id                  String    @id @default(uuid())
-  obra_id             String    @map("obra_id")
-  eap_id              String?   @map("eap_id") // EAP relacionada (opcional)
-  usuario_id          String    @map("usuario_id") // Usuário que realizou a medição
-  periodo_referencia  String    @map("periodo_referencia") // Ex: "2026-01", "2026-Q1"
-  data_medicao        DateTime  @map("data_medicao")
-  quantidade_medida    Decimal   @map("quantidade_medida") @db.Decimal(15, 4)
-  valor_medido         Decimal?  @map("valor_medido") @db.Decimal(15, 2)
+  id                  String      @id @default(uuid())
+  obra_id             String      @map("obra_id")
+  eap_id              String?     @map("eap_id") // EAP relacionada (opcional)
+  usuario_id          String      @map("usuario_id") // Usuário que realizou a medição
+  tipo                TipoMedicao // FASE 1: MP ou MC (obrigatório)
+  periodo_referencia  String      @map("periodo_referencia") // Ex: "2026-01", "2026-Q1"
+  data_medicao        DateTime    @map("data_medicao")
+  quantidade_medida    Decimal     @map("quantidade_medida") @db.Decimal(15, 4)
+  valor_medido         Decimal?    @map("valor_medido") @db.Decimal(15, 2)
   observacoes          String?
-  status              String    @default("rascunho") // rascunho, enviada, aprovada, rejeitada
-  aprovado_por_id     String?   @map("aprovado_por_id")
-  data_aprovacao       DateTime? @map("data_aprovacao")
+  status              String      @default("rascunho") // rascunho, enviada, aprovada, rejeitada
+  aprovado_por_id     String?     @map("aprovado_por_id")
+  data_aprovacao       DateTime?   @map("data_aprovacao")
   
   // Relações
   obra Obra @relation(fields: [obra_id], references: [id], onDelete: Cascade)
@@ -278,6 +329,117 @@ model Medicao {
   @@index([periodo_referencia])
   @@index([data_medicao])
   @@index([status])
+  @@index([tipo]) // FASE 1: Índice para filtros MP/MC
   @@map("medicoes")
+}
+
+/// ============================================
+/// MODELO: Insumo
+/// ============================================
+/// Representa insumos e materiais de construção
+model Insumo {
+  id                String    @id @default(uuid())
+  codigo            String    @unique
+  nome              String
+  unidade           String    // m³, kg, un, saco, milheiro
+  categoria         String
+  preco_estimado    Decimal   @map("preco_estimado") @db.Decimal(15, 2)
+  estoque           Decimal   @default(0) @db.Decimal(15, 4)
+  
+  // Timestamps
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+  deleted_at DateTime? @map("deleted_at")
+
+  @@index([codigo])
+  @@index([categoria])
+  @@map("insumos")
+}
+
+/// ============================================
+/// ENUM: Status da Competência
+/// ============================================
+enum CompetenciaStatus {
+  aberta
+  fechada
+}
+
+/// ============================================
+/// ENUM: Status do Gate
+/// ============================================
+enum GateStatus {
+  pendente
+  em_analise
+  aprovado
+  rejeitado
+  bloqueado
+}
+
+/// ============================================
+/// MODELO: Competência Mensal
+/// ============================================
+/// Backend Mínimo: Competência + 9 Gates (Fechamento Mensal)
+/// Representa um período mensal de fechamento de uma obra
+model CompetenciaMensal {
+  id            String            @id @default(uuid())
+  obra_id       String            @map("obra_id")
+  periodo       String            // Formato: "2026-01" (YYYY-MM)
+  status        CompetenciaStatus @default(aberta) @map("status")
+  aberta_em     DateTime          @default(now()) @map("aberta_em")
+  fechada_em    DateTime?         @map("fechada_em")
+  observacoes   String?
+  
+  // Relações
+  obra Obra @relation(fields: [obra_id], references: [id], onDelete: Cascade)
+  gates CompetenciaGate[] // Gates vinculados a esta competência
+  
+  // Timestamps
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+  deleted_at DateTime? @map("deleted_at")
+  
+  @@unique([obra_id, periodo])
+  @@index([obra_id, status])
+  @@index([obra_id])
+  @@index([status])
+  @@map("competencia_mensal")
+}
+
+/// ============================================
+/// MODELO: Gate da Competência
+/// ============================================
+/// Backend Mínimo: 9 Gates de Fechamento Mensal
+/// Representa um gate específico de uma competência mensal
+model CompetenciaGate {
+  id                String      @id @default(uuid())
+  competencia_id    String      @map("competencia_id")
+  obra_id           String      @map("obra_id") // Redundante mas útil para queries
+  numero            Int         // 1..9
+  nome              String
+  status            GateStatus  @default(pendente) @map("status")
+  trava             Boolean     @default(false) @map("trava") // true somente gates 5 e 6
+  ordem             Int         // Igual ao numero
+  aprovado_por_id   String?     @map("aprovado_por_id")
+  aprovado_em       DateTime?   @map("aprovado_em")
+  rejeitado_por_id  String?     @map("rejeitado_por_id")
+  rejeitado_em      DateTime?   @map("rejeitado_em")
+  motivo_rejeicao   String?     @map("motivo_rejeicao")
+  observacoes       String?
+  
+  // Relações
+  competencia CompetenciaMensal @relation(fields: [competencia_id], references: [id], onDelete: Cascade)
+  obra Obra @relation(fields: [obra_id], references: [id], onDelete: Cascade)
+  aprovado_por Usuario? @relation("CompetenciaGateAprovadoPor", fields: [aprovado_por_id], references: [id], onDelete: SetNull)
+  rejeitado_por Usuario? @relation("CompetenciaGateRejeitadoPor", fields: [rejeitado_por_id], references: [id], onDelete: SetNull)
+  
+  // Timestamps
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+  deleted_at DateTime? @map("deleted_at")
+  
+  @@unique([competencia_id, numero])
+  @@index([competencia_id])
+  @@index([obra_id, numero, status])
+  @@map("competencia_gate")
 }
 
