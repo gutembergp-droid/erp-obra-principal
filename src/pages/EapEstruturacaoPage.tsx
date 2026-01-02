@@ -8,7 +8,7 @@ import { Eap, EapFatorConversao, BaselineComercial } from '../types';
  * Esta página exibe a tabela de alta densidade com a visão dual
  * (Comercial e Operacional) e permite configuração detalhada via Drawers.
  */
-export const EapEstruturacaoPage: React.FC = () => {
+const EapEstruturacaoPage: React.FC = () => {
   const [baselineId, setBaselineId] = useState<string>('');
   const [eapComercial, setEapComercial] = useState<Eap[]>([]);
   const [eapOperacional, setEapOperacional] = useState<Eap[]>([]);
@@ -156,3 +156,4 @@ export const EapEstruturacaoPage: React.FC = () => {
   );
 };
 
+export default EapEstruturacaoPage;
