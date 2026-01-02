@@ -72,7 +72,7 @@ export default function LoginPage() {
 
       // Tokens são salvos automaticamente pelo serviço login()
       // Redireciona para returnUrl se fornecido, senão para /obras
-      const returnUrl = searchParams.get('returnUrl') || '/obras';
+      const returnUrl = searchParams?.get('returnUrl') || '/obras';
       router.push(returnUrl);
     } catch (err: any) {
       setError(err.message || 'Erro ao fazer login. Verifique suas credenciais.');
