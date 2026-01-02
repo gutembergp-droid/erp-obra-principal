@@ -1,5 +1,6 @@
 import './globals.css';
-import MainLayout from '../src/components/MainLayout';
+// Temporariamente sem MainLayout para testar
+// import MainLayout from '../src/components/MainLayout';
 
 export const metadata = {
   title: 'ERP G-NESIS',
@@ -14,9 +15,8 @@ export default function RootLayout({
   return (
     <html lang="pt-br">
       <body className="antialiased">
-        <MainLayout>
-          {children}
-        </MainLayout>
+        {/* Temporariamente sem MainLayout para testar se é ele que causa o 404 */}
+        {children}
       </body>
     </html>
   );
