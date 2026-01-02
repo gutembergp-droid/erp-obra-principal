@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { login } from '../../src/services/api/authApi';
 import './page.css';
@@ -10,7 +10,7 @@ import './page.css';
  * 
  * Autentica usuário e salva tokens no localStorage
  */
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [formData, setFormData] = useState({
@@ -143,4 +143,10 @@ export default function LoginPage() {
     </div>
   );
 }
-
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div>Carregando...</div>}>
+      <LoginContent />
+    </Suspense>
+  );
+}
