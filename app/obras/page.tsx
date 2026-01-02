@@ -38,7 +38,7 @@ function ObrasPageContent() {
     data_inicio: '',
     data_fim_prevista: '',
     orcamento_total: '',
-    status: 'planejamento' as const,
+    status: 'planejamento' as "planejamento" | "em_andamento" | "pausada" | "concluida" | "cancelada",
   });
 
   /**
