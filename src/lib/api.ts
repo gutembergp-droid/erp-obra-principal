@@ -99,7 +99,7 @@ async function apiRequest<T>(
 
   // Adiciona token JWT se disponível
   if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+    (headers as any)['Authorization'] = `Bearer ${token}`;
   }
 
   // Faz a requisição
