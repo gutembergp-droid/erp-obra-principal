@@ -11,7 +11,7 @@ interface ComposicaoPizzaChartProps {
  * Componente de Gráfico de Pizza de Composição
  * Mostra quanto cada grupo da EAP representa no total medido
  */
-export function ComposicaoPizzaChart({ data }: ComposicaPizzaChartProps) {
+export function ComposicaoPizzaChart({ data }: ComposicaoPizzaChartProps) {
   if (data.length === 0) {
     return (
       <div className="chart-empty">
