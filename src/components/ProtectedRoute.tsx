@@ -28,7 +28,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
 
       if (!authenticated) {
         // Redireciona para login, salvando a rota atual
-        const returnUrl = pathname !== '/login' ? pathname : '/obras';
+        const returnUrl = (pathname && pathname !== '/login') ? pathname : '/obras';
         router.push(`/login?returnUrl=${encodeURIComponent(returnUrl)}`);
       }
     };
