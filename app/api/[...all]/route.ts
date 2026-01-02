@@ -5,13 +5,14 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createApp } from '@/api/app';
 
-// Singleton do Express app
+// Singleton do Express app - lazy loading para evitar importar Prisma durante build
 let expressAppInstance: any = null;
 
 function getExpressApp() {
   if (!expressAppInstance) {
+    // Importa createApp apenas quando necessário (runtime, não build time)
+    const { createApp } = require('@/api/app');
     expressAppInstance = createApp();
   }
   return expressAppInstance;
