@@ -2,9 +2,6 @@
  * Catch-all API Route Handler
  * 
  * Integra o servidor Express com Next.js API Routes para funcionar no Vercel.
- * 
- * NOTA: Esta é uma solução simplificada. Para produção, considere migrar
- * as rotas para Next.js API Routes individuais ou usar next-connect.
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -26,7 +23,8 @@ function getExpressApp() {
 async function handleRequest(request: NextRequest) {
   try {
     const url = new URL(request.url);
-    const pathname = url.pathname.replace(/^\/api/, '') || '/';
+    // Mantém o pathname completo incluindo /api para o Express
+    const pathname = url.pathname || '/';
     const method = request.method;
     
     // Prepara body
@@ -39,24 +37,30 @@ async function handleRequest(request: NextRequest) {
         } else if (contentType.includes('application/x-www-form-urlencoded')) {
           const formData = await request.formData();
           body = Object.fromEntries(formData.entries());
+        } else {
+          body = await request.text();
         }
-      } catch {
+      } catch (error) {
         // Ignora erros de parsing do body
       }
     }
 
-    // Cria um mock de Request/Response do Express
+    // Cria um objeto de requisição compatível com Express
     const expressReq = {
       method,
-      url: pathname + url.search,
+      url: pathname + (url.search || ''),
       path: pathname,
       query: Object.fromEntries(url.searchParams),
       headers: Object.fromEntries(request.headers.entries()),
       body,
       params: {},
-      get: (name: string) => request.headers.get(name),
+      get: (name: string) => {
+        const header = request.headers.get(name);
+        return header;
+      },
     } as any;
 
+    // Cria um objeto de resposta compatível com Express
     let statusCode = 200;
     const headers: Record<string, string> = {};
     let responseData: any = null;
@@ -87,35 +91,82 @@ async function handleRequest(request: NextRequest) {
       getHeader: (name: string) => headers[name],
       end: (chunk?: any) => {
         if (responseSent) return expressRes;
-        if (chunk) responseData = chunk;
+        if (chunk !== undefined) responseData = chunk;
         responseSent = true;
         return expressRes;
       },
+      statusCode: 200,
+      locals: {},
     } as any;
 
     // Executa o Express app
     const app = getExpressApp();
     
     await new Promise<void>((resolve) => {
+      let resolved = false;
+      
       // Timeout de segurança
       const timeout = setTimeout(() => {
-        if (!responseSent) {
-          responseSent = true;
+        if (!resolved) {
+          resolved = true;
+          if (!responseSent) {
+            responseSent = true;
+            responseData = { error: 'Timeout', message: 'A requisição demorou muito para processar' };
+            statusCode = 504;
+          }
           resolve();
         }
-      }, 30000); // 30 segundos
+      }, 25000);
 
-      app(expressReq, expressRes, () => {
+      try {
+        // Chama o Express app handler
+        app(expressReq, expressRes, (err?: any) => {
+          if (resolved) return;
+          
+          clearTimeout(timeout);
+          resolved = true;
+          
+          if (err) {
+            console.error('[API Handler] Erro do Express:', err);
+            if (!responseSent) {
+              responseSent = true;
+              responseData = {
+                error: 'Erro interno do servidor',
+                message: process.env.NODE_ENV === 'development' ? err.message : 'Ocorreu um erro inesperado',
+              };
+              statusCode = 500;
+            }
+          }
+          
+          if (!responseSent) {
+            responseSent = true;
+            // Se nenhuma resposta foi enviada, retorna 404
+            responseData = { error: 'Rota não encontrada', message: `Rota ${pathname} não encontrada` };
+            statusCode = 404;
+          }
+          
+          resolve();
+        });
+      } catch (error: any) {
         clearTimeout(timeout);
-        if (!responseSent) {
-          responseSent = true;
+        if (!resolved) {
+          resolved = true;
+          console.error('[API Handler] Erro ao executar Express:', error);
+          if (!responseSent) {
+            responseSent = true;
+            responseData = {
+              error: 'Erro interno do servidor',
+              message: process.env.NODE_ENV === 'development' ? error.message : 'Ocorreu um erro inesperado',
+            };
+            statusCode = 500;
+          }
+          resolve();
         }
-        resolve();
-      });
+      }
     });
 
-    // Retorna resposta
-    if (responseData !== null) {
+    // Retorna resposta Next.js
+    if (responseData !== null && responseData !== undefined) {
       if (typeof responseData === 'object' && !headers['Content-Type']) {
         return NextResponse.json(responseData, { status: statusCode, headers });
       }
@@ -127,7 +178,7 @@ async function handleRequest(request: NextRequest) {
 
     return new NextResponse(null, { status: statusCode, headers });
   } catch (error: any) {
-    console.error('Erro no handler da API:', error);
+    console.error('[API Handler] Erro crítico:', error);
     return NextResponse.json(
       {
         error: 'Erro interno do servidor',
