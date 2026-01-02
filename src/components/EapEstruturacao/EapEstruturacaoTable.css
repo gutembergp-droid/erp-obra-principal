@@ -1,0 +1,203 @@
+/* Container principal - Ocupa toda a tela */
+.eap-estruturacao-container {
+  width: 100%;
+  height: 100vh;
+  background-color: #1a1a1a;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Wrapper da tabela - Ocupa toda a largura disponível */
+.eap-table-wrapper {
+  width: 100%;
+  flex: 1;
+  overflow: auto;
+  background-color: #1a1a1a;
+}
+
+/* Tabela de alta densidade - Estilo planilha profissional */
+.eap-estruturacao-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 12px;
+  background-color: #1a1a1a;
+  color: #e0e0e0;
+  table-layout: fixed;
+}
+
+/* Cabeçalho da tabela */
+.eap-estruturacao-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: #2a2a2a;
+  border-bottom: 2px solid #3a3a3a;
+}
+
+.eap-estruturacao-table th {
+  padding: 8px 6px;
+  text-align: left;
+  font-weight: 600;
+  color: #b0b0b0;
+  border-right: 1px solid #3a3a3a;
+  background-color: #2a2a2a;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+
+/* Larguras específicas das colunas */
+.col-codigo {
+  width: 100px;
+  min-width: 100px;
+}
+
+.col-descricao-comercial {
+  width: 300px;
+  min-width: 300px;
+}
+
+.col-unidade-comercial {
+  width: 80px;
+  min-width: 80px;
+}
+
+.col-volume-planejado {
+  width: 120px;
+  min-width: 120px;
+  text-align: right;
+}
+
+.col-custo-unitario {
+  width: 130px;
+  min-width: 130px;
+  text-align: right;
+}
+
+.col-separator {
+  width: 40px;
+  min-width: 40px;
+  text-align: center;
+  color: #666;
+  font-weight: bold;
+}
+
+.col-unidade-operacional {
+  width: 100px;
+  min-width: 100px;
+}
+
+.col-quantidade-planejada {
+  width: 130px;
+  min-width: 130px;
+  text-align: right;
+}
+
+.col-acoes {
+  width: 60px;
+  min-width: 60px;
+  text-align: center;
+}
+
+/* Linhas da tabela */
+.eap-estruturacao-table tbody tr {
+  border-bottom: 1px solid #2a2a2a;
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+}
+
+.eap-estruturacao-table tbody tr:hover {
+  background-color: #252525;
+}
+
+.eap-estruturacao-table tbody tr.selected {
+  background-color: #2d3a4a;
+  border-left: 3px solid #4a90e2;
+}
+
+.eap-estruturacao-table td {
+  padding: 6px;
+  border-right: 1px solid #2a2a2a;
+  color: #d0d0d0;
+  vertical-align: middle;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Células numéricas - alinhamento à direita */
+.col-volume-planejado,
+.col-custo-unitario,
+.col-quantidade-planejada {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Estado vazio */
+.empty-state {
+  text-align: center;
+  padding: 40px !important;
+  color: #666;
+  font-style: italic;
+}
+
+/* Botão de ações */
+.btn-config {
+  background: transparent;
+  border: 1px solid #444;
+  color: #b0b0b0;
+  padding: 4px 8px;
+  cursor: pointer;
+  border-radius: 3px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  width: 32px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-config:hover {
+  background-color: #3a3a3a;
+  border-color: #555;
+  color: #e0e0e0;
+}
+
+.btn-config:active {
+  background-color: #4a4a4a;
+}
+
+/* Scrollbar personalizada - tema escuro */
+.eap-table-wrapper::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+.eap-table-wrapper::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+.eap-table-wrapper::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 6px;
+}
+
+.eap-table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Responsividade - manter densidade mesmo em telas menores */
+@media (max-width: 1400px) {
+  .eap-estruturacao-table {
+    font-size: 11px;
+  }
+  
+  .eap-estruturacao-table th,
+  .eap-estruturacao-table td {
+    padding: 5px 4px;
+  }
+}
+

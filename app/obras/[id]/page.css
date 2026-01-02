@@ -1,0 +1,772 @@
+/**
+ * Estilos para a página de Detalhes da Obra
+ * Tema escuro (Dark Mode) com cores sóbrias
+ */
+
+.obra-detail-page {
+  min-height: 100vh;
+  background-color: #1a1a1a;
+  color: #e5e5e5;
+  padding: 2rem;
+}
+
+.obra-detail-loading,
+.obra-detail-error {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  color: #e5e5e5;
+}
+
+.obra-detail-error button {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.obra-detail-error button:hover {
+  background-color: #2563eb;
+}
+
+/* Header da Obra */
+.obra-header {
+  background-color: #262626;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  border: 1px solid #404040;
+}
+
+.obra-header-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+}
+
+.obra-header-main h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 0.5rem 0;
+}
+
+.obra-codigo {
+  color: #9ca3af;
+  font-size: 0.875rem;
+  margin: 0.25rem 0;
+}
+
+.obra-cliente {
+  color: #d1d5db;
+  font-size: 1rem;
+  margin: 0.25rem 0;
+}
+
+.obra-status {
+  display: flex;
+  align-items: center;
+}
+
+.status-badge {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: capitalize;
+  color: white;
+}
+
+/* Progresso dos Gates */
+.gates-progress {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #404040;
+}
+
+.gates-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.gates-progress-header h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+}
+
+.gates-progress-percentage {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #3b82f6;
+}
+
+.gates-progress-bar {
+  width: 100%;
+  height: 1rem;
+  background-color: #404040;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.gates-progress-fill {
+  height: 100%;
+  background-color: #10b981;
+  transition: width 0.3s ease;
+}
+
+.gates-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.gate-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  background-color: #1f1f1f;
+  border-radius: 0.5rem;
+  border: 1px solid #404040;
+}
+
+.gate-ordem {
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #3b82f6;
+  color: white;
+  border-radius: 50%;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.gate-nome {
+  flex: 1;
+  color: #e5e5e5;
+  font-size: 0.875rem;
+}
+
+.gate-status {
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: capitalize;
+  color: white;
+}
+
+/* Sistema de Abas */
+.tabs-container {
+  background-color: #262626;
+  border-radius: 0.75rem;
+  border: 1px solid #404040;
+  overflow: hidden;
+}
+
+.tabs-header {
+  display: flex;
+  border-bottom: 1px solid #404040;
+  background-color: #1f1f1f;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  background: none;
+  border: none;
+  color: #9ca3af;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 2px solid transparent;
+}
+
+.tab-button:hover {
+  color: #e5e5e5;
+  background-color: #262626;
+}
+
+.tab-button.active {
+  color: #3b82f6;
+  border-bottom-color: #3b82f6;
+  background-color: #262626;
+}
+
+.tabs-content {
+  padding: 2rem;
+  min-height: 400px;
+}
+
+.tab-panel {
+  color: #e5e5e5;
+}
+
+.tab-panel h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 1.5rem 0;
+}
+
+/* Resumo */
+.resumo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.resumo-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.resumo-item.full-width {
+  grid-column: 1 / -1;
+}
+
+.resumo-item label {
+  color: #9ca3af;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.resumo-item span {
+  color: #e5e5e5;
+  font-size: 1rem;
+}
+
+/* Medições */
+.medicoes-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.medicoes-header h2 {
+  margin: 0;
+}
+
+.medicoes-table-container {
+  overflow-x: auto;
+  background-color: #1f1f1f;
+  border-radius: 0.5rem;
+  border: 1px solid #404040;
+}
+
+.medicoes-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+}
+
+.medicoes-table th,
+.medicoes-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #404040;
+}
+
+.medicoes-table th {
+  background-color: #262626;
+  color: #d1d5db;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+}
+
+.medicoes-table tbody tr {
+  transition: background-color 0.2s;
+}
+
+.medicoes-table tbody tr:hover {
+  background-color: #2a2a2a;
+}
+
+.medicoes-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.medicoes-table .empty-state {
+  text-align: center;
+  color: #9ca3af;
+  padding: 2rem;
+}
+
+/* Drawer */
+.drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.drawer {
+  background-color: #1f1f1f;
+  width: 500px;
+  max-width: 90%;
+  height: 100%;
+  box-shadow: -5px 0 15px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  z-index: 1001;
+}
+
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #404040;
+}
+
+.drawer-header h2 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 1.5rem;
+}
+
+.drawer-close {
+  background: none;
+  border: none;
+  color: #e5e5e5;
+  font-size: 2rem;
+  cursor: pointer;
+  padding: 0;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.drawer-close:hover {
+  color: #ffffff;
+}
+
+.drawer-content {
+  padding: 1.5rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.drawer-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-top: 1px solid #404040;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #d1d5db;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.form-group input[type="text"],
+.form-group input[type="date"],
+.form-group input[type="number"],
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #262626;
+  border: 1px solid #404040;
+  border-radius: 0.5rem;
+  color: #e5e5e5;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.form-group input.readonly-input {
+  background-color: #1a1a1a;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.btn-primary {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #2563eb;
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background-color: #404040;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: #525252;
+}
+
+.btn-secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Relatórios */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.dashboard-header h2 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 1.5rem;
+}
+
+.period-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.period-filter label {
+  color: #d1d5db;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.filter-select {
+  padding: 0.5rem 0.75rem;
+  background-color: #262626;
+  border: 1px solid #404040;
+  border-radius: 0.5rem;
+  color: #e5e5e5;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+/* Cards de KPI */
+.kpi-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.kpi-card {
+  background-color: #1f1f1f;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  border: 1px solid #404040;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.kpi-card.highlight {
+  border-color: #3b82f6;
+  background: linear-gradient(135deg, #1f1f1f 0%, #1e3a5f 100%);
+}
+
+.kpi-card label {
+  color: #9ca3af;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.kpi-value {
+  color: #e5e5e5;
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.kpi-value.percentage {
+  color: #3b82f6;
+  font-size: 2.25rem;
+}
+
+.kpi-progress-bar {
+  width: 100%;
+  height: 0.5rem;
+  background-color: #404040;
+  border-radius: 0.25rem;
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+
+.kpi-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
+  transition: width 0.5s ease;
+  border-radius: 0.25rem;
+}
+
+.report-card {
+  background-color: #1f1f1f;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid #404040;
+}
+
+.report-card h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 1.5rem 0;
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Avanço Financeiro */
+.financial-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.financial-values {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.financial-value {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.financial-value label {
+  color: #9ca3af;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.financial-value .value {
+  color: #e5e5e5;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.financial-value .value.percentage {
+  color: #3b82f6;
+  font-size: 2rem;
+}
+
+.progress-bar-container {
+  width: 100%;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 1.5rem;
+  background-color: #404040;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
+  transition: width 0.5s ease;
+  border-radius: 0.75rem;
+}
+
+/* Gráfico de Evolução */
+.chart-container {
+  width: 100%;
+  overflow-x: auto;
+  padding: 1rem 0;
+}
+
+.evolucao-chart {
+  width: 100%;
+  min-width: 600px;
+  background-color: #262626;
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.chart-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.chart-empty {
+  text-align: center;
+  padding: 3rem;
+  color: #9ca3af;
+}
+
+/* Top 5 Serviços */
+.top-services-table-container {
+  overflow-x: auto;
+  background-color: #262626;
+  border-radius: 0.5rem;
+  border: 1px solid #404040;
+}
+
+.top-services-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 500px;
+}
+
+.top-services-table th,
+.top-services-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #404040;
+}
+
+.top-services-table th {
+  background-color: #1f1f1f;
+  color: #d1d5db;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+}
+
+.top-services-table tbody tr {
+  transition: background-color 0.2s;
+}
+
+.top-services-table tbody tr:hover {
+  background-color: #2a2a2a;
+}
+
+.top-services-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.position-cell {
+  font-weight: 600;
+  color: #3b82f6;
+  text-align: center;
+  width: 60px;
+}
+
+.value-cell {
+  font-weight: 600;
+  color: #10b981;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .obra-detail-page {
+    padding: 1rem;
+  }
+
+  .obra-header {
+    padding: 1.5rem;
+  }
+
+  .obra-header-main {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .tabs-header {
+    flex-wrap: wrap;
+  }
+
+  .tab-button {
+    min-width: 50%;
+  }
+
+  .tabs-content {
+    padding: 1.5rem;
+  }
+
+  .medicoes-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .drawer {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .financial-values {
+    grid-template-columns: 1fr;
+  }
+
+  .evolucao-chart {
+    min-width: 100%;
+  }
+}
+

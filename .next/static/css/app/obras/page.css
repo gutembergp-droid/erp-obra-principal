@@ -1,0 +1,407 @@
+/*!****************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[12].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[12].use[3]!./app/obras/page.css ***!
+  \****************************************************************************************************************************************************************************************************************************************************************/
+/**
+ * Estilos para a página de Obras
+ * Tema escuro (Dark Mode) com cores sóbrias
+ */
+
+.obras-page {
+  min-height: 100vh;
+  background-color: #1a1a1a;
+  color: #e5e5e5;
+  padding: 2rem;
+}
+
+.obras-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.header-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.obras-header h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+}
+
+.btn-primary {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #2563eb;
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background-color: #374151;
+  color: #e5e5e5;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: #4b5563;
+}
+
+.btn-secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-logout {
+  background-color: #dc2626;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-logout:hover {
+  background-color: #b91c1c;
+}
+
+/* Filtros */
+.filters-container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: #262626;
+  border-radius: 0.5rem;
+  border: 1px solid #404040;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1 1;
+}
+
+.filter-group label {
+  color: #d1d5db;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.filter-select,
+.filter-input {
+  padding: 0.5rem 0.75rem;
+  background-color: #1f1f1f;
+  border: 1px solid #404040;
+  border-radius: 0.5rem;
+  color: #e5e5e5;
+  font-size: 0.875rem;
+  transition: border-color 0.2s;
+}
+
+.filter-select:focus,
+.filter-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.filter-input::placeholder {
+  color: #6b7280;
+}
+
+/* Botões de ação */
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.btn-view,
+.btn-edit,
+.btn-delete {
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  font-size: 1.25rem;
+  transition: transform 0.2s, opacity 0.2s;
+  border-radius: 0.25rem;
+}
+
+.btn-view:hover {
+  transform: scale(1.1);
+  background-color: rgba(16, 185, 129, 0.1);
+}
+
+.btn-edit:hover {
+  transform: scale(1.1);
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+.btn-delete:hover:not(:disabled) {
+  transform: scale(1.1);
+  background-color: rgba(220, 38, 38, 0.1);
+}
+
+.btn-delete:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.error-message {
+  background-color: #7f1d1d;
+  color: #fca5a5;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid #991b1b;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: #9ca3af;
+}
+
+.obras-table-container {
+  background-color: #262626;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  border: 1px solid #404040;
+}
+
+.obras-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.obras-table thead {
+  background-color: #1f1f1f;
+}
+
+.obras-table th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: #d1d5db;
+  border-bottom: 2px solid #404040;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.obras-table tbody tr {
+  border-bottom: 1px solid #404040;
+  transition: background-color 0.2s;
+}
+
+.obras-table tbody tr:hover {
+  background-color: #2a2a2a;
+}
+
+.obras-table td {
+  padding: 1rem;
+  color: #e5e5e5;
+  font-size: 0.875rem;
+}
+
+.empty-state {
+  text-align: center;
+  color: #9ca3af;
+  padding: 2rem;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: white;
+  text-transform: capitalize;
+}
+
+/* Drawer Styles */
+.drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  z-index: 1000;
+  animation: fadeIn 0.2s;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  max-width: 500px;
+  background-color: #1f1f1f;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.5);
+  animation: slideIn 0.3s;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #404040;
+}
+
+.drawer-header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+}
+
+.drawer-close {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  font-size: 2rem;
+  cursor: pointer;
+  padding: 0;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.drawer-close:hover {
+  color: #ffffff;
+}
+
+.drawer-content {
+  flex: 1 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+}
+
+.drawer-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-top: 1px solid #404040;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #d1d5db;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #262626;
+  border: 1px solid #404040;
+  border-radius: 0.5rem;
+  color: #e5e5e5;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.form-group textarea {
+  resize: vertical;
+  font-family: inherit;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .obras-page {
+    padding: 1rem;
+  }
+
+  .obras-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .drawer {
+    max-width: 100%;
+  }
+
+  .obras-table {
+    font-size: 0.75rem;
+  }
+
+  .obras-table th,
+  .obras-table td {
+    padding: 0.5rem;
+  }
+}
+
+

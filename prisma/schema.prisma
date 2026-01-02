@@ -1,0 +1,283 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" // ou "mysql", "sqlite" conforme necessário
+  url      = env("DATABASE_URL")
+}
+
+/// ============================================
+/// MODELO: Usuario
+/// ============================================
+model Usuario {
+  id                String    @id @default(uuid())
+  email             String    @unique
+  nome              String
+  senha_hash        String    @map("senha_hash")
+  perfil            String    @default("usuario") // admin, gestor, engenheiro, usuario
+  is_ativo          Boolean   @default(true) @map("is_ativo")
+  
+  // Relações
+  gates_criados     Gate[]    @relation("GateCriadoPor")
+  gates_aprovados   Gate[]    @relation("GateAprovadoPor")
+  medicoes          Medicao[]
+  medicoes_aprovadas Medicao[] @relation("MedicaoAprovadaPor")
+  obras_permitidas  UsuarioObra[] // Obras que o usuário tem permissão de acessar
+  eaps_criadas      Eap[]      @relation("EapCriadaPor") // EAPs criadas pelo usuário
+  
+  // Timestamps
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+  deleted_at DateTime? @map("deleted_at")
+
+  @@index([email])
+  @@index([perfil])
+  @@index([is_ativo])
+  @@map("usuarios")
+}
+
+/// ============================================
+/// MODELO: Obras
+/// ============================================
+model Obra {
+  id                String    @id @default(uuid())
+  codigo            String    @unique
+  nome              String
+  descricao         String?
+  cliente           String?
+  data_inicio       DateTime?
+  data_fim_prevista DateTime? @map("data_fim_prevista")
+  data_fim_real     DateTime? @map("data_fim_real")
+  status            String    @default("planejamento") // planejamento, em_andamento, pausada, concluida, cancelada
+  orcamento_total   Decimal?  @map("orcamento_total") @db.Decimal(15, 2)
+  
+  // Relações
+  baseline_comercial BaselineComercial[]
+  gates              Gate[]
+  medicoes           Medicao[]
+  usuarios_permitidos UsuarioObra[] // Usuários que têm permissão nesta obra
+  
+  // Timestamps
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+  deleted_at DateTime? @map("deleted_at")
+
+  @@map("obras")
+}
+
+/// ============================================
+/// MODELO: UsuarioObra (Permissões)
+/// ============================================
+/// Tabela de relacionamento N:N entre Usuario e Obra
+/// Define quais usuários têm permissão de acessar quais obras
+model UsuarioObra {
+  id         String   @id @default(uuid())
+  usuario_id String   @map("usuario_id")
+  obra_id    String   @map("obra_id")
+  permissao  String   @default("leitura") // leitura, escrita, administrador
+  is_ativo   Boolean  @default(true) @map("is_ativo")
+  
+  // Relações
+  usuario Usuario @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  obra    Obra    @relation(fields: [obra_id], references: [id], onDelete: Cascade)
+  
+  // Timestamps
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+  deleted_at DateTime? @map("deleted_at")
+
+  @@unique([usuario_id, obra_id])
+  @@index([usuario_id])
+  @@index([obra_id])
+  @@index([is_ativo])
+  @@map("usuario_obra")
+}
+
+/// ============================================
+/// MODELO: Baseline Comercial
+/// ============================================
+model BaselineComercial {
+  id            String   @id @default(uuid())
+  obra_id       String   @map("obra_id")
+  versao        Int
+  descricao     String?
+  data_aprovacao DateTime? @map("data_aprovacao")
+  aprovado_por  String?  @map("aprovado_por")
+  valor_total   Decimal  @map("valor_total") @db.Decimal(15, 2)
+  is_ativo      Boolean  @default(true) @map("is_ativo")
+  
+  // Relações
+  obra Obra @relation(fields: [obra_id], references: [id], onDelete: Cascade)
+  eap  Eap[]
+  
+  // Timestamps
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+  deleted_at DateTime? @map("deleted_at")
+
+  @@unique([obra_id, versao])
+  @@map("baseline_comercial")
+}
+
+/// ============================================
+/// MODELO: EAP (Estrutura Analítica do Projeto)
+/// ============================================
+model Eap {
+  id                  String   @id @default(uuid())
+  baseline_comercial_id String @map("baseline_comercial_id")
+  codigo              String
+  descricao           String
+  tipo                String   // "comercial" ou "operacional"
+  nivel               Int
+  eap_pai_id          String?  @map("eap_pai_id")
+  unidade_medida      String?  @map("unidade_medida")
+  quantidade          Decimal? @db.Decimal(15, 4)
+  valor_unitario      Decimal? @map("valor_unitario") @db.Decimal(15, 2)
+  valor_total         Decimal? @map("valor_total") @db.Decimal(15, 2)
+  ordem               Int
+  is_folha            Boolean  @default(false) @map("is_folha")
+  usuario_id          String?  @map("usuario_id") // Usuário que criou a EAP (auditoria)
+  
+  // Relações
+  baseline_comercial BaselineComercial @relation(fields: [baseline_comercial_id], references: [id], onDelete: Cascade)
+  usuario_criador Usuario? @relation("EapCriadaPor", fields: [usuario_id], references: [id], onDelete: SetNull)
+  
+  // Self-reference para hierarquia (item pai)
+  pai   Eap?  @relation("EapHierarchy", fields: [eap_pai_id], references: [id], onDelete: SetNull)
+  filhos Eap[] @relation("EapHierarchy")
+  
+  // Relações de fator de conversão
+  // Quando é EAP Comercial, pode ter múltiplos fatores de conversão para EAPs Operacionais
+  fatores_como_comercial EapFatorConversao[] @relation("EapComercial")
+  
+  // Quando é EAP Operacional, pode estar relacionada a uma EAP Comercial
+  fatores_como_operacional EapFatorConversao[] @relation("EapOperacional")
+  
+  // Relações com medições
+  medicoes Medicao[]
+  
+  // Timestamps
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+  deleted_at DateTime? @map("deleted_at")
+
+  @@unique([baseline_comercial_id, codigo])
+  @@index([baseline_comercial_id])
+  @@index([eap_pai_id])
+  @@index([tipo])
+  @@index([usuario_id])
+  @@map("eap")
+}
+
+/// ============================================
+/// MODELO: EAP Fator de Conversão
+/// ============================================
+/// REGRA: Cada item da EAP Comercial pode ter um ou mais itens da EAP Operacional
+/// através de fatores de conversão que definem a relação quantidade/valor
+model EapFatorConversao {
+  id                 String  @id @default(uuid())
+  eap_comercial_id   String  @map("eap_comercial_id")
+  eap_operacional_id String  @map("eap_operacional_id")
+  fator_quantidade   Decimal @map("fator_quantidade") @db.Decimal(15, 6)
+  fator_valor        Decimal? @map("fator_valor") @db.Decimal(15, 6)
+  observacoes        String?
+  is_ativo           Boolean @default(true) @map("is_ativo")
+  
+  // Relações
+  eap_comercial   Eap @relation("EapComercial", fields: [eap_comercial_id], references: [id], onDelete: Cascade)
+  eap_operacional Eap @relation("EapOperacional", fields: [eap_operacional_id], references: [id], onDelete: Cascade)
+  
+  // Timestamps
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+  deleted_at DateTime? @map("deleted_at")
+
+  @@unique([eap_comercial_id, eap_operacional_id])
+  @@index([eap_comercial_id])
+  @@index([eap_operacional_id])
+  @@index([is_ativo])
+  @@map("eap_fator_conversao")
+}
+
+/// ============================================
+/// MODELO: Gates (Portões/Marcos do Projeto)
+/// ============================================
+model Gate {
+  id                  String    @id @default(uuid())
+  obra_id             String    @map("obra_id")
+  codigo              String
+  nome                String
+  descricao           String?
+  tipo                String    @default("meio") // inicio, meio, fim, customizado
+  ordem               Int
+  data_prevista       DateTime? @map("data_prevista")
+  data_real           DateTime? @map("data_real")
+  status              String    @default("pendente") // pendente, em_analise, aprovado, rejeitado
+  usuario_id          String?   @map("usuario_id") // Usuário que criou/executou a ação
+  aprovado_por        String?   @map("aprovado_por") // Mantido para compatibilidade
+  usuario_aprovador_id String?  @map("usuario_aprovador_id") // Usuário que aprovou
+  data_aprovacao      DateTime? @map("data_aprovacao")
+  observacoes         String?
+  criterios_aprovacao String?   @map("criterios_aprovacao") // JSON ou texto
+  
+  // Relações
+  obra Obra @relation(fields: [obra_id], references: [id], onDelete: Cascade)
+  usuario_criador Usuario? @relation("GateCriadoPor", fields: [usuario_id], references: [id], onDelete: SetNull)
+  usuario_aprovador Usuario? @relation("GateAprovadoPor", fields: [usuario_aprovador_id], references: [id], onDelete: SetNull)
+  
+  // Timestamps
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+  deleted_at DateTime? @map("deleted_at")
+
+  @@unique([obra_id, codigo])
+  @@index([obra_id])
+  @@index([usuario_id])
+  @@index([usuario_aprovador_id])
+  @@index([status])
+  @@index([ordem])
+  @@map("gates")
+}
+
+/// ============================================
+/// MODELO: Medição
+/// ============================================
+/// Representa medições realizadas em uma obra
+model Medicao {
+  id                  String    @id @default(uuid())
+  obra_id             String    @map("obra_id")
+  eap_id              String?   @map("eap_id") // EAP relacionada (opcional)
+  usuario_id          String    @map("usuario_id") // Usuário que realizou a medição
+  periodo_referencia  String    @map("periodo_referencia") // Ex: "2026-01", "2026-Q1"
+  data_medicao        DateTime  @map("data_medicao")
+  quantidade_medida    Decimal   @map("quantidade_medida") @db.Decimal(15, 4)
+  valor_medido         Decimal?  @map("valor_medido") @db.Decimal(15, 2)
+  observacoes          String?
+  status              String    @default("rascunho") // rascunho, enviada, aprovada, rejeitada
+  aprovado_por_id     String?   @map("aprovado_por_id")
+  data_aprovacao       DateTime? @map("data_aprovacao")
+  
+  // Relações
+  obra Obra @relation(fields: [obra_id], references: [id], onDelete: Cascade)
+  eap  Eap? @relation(fields: [eap_id], references: [id], onDelete: SetNull)
+  usuario Usuario @relation(fields: [usuario_id], references: [id], onDelete: Restrict)
+  aprovado_por Usuario? @relation("MedicaoAprovadaPor", fields: [aprovado_por_id], references: [id], onDelete: SetNull)
+  
+  // Timestamps
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+  deleted_at DateTime? @map("deleted_at")
+
+  @@index([obra_id])
+  @@index([eap_id])
+  @@index([usuario_id])
+  @@index([periodo_referencia])
+  @@index([data_medicao])
+  @@index([status])
+  @@map("medicoes")
+}
+
