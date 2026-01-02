@@ -22,7 +22,7 @@ type TabType = 'resumo' | 'eap' | 'medicoes' | 'relatorios';
 function ObraDetailContent() {
   const params = useParams();
   const router = useRouter();
-  const obraId = params.id as string;
+  const obraId = params?.id as string;
 
   const [obra, setObra] = useState<Obra | null>(null);
   const [gates, setGates] = useState<Gate[]>([]);
