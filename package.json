@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "dev:api": "ts-node --project tsconfig.server.json src/api/server.ts",
-    "start:api": "ts-node src/api/server.ts",
+    "start:api": "tsx src/api/server.ts",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -25,7 +25,8 @@
     "next": "^14.0.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "recharts": "^2.10.0"
+    "recharts": "^2.10.0",
+    "tsx": "^4.21.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
