@@ -113,7 +113,7 @@ async function apiRequest<T>(
     const newToken = await refreshAccessToken();
     if (newToken) {
       // Tenta novamente com o novo token
-      headers['Authorization'] = `Bearer ${newToken}`;
+      (headers as any)['Authorization'] = `Bearer ${newToken}`;
       response = await fetch(`${API_BASE_URL}${endpoint}`, {
         ...options,
         headers,
