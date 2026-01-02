@@ -3,7 +3,10 @@
  * Inclui interceptor para adicionar token JWT automaticamente
  */
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+// Em produção (Vercel), usa URL relativa para usar as API Routes do Next.js
+// Em desenvolvimento, usa a URL do servidor Express separado
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 
+  (typeof window !== 'undefined' && window.location.origin ? '/api' : 'http://localhost:3000/api');
 
 /**
  * Obtém o token de acesso do localStorage
