@@ -10,6 +10,7 @@ import {
   Check, 
   X,
   ChevronRight,
+  ChevronLeft,
   DollarSign,
   TrendingUp,
   ShoppingCart,
@@ -25,9 +26,14 @@ import {
   ArrowRight,
   Info,
   Plus,
-  Flag
+  Flag,
+  Globe,
+  Megaphone,
+  Pin,
+  AlertCircle
 } from 'lucide-react';
 import Link from 'next/link';
+import { api } from '@/lib/api';
 
 // Interfaces para os dados da API
 interface Tarefa {
@@ -45,9 +51,27 @@ interface Comunicado {
   id: string;
   titulo: string;
   conteudo: string;
-  remetente: string;
-  data: string;
-  lido: boolean;
+  escopo: 'global' | 'obra' | 'setor';
+  prioridade: 'normal' | 'urgente' | 'critico';
+  categoria?: string;
+  fixado: boolean;
+  exige_confirmacao: boolean;
+  publicado_em: string;
+  autor: {
+    id: string;
+    nome: string;
+  };
+  confirmacoes_leitura?: any[];
+  _count?: {
+    confirmacoes_leitura: number;
+  };
+}
+
+interface ComunicadosIntranet {
+  corporativos: Comunicado[];
+  obra: Comunicado[];
+  setor: Comunicado[];
+  todos: Comunicado[];
 }
 
 interface Requisicao {
@@ -61,6 +85,14 @@ interface Requisicao {
 export default function IntranetPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [comunicados, setComunicados] = useState<ComunicadosIntranet>({
+    corporativos: [],
+    obra: [],
+    setor: [],
+    todos: []
+  });
+  const [carrosselIndex, setCarrosselIndex] = useState(0);
+  const [obraAtiva, setObraAtiva] = useState<any>(null);
 
   // Dados mockados (serão substituídos por chamadas à API)
   const data = {
@@ -115,16 +147,6 @@ export default function IntranetPage() {
         prioridade: 'alta' as const,
       },
     ],
-    comunicados: [
-      {
-        id: '1',
-        titulo: 'Reunião Geral - Segunda-feira',
-        conteudo: 'Reunião geral da equipe às 9h na sala de reuniões.',
-        remetente: 'Diretoria',
-        data: '2026-01-15',
-        lido: false,
-      },
-    ],
     requisicoes: [
       {
         id: '1',
@@ -136,12 +158,100 @@ export default function IntranetPage() {
     ],
   };
 
+  // Carrega comunicados da API
+  const carregarComunicados = async () => {
+    try {
+      const obraId = localStorage.getItem('obraAtiva');
+      const response = await api.get(`/comunicados/intranet${obraId ? `?obra_id=${obraId}` : ''}`) as { data: ComunicadosIntranet };
+      setComunicados(response.data);
+    } catch (err) {
+      console.error('Erro ao carregar comunicados:', err);
+      // Se não conseguir carregar, usa dados mockados
+      setComunicados({
+        corporativos: [
+          {
+            id: '1',
+            titulo: 'Novo Contrato Assinado - Rodovia BR-101',
+            conteudo: 'A AahBrant acaba de assinar um novo contrato para a duplicação de 50km da BR-101. Este é mais um marco importante para nossa empresa.',
+            escopo: 'global',
+            prioridade: 'normal',
+            categoria: 'Institucional',
+            fixado: true,
+            exige_confirmacao: false,
+            publicado_em: new Date().toISOString(),
+            autor: { id: '1', nome: 'Diretoria' }
+          },
+          {
+            id: '2',
+            titulo: 'Treinamento Obrigatório de Segurança',
+            conteudo: 'Todos os colaboradores devem participar do treinamento de segurança até o dia 15/01. Compareçam à sala de treinamento às 9h.',
+            escopo: 'global',
+            prioridade: 'urgente',
+            categoria: 'SSMA',
+            fixado: false,
+            exige_confirmacao: true,
+            publicado_em: new Date().toISOString(),
+            autor: { id: '2', nome: 'SSMA Corporativo' }
+          }
+        ],
+        obra: [
+          {
+            id: '3',
+            titulo: 'Entrega da Data Marco - Fundações Concluídas',
+            conteudo: 'Informamos que as fundações da Ponte Rio Azul foram concluídas dentro do prazo previsto. Parabéns a toda a equipe!',
+            escopo: 'obra',
+            prioridade: 'normal',
+            categoria: 'Obra',
+            fixado: false,
+            exige_confirmacao: false,
+            publicado_em: new Date().toISOString(),
+            autor: { id: '3', nome: 'Gerência de Obra' }
+          }
+        ],
+        setor: [],
+        todos: []
+      });
+    }
+  };
+
   useEffect(() => {
+    // Carrega obra ativa do localStorage
+    const obraId = localStorage.getItem('obraAtiva');
+    if (obraId) {
+      setObraAtiva(JSON.parse(obraId));
+    }
+
+    // Carrega comunicados
+    carregarComunicados();
+
     // Simula carregamento de dados
     setTimeout(() => {
       setLoading(false);
     }, 500);
   }, []);
+
+  // Auto-rotação do carrossel
+  useEffect(() => {
+    const todosFixados = [...comunicados.corporativos, ...comunicados.obra].filter(c => c.fixado);
+    const todosNaoFixados = [...comunicados.corporativos, ...comunicados.obra].filter(c => !c.fixado);
+    const todosComunicados = [...todosFixados, ...todosNaoFixados];
+    
+    if (todosComunicados.length > 1) {
+      const interval = setInterval(() => {
+        setCarrosselIndex((prev) => (prev + 1) % todosComunicados.length);
+      }, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [comunicados]);
+
+  const confirmarLeitura = async (comunicadoId: string) => {
+    try {
+      await api.post(`/comunicados/${comunicadoId}/confirmar-leitura`);
+      carregarComunicados();
+    } catch (err) {
+      console.error('Erro ao confirmar leitura:', err);
+    }
+  };
 
   if (loading) {
     return (
@@ -159,6 +269,12 @@ export default function IntranetPage() {
     );
   }
 
+  // Prepara comunicados para o carrossel
+  const todosFixados = [...comunicados.corporativos, ...comunicados.obra].filter(c => c.fixado);
+  const todosNaoFixados = [...comunicados.corporativos, ...comunicados.obra].filter(c => !c.fixado);
+  const comunicadosCarrossel = [...todosFixados, ...todosNaoFixados];
+  const comunicadoAtual = comunicadosCarrossel[carrosselIndex];
+
   return (
     <div className="bg-white min-h-screen">
       {/* Header */}
@@ -168,6 +284,100 @@ export default function IntranetPage() {
           <p className="text-gray-600">Painel de controle e informações gerais do projeto</p>
         </div>
       </div>
+
+      {/* Carrossel de Comunicados */}
+      {comunicadosCarrossel.length > 0 && (
+        <div className="px-8 py-4 bg-gray-50 border-b border-gray-200">
+          <div className="relative bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            {/* Header do Carrossel */}
+            <div className="flex items-center justify-between px-4 py-2 bg-gray-100 border-b border-gray-200">
+              <div className="flex items-center gap-2">
+                <Megaphone className="text-gray-600" size={18} />
+                <span className="text-sm font-medium text-gray-700">Comunicados</span>
+                {comunicadoAtual?.fixado && (
+                  <span className="flex items-center gap-1 text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded">
+                    <Pin size={12} /> Fixado
+                  </span>
+                )}
+                {comunicadoAtual?.escopo === 'global' && (
+                  <span className="flex items-center gap-1 text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+                    <Globe size={12} /> Corporativo
+                  </span>
+                )}
+                {comunicadoAtual?.prioridade === 'urgente' && (
+                  <span className="flex items-center gap-1 text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded">
+                    <AlertCircle size={12} /> Urgente
+                  </span>
+                )}
+                {comunicadoAtual?.prioridade === 'critico' && (
+                  <span className="flex items-center gap-1 text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded">
+                    <AlertTriangle size={12} /> Crítico
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-500">
+                  {carrosselIndex + 1} / {comunicadosCarrossel.length}
+                </span>
+                <button 
+                  onClick={() => setCarrosselIndex((prev) => (prev - 1 + comunicadosCarrossel.length) % comunicadosCarrossel.length)}
+                  className="p-1 hover:bg-gray-200 rounded"
+                >
+                  <ChevronLeft size={18} className="text-gray-600" />
+                </button>
+                <button 
+                  onClick={() => setCarrosselIndex((prev) => (prev + 1) % comunicadosCarrossel.length)}
+                  className="p-1 hover:bg-gray-200 rounded"
+                >
+                  <ChevronRight size={18} className="text-gray-600" />
+                </button>
+              </div>
+            </div>
+            
+            {/* Conteúdo do Comunicado */}
+            <div className="p-4">
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">{comunicadoAtual?.titulo}</h3>
+              <p className="text-gray-600 text-sm mb-3">{comunicadoAtual?.conteudo}</p>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4 text-xs text-gray-500">
+                  <span>{comunicadoAtual?.autor?.nome}</span>
+                  <span>{comunicadoAtual?.publicado_em ? new Date(comunicadoAtual.publicado_em).toLocaleDateString('pt-BR') : ''}</span>
+                  {comunicadoAtual?.categoria && (
+                    <span className={`px-2 py-0.5 rounded ${
+                      comunicadoAtual.categoria === 'SSMA' ? 'bg-red-100 text-red-700' :
+                      comunicadoAtual.categoria === 'Institucional' ? 'bg-purple-100 text-purple-700' :
+                      'bg-gray-100 text-gray-700'
+                    }`}>
+                      {comunicadoAtual.categoria}
+                    </span>
+                  )}
+                </div>
+                {comunicadoAtual?.exige_confirmacao && (
+                  <button 
+                    onClick={() => confirmarLeitura(comunicadoAtual.id)}
+                    className="flex items-center gap-1 text-xs bg-green-600 text-white px-3 py-1.5 rounded hover:bg-green-700"
+                  >
+                    <Check size={14} /> Li e estou ciente
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Indicadores de posição */}
+            <div className="flex justify-center gap-1 pb-3">
+              {comunicadosCarrossel.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCarrosselIndex(idx)}
+                  className={`w-2 h-2 rounded-full transition-colors ${
+                    idx === carrosselIndex ? 'bg-gray-800' : 'bg-gray-300'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Indicadores Rápidos */}
       <div className="px-8 py-6 bg-gray-50 border-b border-gray-200">
@@ -281,15 +491,29 @@ export default function IntranetPage() {
 
           {/* Sidebar Direita */}
           <div className="space-y-6">
-            {/* Comunicados */}
+            {/* Lista de Comunicados Recentes */}
             <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Comunicados</h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-800">Comunicados Recentes</h3>
+                <span className="text-xs text-gray-500">{comunicados.corporativos.length + comunicados.obra.length} novos</span>
+              </div>
               <div className="space-y-3">
-                {data.comunicados.map((comunicado) => (
-                  <div key={comunicado.id} className="border-l-4 border-blue-500 pl-4 py-2">
-                    <p className="font-medium text-gray-800">{comunicado.titulo}</p>
-                    <p className="text-sm text-gray-600">{comunicado.conteudo}</p>
-                    <p className="text-xs text-gray-500 mt-1">{comunicado.remetente}</p>
+                {[...comunicados.corporativos, ...comunicados.obra].slice(0, 5).map((comunicado) => (
+                  <div 
+                    key={comunicado.id} 
+                    className={`border-l-4 pl-4 py-2 ${
+                      comunicado.escopo === 'global' ? 'border-blue-500' :
+                      comunicado.categoria === 'SSMA' ? 'border-red-500' :
+                      'border-gray-300'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <p className="font-medium text-gray-800 text-sm">{comunicado.titulo}</p>
+                        <p className="text-xs text-gray-500 mt-1">{comunicado.autor?.nome}</p>
+                      </div>
+                      {comunicado.fixado && <Pin size={14} className="text-yellow-600" />}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -322,4 +546,3 @@ export default function IntranetPage() {
     </div>
   );
 }
-

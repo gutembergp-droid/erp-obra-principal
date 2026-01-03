@@ -7,6 +7,7 @@ import dashboardRoutes from './dashboard.routes';
 import authRoutes from './auth.routes';
 import comercialRoutes from './comercial.routes'; // FASE 1: Rotas do Comercial
 import competenciasRoutes from './competencias.routes'; // Backend Mínimo: Competências e Gates
+import comunicadosRoutes from './comunicados.routes'; // Intranet: Comunicados
 
 const router = Router();
 
@@ -21,5 +22,6 @@ router.use('/gates', gatesRoutes);
 router.use('/dashboard', dashboardRoutes);
 router.use('/comercial', comercialRoutes); // FASE 1: Rotas do Comercial
 router.use('/api', competenciasRoutes); // Backend Mínimo: Competências e Gates (prefixo /api já está no router principal)
+router.use('/comunicados', comunicadosRoutes); // Intranet: Comunicados
 
 export default router;

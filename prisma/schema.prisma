@@ -34,6 +34,13 @@ model Usuario {
   competencia_gates_aprovados CompetenciaGate[] @relation("CompetenciaGateAprovadoPor")
   competencia_gates_rejeitados CompetenciaGate[] @relation("CompetenciaGateRejeitadoPor")
   
+  // Relações de Comunicados
+  comunicados_criados Comunicado[] @relation("ComunicadoAutor")
+  comunicados_validados Comunicado[] @relation("ComunicadoValidadorSetor")
+  comunicados_publicados Comunicado[] @relation("ComunicadoPublicador")
+  comunicados_aprovados_corp Comunicado[] @relation("ComunicadoAprovadorCorporativo")
+  confirmacoes_leitura ConfirmacaoLeitura[]
+  
   // Timestamps
   created_at DateTime @default(now()) @map("created_at")
   updated_at DateTime @updatedAt @map("updated_at")
@@ -441,5 +448,119 @@ model CompetenciaGate {
   @@index([competencia_id])
   @@index([obra_id, numero, status])
   @@map("competencia_gate")
+}
+
+
+/// ============================================
+/// ENUM: Escopo do Comunicado
+/// ============================================
+enum ComunicadoEscopo {
+  global       // Todas as obras (requer aprovação corporativa)
+  obra         // Apenas uma obra específica
+  setor        // Apenas um setor específico
+}
+
+/// ============================================
+/// ENUM: Prioridade do Comunicado
+/// ============================================
+enum ComunicadoPrioridade {
+  normal
+  urgente
+  critico
+}
+
+/// ============================================
+/// ENUM: Status do Comunicado
+/// ============================================
+enum ComunicadoStatus {
+  rascunho
+  aguardando_validacao_setor
+  devolvido_para_ajustes
+  validado_pelo_setor
+  aguardando_publicacao
+  aguardando_aprovacao_corporativa
+  publicado
+  expirado
+  cancelado
+}
+
+/// ============================================
+/// MODELO: Comunicado
+/// ============================================
+/// Comunicados da Intranet com fluxo de aprovação
+model Comunicado {
+  id                    String              @id @default(uuid())
+  titulo                String
+  conteudo              String              @db.Text
+  escopo                ComunicadoEscopo    @default(obra)
+  prioridade            ComunicadoPrioridade @default(normal)
+  status                ComunicadoStatus    @default(rascunho)
+  categoria             String?             // SSMA, Qualidade, Institucional, Obra, etc.
+  setor_origem          String?             @map("setor_origem")
+  obra_id               String?             @map("obra_id") // Null se escopo = global
+  fixado                Boolean             @default(false) // Comunicado fixado no topo
+  exige_confirmacao     Boolean             @default(false) @map("exige_confirmacao") // Exige "Li e estou ciente"
+  
+  // Fluxo de Aprovação
+  autor_id              String              @map("autor_id")
+  validador_setor_id    String?             @map("validador_setor_id")
+  validado_setor_em     DateTime?           @map("validado_setor_em")
+  publicador_id         String?             @map("publicador_id")
+  publicado_em          DateTime?           @map("publicado_em")
+  aprovador_corporativo_id String?          @map("aprovador_corporativo_id")
+  aprovado_corporativo_em DateTime?         @map("aprovado_corporativo_em")
+  
+  // Datas de Vigência
+  data_publicacao       DateTime?           @map("data_publicacao") // Pode ser agendada
+  data_expiracao        DateTime?           @map("data_expiracao")
+  
+  // Errata
+  comunicado_original_id String?            @map("comunicado_original_id")
+  is_errata             Boolean             @default(false) @map("is_errata")
+  
+  // Relações
+  autor                 Usuario             @relation("ComunicadoAutor", fields: [autor_id], references: [id], onDelete: Cascade)
+  validador_setor       Usuario?            @relation("ComunicadoValidadorSetor", fields: [validador_setor_id], references: [id], onDelete: SetNull)
+  publicador            Usuario?            @relation("ComunicadoPublicador", fields: [publicador_id], references: [id], onDelete: SetNull)
+  aprovador_corporativo Usuario?            @relation("ComunicadoAprovadorCorporativo", fields: [aprovador_corporativo_id], references: [id], onDelete: SetNull)
+  comunicado_original   Comunicado?         @relation("ComunicadoErrata", fields: [comunicado_original_id], references: [id], onDelete: SetNull)
+  erratas               Comunicado[]        @relation("ComunicadoErrata")
+  confirmacoes_leitura  ConfirmacaoLeitura[]
+  
+  // Timestamps
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+  deleted_at DateTime? @map("deleted_at")
+  
+  @@index([escopo, status])
+  @@index([obra_id, status])
+  @@index([autor_id])
+  @@index([status])
+  @@index([publicado_em])
+  @@index([fixado])
+  @@map("comunicados")
+}
+
+/// ============================================
+/// MODELO: Confirmação de Leitura
+/// ============================================
+/// Registro de quem leu comunicados que exigem confirmação
+model ConfirmacaoLeitura {
+  id              String    @id @default(uuid())
+  comunicado_id   String    @map("comunicado_id")
+  usuario_id      String    @map("usuario_id")
+  confirmado_em   DateTime  @default(now()) @map("confirmado_em")
+  
+  // Relações
+  comunicado      Comunicado @relation(fields: [comunicado_id], references: [id], onDelete: Cascade)
+  usuario         Usuario    @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  
+  // Timestamps
+  created_at DateTime @default(now()) @map("created_at")
+  
+  @@unique([comunicado_id, usuario_id])
+  @@index([comunicado_id])
+  @@index([usuario_id])
+  @@map("confirmacoes_leitura")
 }
 
