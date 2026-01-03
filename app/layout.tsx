@@ -1,10 +1,9 @@
 import './globals.css';
-// Temporariamente sem MainLayout para testar
-// import MainLayout from '../src/components/MainLayout';
+import { MainLayout } from '../src/components/layout';
 
 export const metadata = {
   title: 'ERP G-NESIS',
-  description: 'Sistema de Gestão de Obras',
+  description: 'Sistema de Gestão de Obras - O Corporativo Governa. A Obra Executa.',
 };
 
 export default function RootLayout({
@@ -15,8 +14,9 @@ export default function RootLayout({
   return (
     <html lang="pt-br">
       <body className="antialiased">
-        {/* Temporariamente sem MainLayout para testar se é ele que causa o 404 */}
-        {children}
+        <MainLayout>
+          {children}
+        </MainLayout>
       </body>
     </html>
   );

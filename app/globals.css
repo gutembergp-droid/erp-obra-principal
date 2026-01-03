@@ -1,7 +1,11 @@
 /**
  * Estilos Globais do ERP G-NESIS
+ * Tema: Dark Mode (padrão do protótipo V0)
  */
 
+@import "tailwindcss";
+
+/* Reset e Base */
 * {
   margin: 0;
   padding: 0;
@@ -21,8 +25,8 @@ body {
 body {
   margin: 0;
   padding: 0;
-  background-color: #f5f5f5;
-  color: #2b2b2b;
+  background-color: #030712; /* gray-950 */
+  color: #f9fafb; /* gray-50 */
 }
 
 #__next {
@@ -38,6 +42,8 @@ a {
 button {
   font-family: inherit;
   cursor: pointer;
+  border: none;
+  background: none;
 }
 
 input,
@@ -52,3 +58,219 @@ select {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Scrollbar Customizada */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1f2937; /* gray-800 */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4b5563; /* gray-600 */
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #6b7280; /* gray-500 */
+}
+
+/* Cores do Tema Genesis */
+:root {
+  --genesis-primary: #b91c1c; /* red-700 */
+  --genesis-primary-light: #dc2626; /* red-600 */
+  --genesis-primary-dark: #991b1b; /* red-800 */
+  
+  --genesis-bg-primary: #030712; /* gray-950 */
+  --genesis-bg-secondary: #111827; /* gray-900 */
+  --genesis-bg-tertiary: #1f2937; /* gray-800 */
+  
+  --genesis-text-primary: #f9fafb; /* gray-50 */
+  --genesis-text-secondary: #9ca3af; /* gray-400 */
+  --genesis-text-muted: #6b7280; /* gray-500 */
+  
+  --genesis-border: #374151; /* gray-700 */
+  
+  --genesis-success: #22c55e; /* green-500 */
+  --genesis-warning: #eab308; /* yellow-500 */
+  --genesis-error: #ef4444; /* red-500 */
+  --genesis-info: #3b82f6; /* blue-500 */
+}
+
+/* Classes de Componentes Reutilizáveis */
+
+/* Cards */
+.genesis-card {
+  background-color: #111827;
+  border: 1px solid #1f2937;
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.genesis-card-hover {
+  background-color: #111827;
+  border: 1px solid #1f2937;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  transition: border-color 0.2s;
+}
+
+.genesis-card-hover:hover {
+  border-color: #374151;
+}
+
+/* Botões */
+.genesis-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.genesis-btn-primary {
+  background-color: #b91c1c;
+  color: white;
+}
+
+.genesis-btn-primary:hover {
+  background-color: #dc2626;
+}
+
+.genesis-btn-secondary {
+  background-color: #1f2937;
+  color: #e5e7eb;
+}
+
+.genesis-btn-secondary:hover {
+  background-color: #374151;
+}
+
+.genesis-btn-ghost {
+  color: #9ca3af;
+}
+
+.genesis-btn-ghost:hover {
+  color: white;
+  background-color: #1f2937;
+}
+
+/* Inputs */
+.genesis-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  background-color: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 0.5rem;
+  color: white;
+}
+
+.genesis-input::placeholder {
+  color: #6b7280;
+}
+
+.genesis-input:focus {
+  outline: none;
+  border-color: #dc2626;
+  box-shadow: 0 0 0 1px #dc2626;
+}
+
+/* Tabelas */
+.genesis-table {
+  width: 100%;
+  font-size: 0.875rem;
+  text-align: left;
+}
+
+.genesis-table thead {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  text-transform: uppercase;
+  background-color: #111827;
+  border-bottom: 1px solid #1f2937;
+}
+
+.genesis-table th {
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+}
+
+.genesis-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #1f2937;
+}
+
+.genesis-table tbody tr:hover {
+  background-color: rgba(17, 24, 39, 0.5);
+}
+
+/* Badges */
+.genesis-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.genesis-badge-success {
+  background-color: rgba(34, 197, 94, 0.2);
+  color: #4ade80;
+}
+
+.genesis-badge-warning {
+  background-color: rgba(234, 179, 8, 0.2);
+  color: #facc15;
+}
+
+.genesis-badge-error {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+}
+
+.genesis-badge-info {
+  background-color: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+}
+
+/* Status de Gates */
+.gate-approved {
+  background-color: rgba(34, 197, 94, 0.15);
+  border: 1px solid #166534;
+  color: #4ade80;
+}
+
+.gate-pending {
+  background-color: rgba(234, 179, 8, 0.15);
+  border: 1px solid #854d0e;
+  color: #facc15;
+}
+
+.gate-blocked {
+  background-color: rgba(239, 68, 68, 0.15);
+  border: 1px solid #991b1b;
+  color: #f87171;
+}
+
+.gate-trava {
+  background-color: rgba(239, 68, 68, 0.25);
+  border: 2px solid #dc2626;
+  color: #f87171;
+  animation: pulse-slow 2s ease-in-out infinite;
+}
+
+/* Animações */
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 2s ease-in-out infinite;
+}
