@@ -97,11 +97,22 @@ export default function MedicaoProducaoPage() {
         setMedicoes(data.filter((m: any) => m.tipo === 'MP'));
       }
 
-      // Carrega itens da EAP
+      // Carrega itens da EAP (apenas folhas - itens medíveis)
       const resEap = await fetch(`/api/eap/obra/${obraId}`);
       if (resEap.ok) {
         const data = await resEap.json();
-        setEapItems(data);
+        // Filtra apenas EAPs folha e mapeia para o formato esperado
+        const eapsFolha = data
+          .filter((e: any) => e.is_folha === true)
+          .map((e: any) => ({
+            id: e.id,
+            codigo: e.codigo,
+            descricao: e.descricao,
+            unidade: e.unidade_medida || '-',
+            quantidade_total: parseFloat(e.quantidade) || 0,
+            valor_unitario: parseFloat(e.valor_unitario) || 0,
+          }));
+        setEapItems(eapsFolha);
       }
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
