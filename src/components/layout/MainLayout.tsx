@@ -25,8 +25,12 @@ interface Usuario {
   perfil: string;
 }
 
-// Espaçamento uniforme para todas as margens (29px = 1.8rem)
-const ESPACAMENTO_UNIFORME = '1.8rem';
+// Espaçamento uniforme para margens laterais (29px = 1.8rem)
+const ESPACAMENTO_LATERAL = '1.8rem';
+// Margem superior reduzida em 10% (29px * 0.9 = 26px = 1.6rem)
+const MARGEM_SUPERIOR = '1.6rem';
+// Margem inferior aumentada em 10% (29px * 1.1 = 32px = 2rem)
+const MARGEM_INFERIOR = '2rem';
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -116,12 +120,15 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
           notificacoes={3}
         />
 
-        {/* Conteúdo com padding uniforme */}
+        {/* Conteúdo com margens ajustadas */}
         <main 
           className="flex-1 overflow-y-auto transition-colors duration-200"
           style={{ 
             backgroundColor: colors.bgPrimary,
-            padding: ESPACAMENTO_UNIFORME,
+            paddingTop: MARGEM_SUPERIOR,
+            paddingBottom: MARGEM_INFERIOR,
+            paddingLeft: ESPACAMENTO_LATERAL,
+            paddingRight: ESPACAMENTO_LATERAL,
           }}
         >
           {children}
