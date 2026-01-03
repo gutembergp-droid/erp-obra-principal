@@ -334,21 +334,21 @@ export default function IntranetPage() {
   }
 
   return (
-    <div className="min-h-screen">
-      {/* Header com mais espaçamento */}
-      <div className="mb-8">
+    <div className="min-h-screen max-w-[1600px] mx-auto">
+      {/* Header */}
+      <div className="mb-10">
         <h1 className="text-3xl font-bold text-gray-100 tracking-tight">Intranet</h1>
-        <p className="text-base text-gray-400 mt-1">Visão geral da obra e tarefas pendentes</p>
+        <p className="text-base text-gray-400 mt-2">Visão geral da obra e tarefas pendentes</p>
       </div>
 
-      {/* KPIs com mais espaçamento e proporção */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-gray-900 rounded-xl border border-gray-800 p-5">
+      {/* KPIs */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
+        <div className="bg-gray-900 rounded-xl border border-gray-800 p-6">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-sm text-gray-500 font-medium">Tarefas Pendentes</p>
-              <p className="text-3xl font-bold text-gray-100 mt-1">{stats.tarefasPendentes}</p>
-              <p className="text-sm text-gray-500 mt-1">Aguardando ação</p>
+              <p className="text-4xl font-bold text-gray-100 mt-2">{stats.tarefasPendentes}</p>
+              <p className="text-sm text-gray-500 mt-2">Aguardando ação</p>
             </div>
             <div className="bg-amber-900/30 rounded-full p-3">
               <Clock className="h-6 w-6 text-amber-500" />
@@ -356,12 +356,12 @@ export default function IntranetPage() {
           </div>
         </div>
 
-        <div className="bg-gray-900 rounded-xl border border-gray-800 p-5">
+        <div className="bg-gray-900 rounded-xl border border-gray-800 p-6">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-sm text-gray-500 font-medium">Tarefas Concluídas</p>
-              <p className="text-3xl font-bold text-gray-100 mt-1">{stats.tarefasConcluidas}</p>
-              <p className="text-sm text-gray-500 mt-1">Finalizadas</p>
+              <p className="text-4xl font-bold text-gray-100 mt-2">{stats.tarefasConcluidas}</p>
+              <p className="text-sm text-gray-500 mt-2">Finalizadas</p>
             </div>
             <div className="bg-emerald-900/30 rounded-full p-3">
               <CheckCircle className="h-6 w-6 text-emerald-500" />
@@ -369,12 +369,12 @@ export default function IntranetPage() {
           </div>
         </div>
 
-        <div className="bg-gray-900 rounded-xl border border-gray-800 p-5">
+        <div className="bg-gray-900 rounded-xl border border-gray-800 p-6">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-sm text-gray-500 font-medium">Comunicados</p>
-              <p className="text-3xl font-bold text-gray-100 mt-1">{stats.comunicadosNaoLidos}</p>
-              <p className="text-sm text-gray-500 mt-1">Não lidos</p>
+              <p className="text-4xl font-bold text-gray-100 mt-2">{stats.comunicadosNaoLidos}</p>
+              <p className="text-sm text-gray-500 mt-2">Não lidos</p>
             </div>
             <div className="bg-blue-900/30 rounded-full p-3">
               <Bell className="h-6 w-6 text-blue-500" />
@@ -382,12 +382,12 @@ export default function IntranetPage() {
           </div>
         </div>
 
-        <div className="bg-gray-900 rounded-xl border border-gray-800 p-5">
+        <div className="bg-gray-900 rounded-xl border border-gray-800 p-6">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-sm text-gray-500 font-medium">Marcos Pendentes</p>
-              <p className="text-3xl font-bold text-gray-100 mt-1">{stats.marcosPendentes}</p>
-              <p className="text-sm text-gray-500 mt-1">Próximos eventos</p>
+              <p className="text-4xl font-bold text-gray-100 mt-2">{stats.marcosPendentes}</p>
+              <p className="text-sm text-gray-500 mt-2">Próximos eventos</p>
             </div>
             <div className="bg-[#96110D]/30 rounded-full p-3">
               <ListTodo className="h-6 w-6 text-[#96110D]" />
@@ -396,17 +396,17 @@ export default function IntranetPage() {
         </div>
       </div>
 
-      {/* Grid Principal - Layout com proporções ajustadas */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Coluna Esquerda - Comunicados + Fila de Trabalho (empilhados) */}
-        <div className="lg:col-span-2 space-y-6">
+      {/* Grid Principal */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Coluna Esquerda - Comunicados + Fila de Trabalho */}
+        <div className="lg:col-span-2 space-y-8">
           
           {/* Card de Comunicados */}
           <div className="bg-gray-900 rounded-xl border border-gray-800">
-            <div className="p-5 border-b border-gray-800">
+            <div className="p-6 border-b border-gray-800">
               <div className="flex items-center gap-3">
                 <Megaphone className="h-6 w-6 text-gray-400" />
-                <h2 className="text-lg font-semibold text-gray-100">Comunicados</h2>
+                <h2 className="text-xl font-semibold text-gray-100">Comunicados</h2>
               </div>
               <p className="text-sm text-gray-500 mt-2">
                 {loading ? 'Carregando...' : `${stats.comunicadosNaoLidos} comunicados não lidos`}
@@ -425,25 +425,25 @@ export default function IntranetPage() {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-gray-800">
-                      <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-4">Status</th>
-                      <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-4">Título</th>
-                      <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-4">Origem</th>
-                      <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-4">Data</th>
-                      <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-4">Prioridade</th>
-                      <th className="text-right text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-4">Ações</th>
+                      <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-4">Status</th>
+                      <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-4">Título</th>
+                      <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-4">Origem</th>
+                      <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-4">Data</th>
+                      <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-4">Prioridade</th>
+                      <th className="text-right text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-4">Ações</th>
                     </tr>
                   </thead>
                   <tbody>
                     {comunicados.map((comunicado) => (
                       <tr key={comunicado.id} className={`border-b border-gray-800/50 hover:bg-gray-800/50 transition-colors ${!comunicado.lido ? 'bg-blue-900/10' : ''}`}>
-                        <td className="px-5 py-4">
+                        <td className="px-6 py-5">
                           {comunicado.tipo === "urgente" ? (
                             <AlertTriangle className="h-5 w-5 text-[#96110D]" />
                           ) : (
                             <Megaphone className="h-5 w-5 text-blue-400" />
                           )}
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-6 py-5">
                           <div>
                             <span className={`text-sm text-gray-200 ${!comunicado.lido ? 'font-semibold' : ''}`}>
                               {comunicado.titulo}
@@ -451,20 +451,20 @@ export default function IntranetPage() {
                             <p className="text-xs text-gray-500 mt-1 line-clamp-1">{comunicado.conteudo}</p>
                           </div>
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-6 py-5">
                           <span className="text-sm text-gray-300">{comunicado.autor}</span>
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-6 py-5">
                           <span className="text-sm text-gray-300">{formatDate(comunicado.data)}</span>
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-6 py-5">
                           <span
-                            className={`inline-flex px-2.5 py-1 text-xs font-medium rounded-md ${prioridadeColors[comunicado.tipo] || prioridadeColors.info}`}
+                            className={`inline-flex px-3 py-1.5 text-xs font-medium rounded-md ${prioridadeColors[comunicado.tipo] || prioridadeColors.info}`}
                           >
                             {comunicado.tipo === "urgente" ? "urgente" : "normal"}
                           </span>
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-6 py-5">
                           <div className="flex items-center justify-end gap-2">
                             <button className="p-2 hover:bg-gray-700 rounded-lg transition-colors">
                               <Eye className="h-4 w-4 text-gray-400" />
@@ -490,10 +490,10 @@ export default function IntranetPage() {
 
           {/* Card de Fila de Trabalho */}
           <div className="bg-gray-900 rounded-xl border border-gray-800">
-            <div className="p-5 border-b border-gray-800">
+            <div className="p-6 border-b border-gray-800">
               <div className="flex items-center gap-3">
                 <Clock className="h-6 w-6 text-gray-400" />
-                <h2 className="text-lg font-semibold text-gray-100">Fila de Trabalho</h2>
+                <h2 className="text-xl font-semibold text-gray-100">Fila de Trabalho</h2>
               </div>
               <p className="text-sm text-gray-500 mt-2">
                 {stats.tarefasPendentes} itens pendentes de aprovação
@@ -503,13 +503,13 @@ export default function IntranetPage() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-gray-800">
-                    <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-4">Tipo</th>
-                    <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-4">Título</th>
-                    <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-4">Solicitante</th>
-                    <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-4">Valor</th>
-                    <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-4">Prazo</th>
-                    <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-4">Prioridade</th>
-                    <th className="text-right text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-4">Ações</th>
+                    <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-4">Tipo</th>
+                    <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-4">Título</th>
+                    <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-4">Solicitante</th>
+                    <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-4">Valor</th>
+                    <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-4">Prazo</th>
+                    <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-4">Prioridade</th>
+                    <th className="text-right text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-4">Ações</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -517,34 +517,34 @@ export default function IntranetPage() {
                     const Icon = tipoIcons[tarefa.tipo] || FileText
                     return (
                       <tr key={tarefa.id} className="border-b border-gray-800/50 hover:bg-gray-800/50 transition-colors">
-                        <td className="px-5 py-4">
+                        <td className="px-6 py-5">
                           <Icon className="h-5 w-5 text-gray-500" />
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-6 py-5">
                           <span className="text-sm font-medium text-gray-200">{tarefa.titulo}</span>
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-6 py-5">
                           <div>
                             <span className="text-sm text-gray-300">{tarefa.solicitante}</span>
-                            <p className="text-xs text-gray-500 mt-0.5">{tarefa.departamento}</p>
+                            <p className="text-xs text-gray-500 mt-1">{tarefa.departamento}</p>
                           </div>
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-6 py-5">
                           <span className="text-sm text-gray-300">
                             {tarefa.valor ? formatCurrency(tarefa.valor) : "-"}
                           </span>
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-6 py-5">
                           <span className="text-sm text-gray-300">{formatDate(tarefa.prazo)}</span>
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-6 py-5">
                           <span
-                            className={`inline-flex px-2.5 py-1 text-xs font-medium rounded-md ${prioridadeColors[tarefa.prioridade]}`}
+                            className={`inline-flex px-3 py-1.5 text-xs font-medium rounded-md ${prioridadeColors[tarefa.prioridade]}`}
                           >
                             {tarefa.prioridade}
                           </span>
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-6 py-5">
                           <div className="flex items-center justify-end gap-2">
                             <button className="p-2 hover:bg-gray-700 rounded-lg transition-colors">
                               <Eye className="h-4 w-4 text-gray-400" />
@@ -566,16 +566,15 @@ export default function IntranetPage() {
           </div>
         </div>
 
-        {/* Coluna Direita - Apenas Calendário */}
+        {/* Coluna Direita - Calendário */}
         <div>
-          {/* Calendário */}
           <div className="bg-gray-900 rounded-xl border border-gray-800 h-full">
-            <div className="p-5 border-b border-gray-800">
+            <div className="p-6 border-b border-gray-800">
               <div className="flex items-center justify-between">
                 <div>
                   <div className="flex items-center gap-3">
                     <Calendar className="h-6 w-6 text-gray-400" />
-                    <h2 className="text-lg font-semibold text-gray-100">Calendário</h2>
+                    <h2 className="text-xl font-semibold text-gray-100">Calendário</h2>
                   </div>
                   <p className="text-sm text-gray-500 mt-2">Marcos e eventos da obra</p>
                 </div>
@@ -583,22 +582,22 @@ export default function IntranetPage() {
                   <button className="p-2 hover:bg-gray-800 rounded-lg transition-colors" onClick={() => navegarMes(-1)}>
                     <ChevronLeft className="h-5 w-5 text-gray-400" />
                   </button>
-                  <span className="text-sm font-medium min-w-[130px] text-center capitalize text-gray-300">{nomeMes}</span>
+                  <span className="text-sm font-medium min-w-[140px] text-center capitalize text-gray-300">{nomeMes}</span>
                   <button className="p-2 hover:bg-gray-800 rounded-lg transition-colors" onClick={() => navegarMes(1)}>
                     <ChevronRight className="h-5 w-5 text-gray-400" />
                   </button>
                 </div>
               </div>
             </div>
-            <div className="p-5">
+            <div className="p-6">
               {/* Marcos do Mês */}
-              <div className="space-y-3 mb-8">
+              <div className="space-y-4 mb-8">
                 <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Marcos do Mês</h4>
                 {marcosDoMes.length === 0 ? (
                   <p className="text-sm text-gray-500 text-center py-6">Nenhum marco neste mês</p>
                 ) : (
                   marcosDoMes.map((marco) => (
-                    <div key={marco.id} className="flex items-center justify-between p-4 rounded-lg border border-gray-700/50 bg-gray-800/30">
+                    <div key={marco.id} className="flex items-center justify-between p-4 rounded-xl border border-gray-700/50 bg-gray-800/30">
                       <div className="flex items-center gap-4">
                         <div className={`h-3 w-3 rounded-full ${tipoMarcoColors[marco.tipo]}`} />
                         <div>
@@ -633,7 +632,7 @@ export default function IntranetPage() {
               {/* Legenda */}
               <div className="border-t border-gray-800 pt-6 mt-8">
                 <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Legenda</h4>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-4">
                   <div className="flex items-center gap-3">
                     <div className="h-3 w-3 rounded-full bg-amber-500" />
                     <span className="text-sm text-gray-400">Marco</span>
