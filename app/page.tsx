@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Clock, CheckCircle, Bell, ListTodo, Eye, Check, X, FileCheck, ShoppingCart, Receipt, FileText, Megaphone, AlertTriangle, Users, Calendar, ChevronLeft, ChevronRight, Circle, Plus } from "lucide-react"
+import { useState, useEffect, useCallback } from "react"
+import { Clock, CheckCircle, Bell, ListTodo, Eye, Check, X, FileCheck, ShoppingCart, Receipt, FileText, Megaphone, AlertTriangle, Users, Calendar, ChevronLeft, ChevronRight, Circle, Plus, Loader2 } from "lucide-react"
 
 // ============================================================================
 // CORES AAHBRANT - Identidade Visual Oficial
@@ -25,6 +25,29 @@ interface Tarefa {
   prioridade: string
 }
 
+interface ComunicadoAPI {
+  id: string
+  titulo: string
+  conteudo: string
+  escopo: string
+  prioridade: string
+  status: string
+  categoria: string | null
+  setor_origem: string | null
+  obra_id: string | null
+  fixado: boolean
+  exige_confirmacao: boolean
+  publicado_em: string | null
+  autor: {
+    id: string
+    nome: string
+  }
+  confirmacoes_leitura?: Array<{ usuario_id: string }>
+  _count?: {
+    confirmacoes_leitura: number
+  }
+}
+
 interface Comunicado {
   id: string
   tipo: string
@@ -33,6 +56,8 @@ interface Comunicado {
   autor: string
   data: string
   lido: boolean
+  prioridade: string
+  exigeConfirmacao: boolean
 }
 
 interface Requisicao {
@@ -53,112 +78,80 @@ interface Marco {
 }
 
 // ============================================================================
-// DADOS MOCK - SUBSTITUA POR DADOS REAIS DO SEU BACKEND
+// DADOS MOCK PARA TAREFAS E MARCOS (até implementar APIs)
 // ============================================================================
 
-const dadosMock = {
-  tarefasPendentes: [
-    {
-      id: "1",
-      tipo: "aprovacao",
-      titulo: "Aprovação de BDI - Ponte Rio Azul",
-      solicitante: "Carlos Mendes",
-      departamento: "Comercial",
-      valor: 119700000,
-      prazo: "2024-01-15",
-      prioridade: "alta",
-    },
-    {
-      id: "2",
-      tipo: "requisicao",
-      titulo: "Requisição de Compra - Aço CA-50",
-      solicitante: "Roberto Silva",
-      departamento: "Suprimentos",
-      valor: 15750000,
-      prazo: "2024-01-20",
-      prioridade: "urgente",
-    },
-    {
-      id: "3",
-      tipo: "medicao",
-      titulo: "Medição #01 - Mobilização",
-      solicitante: "Ana Paula Costa",
-      departamento: "Comercial",
-      valor: 8400000,
-      prazo: "2024-02-05",
-      prioridade: "alta",
-    },
-    {
-      id: "4",
-      tipo: "documento",
-      titulo: "Revisão de Contrato - Aditivo Prazo",
-      solicitante: "Mariana Lopes",
-      departamento: "Jurídico",
-      valor: null,
-      prazo: "2024-02-01",
-      prioridade: "media",
-    },
-    {
-      id: "5",
-      tipo: "aprovacao",
-      titulo: "Aprovação de Subcontrato - Fundações",
-      solicitante: "Pedro Augusto",
-      departamento: "Engenharia",
-      valor: 32000000,
-      prazo: "2024-01-25",
-      prioridade: "alta",
-    },
-  ] as Tarefa[],
-  comunicados: [
-    {
-      id: "1",
-      tipo: "info",
-      titulo: "Início das Operações - Ponte Rio Azul",
-      conteudo:
-        "Comunicamos o início oficial das operações da obra Ponte Rio Azul a partir de 15/01/2024. Todas as equipes devem seguir o cronograma de mobilização.",
-      autor: "Diretoria de Operações",
-      data: "2024-01-10",
-      lido: false,
-    },
-    {
-      id: "2",
-      tipo: "urgente",
-      titulo: "URGENTE: Prazo para Estruturação",
-      conteudo:
-        "Lembramos que o prazo para conclusão da estruturação comercial (Gate 1) é 31/01/2024. Todos os responsáveis devem finalizar suas etapas até esta data.",
-      autor: "Gerência Comercial",
-      data: "2024-01-15",
-      lido: false,
-    },
-    {
-      id: "3",
-      tipo: "geral",
-      titulo: "Treinamento Sistema GENESIS",
-      conteudo:
-        "Será realizado treinamento do módulo Comercial do GENESIS nos dias 20 e 21/01. Participação obrigatória para equipe comercial e gestores de obra.",
-      autor: "TI Corporativo",
-      data: "2024-01-12",
-      lido: true,
-    },
-  ] as Comunicado[],
-  requisicoes: [
-    {
-      id: "1",
-      numero: "REQ-2024-0001",
-      descricao: "Aço CA-50 para armaduras de fundação",
-      valor: 5754000,
-      data: "2024-01-18",
-      status: "enviada",
-    },
-  ] as Requisicao[],
-  marcos: [
-    { id: "1", titulo: "Início da Mobilização", data: "2024-01-15", tipo: "marco", concluido: false },
-    { id: "2", titulo: "Medição #01", data: "2024-02-05", tipo: "medicao", concluido: false },
-    { id: "3", titulo: "Início Fundações", data: "2024-02-15", tipo: "entrega", concluido: false },
-    { id: "4", titulo: "Medição #02", data: "2024-03-05", tipo: "medicao", concluido: false },
-    { id: "5", titulo: "Reunião de Acompanhamento", data: "2024-03-15", tipo: "reuniao", concluido: false },
-  ] as Marco[],
-}
+const tarefasMock: Tarefa[] = [
+  {
+    id: "1",
+    tipo: "aprovacao",
+    titulo: "Aprovação de BDI - Duplicação BR-101",
+    solicitante: "Carlos Mendes",
+    departamento: "Comercial",
+    valor: 119700000,
+    prazo: "2025-01-15",
+    prioridade: "alta",
+  },
+  {
+    id: "2",
+    tipo: "requisicao",
+    titulo: "Requisição de Compra - Aço CA-50",
+    solicitante: "Roberto Silva",
+    departamento: "Suprimentos",
+    valor: 15750000,
+    prazo: "2025-01-20",
+    prioridade: "urgente",
+  },
+  {
+    id: "3",
+    tipo: "medicao",
+    titulo: "Medição #01 - Mobilização",
+    solicitante: "Ana Paula Costa",
+    departamento: "Comercial",
+    valor: 8400000,
+    prazo: "2025-02-05",
+    prioridade: "alta",
+  },
+  {
+    id: "4",
+    tipo: "documento",
+    titulo: "Revisão de Contrato - Aditivo Prazo",
+    solicitante: "Mariana Lopes",
+    departamento: "Jurídico",
+    valor: null,
+    prazo: "2025-02-01",
+    prioridade: "media",
+  },
+  {
+    id: "5",
+    tipo: "aprovacao",
+    titulo: "Aprovação de Subcontrato - Fundações",
+    solicitante: "Pedro Augusto",
+    departamento: "Engenharia",
+    valor: 32000000,
+    prazo: "2025-01-25",
+    prioridade: "alta",
+  },
+]
+
+const requisicoesMock: Requisicao[] = [
+  {
+    id: "1",
+    numero: "REQ-2025-0001",
+    descricao: "Aço CA-50 para armaduras de fundação",
+    valor: 5754000,
+    data: "2025-01-18",
+    status: "enviada",
+  },
+]
+
+const marcosMock: Marco[] = [
+  { id: "1", titulo: "Início da Mobilização", data: "2025-01-15", tipo: "marco", concluido: false },
+  { id: "2", titulo: "Medição #01", data: "2025-02-05", tipo: "medicao", concluido: false },
+  { id: "3", titulo: "Início Fundações", data: "2025-02-15", tipo: "entrega", concluido: false },
+  { id: "4", titulo: "Medição #02", data: "2025-03-05", tipo: "medicao", concluido: false },
+  { id: "5", titulo: "Reunião de Acompanhamento", data: "2025-03-15", tipo: "reuniao", concluido: false },
+]
 
 // ============================================================================
 // FUNÇÕES UTILITÁRIAS
@@ -172,13 +165,25 @@ function formatCurrency(value: number): string {
 }
 
 function formatDate(dateStr: string): string {
-  const date = new Date(dateStr + "T00:00:00")
+  const date = new Date(dateStr)
   return date.toLocaleDateString("pt-BR")
 }
 
 function formatDateShort(dateStr: string): string {
-  const date = new Date(dateStr + "T00:00:00")
+  const date = new Date(dateStr)
   return date.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" }).replace(".", "")
+}
+
+// Mapeia prioridade da API para tipo de exibição
+function mapPrioridadeToTipo(prioridade: string): string {
+  switch (prioridade) {
+    case 'urgente':
+    case 'critico':
+      return 'urgente'
+    case 'normal':
+    default:
+      return 'info'
+  }
 }
 
 // ============================================================================
@@ -186,11 +191,103 @@ function formatDateShort(dateStr: string): string {
 // ============================================================================
 
 export default function IntranetPage() {
-  const [mesAtual, setMesAtual] = useState(new Date(2024, 0, 1))
-  const [tarefas, setTarefas] = useState<Tarefa[]>(dadosMock.tarefasPendentes)
-  const [comunicados, setComunicados] = useState<Comunicado[]>(dadosMock.comunicados)
-  const [requisicoes, setRequisicoes] = useState<Requisicao[]>(dadosMock.requisicoes)
-  const [marcos, setMarcos] = useState<Marco[]>(dadosMock.marcos)
+  const [mesAtual, setMesAtual] = useState(new Date(2025, 0, 1))
+  const [tarefas] = useState<Tarefa[]>(tarefasMock)
+  const [comunicados, setComunicados] = useState<Comunicado[]>([])
+  const [requisicoes] = useState<Requisicao[]>(requisicoesMock)
+  const [marcos] = useState<Marco[]>(marcosMock)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  // Busca comunicados da API
+  const fetchComunicados = useCallback(async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      
+      // Busca obra ativa do localStorage
+      const obraAtivaStr = localStorage.getItem('obraAtiva')
+      const obraAtiva = obraAtivaStr ? JSON.parse(obraAtivaStr) : null
+      const obraId = obraAtiva?.id || ''
+      
+      // Busca token de autenticação
+      const token = localStorage.getItem('token')
+      
+      const response = await fetch(`/api/comunicados/intranet?obra_id=${obraId}`, {
+        headers: {
+          'Authorization': token ? `Bearer ${token}` : '',
+          'Content-Type': 'application/json'
+        }
+      })
+      
+      if (!response.ok) {
+        throw new Error('Erro ao buscar comunicados')
+      }
+      
+      const data = await response.json()
+      
+      // Mapeia os comunicados da API para o formato do componente
+      const todosComunicados: ComunicadoAPI[] = data.todos || []
+      const comunicadosMapeados: Comunicado[] = todosComunicados.map((c: ComunicadoAPI) => ({
+        id: c.id,
+        tipo: mapPrioridadeToTipo(c.prioridade),
+        titulo: c.titulo,
+        conteudo: c.conteudo,
+        autor: c.setor_origem || c.autor?.nome || 'Sistema',
+        data: c.publicado_em || new Date().toISOString(),
+        lido: Boolean(c.confirmacoes_leitura && c.confirmacoes_leitura.length > 0),
+        prioridade: c.prioridade,
+        exigeConfirmacao: c.exige_confirmacao
+      }))
+      
+      setComunicados(comunicadosMapeados)
+    } catch (err) {
+      console.error('Erro ao buscar comunicados:', err)
+      setError('Não foi possível carregar os comunicados')
+      // Fallback para dados mock em caso de erro
+      setComunicados([
+        {
+          id: "1",
+          tipo: "info",
+          titulo: "Início das Operações - Duplicação BR-101",
+          conteudo: "Comunicamos o início oficial das operações da obra Duplicação BR-101 - Lote 2 a partir de 15/01/2025.",
+          autor: "Diretoria de Operações",
+          data: "2025-01-10",
+          lido: false,
+          prioridade: "normal",
+          exigeConfirmacao: true
+        },
+        {
+          id: "2",
+          tipo: "urgente",
+          titulo: "URGENTE: Prazo para Estruturação Comercial (Gate 1)",
+          conteudo: "Lembramos que o prazo para conclusão da estruturação comercial (Gate 1) é 31/01/2025.",
+          autor: "Gerência Comercial",
+          data: "2025-01-15",
+          lido: false,
+          prioridade: "urgente",
+          exigeConfirmacao: true
+        },
+        {
+          id: "3",
+          tipo: "info",
+          titulo: "Treinamento Sistema GENESIS",
+          conteudo: "Será realizado treinamento do módulo Comercial do GENESIS nos dias 20 e 21/01.",
+          autor: "TI Corporativo",
+          data: "2025-01-12",
+          lido: true,
+          prioridade: "normal",
+          exigeConfirmacao: false
+        },
+      ])
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchComunicados()
+  }, [fetchComunicados])
 
   const stats = {
     tarefasPendentes: tarefas.length,
@@ -234,8 +331,25 @@ export default function IntranetPage() {
   }
 
   // Marcar comunicado como lido
-  const marcarComoLido = (id: string) => {
-    setComunicados(prev => prev.map(c => c.id === id ? { ...c, lido: true } : c))
+  const marcarComoLido = async (id: string) => {
+    try {
+      const token = localStorage.getItem('token')
+      
+      await fetch(`/api/comunicados/${id}/confirmar-leitura`, {
+        method: 'POST',
+        headers: {
+          'Authorization': token ? `Bearer ${token}` : '',
+          'Content-Type': 'application/json'
+        }
+      })
+      
+      // Atualiza estado local
+      setComunicados(prev => prev.map(c => c.id === id ? { ...c, lido: true } : c))
+    } catch (err) {
+      console.error('Erro ao confirmar leitura:', err)
+      // Atualiza estado local mesmo em caso de erro
+      setComunicados(prev => prev.map(c => c.id === id ? { ...c, lido: true } : c))
+    }
   }
 
   return (
@@ -436,62 +550,73 @@ export default function IntranetPage() {
                 <h2 className="font-semibold text-gray-100">Comunicados</h2>
               </div>
               <p className="text-sm text-gray-500 mt-1">
-                {stats.comunicadosNaoLidos} comunicados não lidos
+                {loading ? 'Carregando...' : `${stats.comunicadosNaoLidos} comunicados não lidos`}
               </p>
             </div>
             <div className="p-4 space-y-3">
-              {comunicados.map((comunicado) => (
-                <div
-                  key={comunicado.id}
-                  className={`p-3 rounded-lg border ${!comunicado.lido ? "bg-blue-900/20 border-blue-700/30" : "bg-gray-800/30 border-gray-700/30"}`}
-                >
-                  <div className="flex items-start gap-3">
-                    <div
-                      className={`rounded-full p-1.5 ${
-                        comunicado.tipo === "urgente"
-                          ? "bg-[#96110D]/30"
-                          : comunicado.tipo === "info"
-                            ? "bg-blue-900/30"
-                            : "bg-gray-700/30"
-                      }`}
-                    >
-                      {comunicado.tipo === "urgente" ? (
-                        <AlertTriangle className="h-3 w-3 text-[#96110D]" />
-                      ) : comunicado.tipo === "info" ? (
-                        <Megaphone className="h-3 w-3 text-blue-400" />
-                      ) : (
-                        <Users className="h-3 w-3 text-gray-400" />
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <h4 className={`text-sm font-medium text-gray-200 ${!comunicado.lido ? "font-semibold" : ""}`}>
-                          {comunicado.titulo}
-                        </h4>
-                        {comunicado.tipo === "urgente" && (
-                          <span className="px-1.5 py-0.5 text-[10px] font-medium bg-[#96110D] text-white rounded">
-                            URGENTE
-                          </span>
+              {loading ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="h-6 w-6 text-gray-400 animate-spin" />
+                </div>
+              ) : error ? (
+                <div className="text-center py-4 text-gray-500 text-sm">{error}</div>
+              ) : comunicados.length === 0 ? (
+                <div className="text-center py-4 text-gray-500 text-sm">Nenhum comunicado disponível</div>
+              ) : (
+                comunicados.map((comunicado) => (
+                  <div
+                    key={comunicado.id}
+                    className={`p-3 rounded-lg border ${!comunicado.lido ? "bg-blue-900/20 border-blue-700/30" : "bg-gray-800/30 border-gray-700/30"}`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div
+                        className={`rounded-full p-1.5 ${
+                          comunicado.tipo === "urgente"
+                            ? "bg-[#96110D]/30"
+                            : comunicado.tipo === "info"
+                              ? "bg-blue-900/30"
+                              : "bg-gray-700/30"
+                        }`}
+                      >
+                        {comunicado.tipo === "urgente" ? (
+                          <AlertTriangle className="h-3 w-3 text-[#96110D]" />
+                        ) : comunicado.tipo === "info" ? (
+                          <Megaphone className="h-3 w-3 text-blue-400" />
+                        ) : (
+                          <Users className="h-3 w-3 text-gray-400" />
                         )}
                       </div>
-                      <p className="text-xs text-gray-400 mt-1 line-clamp-2">{comunicado.conteudo}</p>
-                      <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
-                        <span>{comunicado.autor}</span>
-                        <span>•</span>
-                        <span>{formatDate(comunicado.data)}</span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <h4 className={`text-sm font-medium text-gray-200 ${!comunicado.lido ? "font-semibold" : ""}`}>
+                            {comunicado.titulo}
+                          </h4>
+                          {comunicado.tipo === "urgente" && (
+                            <span className="px-1.5 py-0.5 text-[10px] font-medium bg-[#96110D] text-white rounded">
+                              URGENTE
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-gray-400 mt-1 line-clamp-2">{comunicado.conteudo}</p>
+                        <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
+                          <span>{comunicado.autor}</span>
+                          <span>•</span>
+                          <span>{formatDate(comunicado.data)}</span>
+                        </div>
                       </div>
+                      {!comunicado.lido && (
+                        <button 
+                          onClick={() => marcarComoLido(comunicado.id)}
+                          className="p-1 hover:bg-blue-900/30 rounded transition-colors"
+                          title={comunicado.exigeConfirmacao ? "Confirmar leitura" : "Marcar como lido"}
+                        >
+                          <Check className="h-4 w-4 text-blue-400" />
+                        </button>
+                      )}
                     </div>
-                    {!comunicado.lido && (
-                      <button 
-                        onClick={() => marcarComoLido(comunicado.id)}
-                        className="p-1 hover:bg-blue-900/30 rounded transition-colors"
-                      >
-                        <Check className="h-4 w-4 text-blue-400" />
-                      </button>
-                    )}
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
 
