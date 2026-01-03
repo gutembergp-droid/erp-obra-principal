@@ -74,6 +74,9 @@ interface QuickNavItem {
   id: string;
   name: string;
   shortName: string;
+  subtitle: string;
+  description: string;
+  shortcut: string;
   icon: React.ElementType;
   path: string;
   badge?: number;
@@ -124,14 +127,70 @@ export default function Sidebar({ obraAtiva }: SidebarProps) {
     }));
   };
 
-  // Itens de navegação rápida (redesenhado)
+  // Itens de navegação rápida (redesenhado com tooltip rico)
   const quickNavItems: QuickNavItem[] = [
-    { id: 'home', name: 'Dashboard', shortName: 'Início', icon: LayoutDashboard, path: '/' },
-    { id: 'comunicados', name: 'Comunicados', shortName: 'Msgs', icon: MessageSquare, path: '/comunicados', badge: 2 },
-    { id: 'tarefas', name: 'Minhas Tarefas', shortName: 'Tarefas', icon: ListTodo, path: '/tarefas', badge: 5 },
-    { id: 'agenda', name: 'Agenda', shortName: 'Agenda', icon: Calendar, path: '/agenda' },
-    { id: 'alertas', name: 'Alertas de Gates', shortName: 'Alertas', icon: Bell, path: '/alertas-gates' },
-    { id: 'ia', name: 'Assistente IA', shortName: 'IA', icon: Bot, path: '/assistente' },
+    { 
+      id: 'home', 
+      name: 'Dashboard', 
+      shortName: 'Início', 
+      subtitle: 'Visão Geral',
+      description: 'Acesse o painel principal com resumo da obra, tarefas e indicadores.',
+      shortcut: 'Ctrl+H',
+      icon: LayoutDashboard, 
+      path: '/' 
+    },
+    { 
+      id: 'comunicados', 
+      name: 'Comunicados', 
+      shortName: 'Msgs', 
+      subtitle: 'Mensagens da Obra',
+      description: 'Visualize comunicados, avisos e notícias importantes da obra.',
+      shortcut: 'Ctrl+M',
+      icon: MessageSquare, 
+      path: '/comunicados', 
+      badge: 2 
+    },
+    { 
+      id: 'tarefas', 
+      name: 'Minhas Tarefas', 
+      shortName: 'Tarefas', 
+      subtitle: 'Fila de Trabalho',
+      description: 'Gerencie suas tarefas pendentes, aprovações e itens de trabalho.',
+      shortcut: 'Ctrl+T',
+      icon: ListTodo, 
+      path: '/tarefas', 
+      badge: 5 
+    },
+    { 
+      id: 'agenda', 
+      name: 'Agenda', 
+      shortName: 'Agenda', 
+      subtitle: 'Calendário de Eventos',
+      description: 'Consulte marcos, reuniões, medições e eventos programados.',
+      shortcut: 'Ctrl+A',
+      icon: Calendar, 
+      path: '/agenda' 
+    },
+    { 
+      id: 'alertas', 
+      name: 'Alertas de Gates', 
+      shortName: 'Alertas', 
+      subtitle: 'Pontos de Controle',
+      description: 'Monitore alertas críticos e gates de liberação da obra.',
+      shortcut: 'Ctrl+G',
+      icon: Bell, 
+      path: '/alertas-gates' 
+    },
+    { 
+      id: 'ia', 
+      name: 'Assistente IA', 
+      shortName: 'IA', 
+      subtitle: 'Inteligência Artificial',
+      description: 'Converse com a IA para tirar dúvidas, gerar relatórios e obter insights.',
+      shortcut: 'Ctrl+I',
+      icon: Bot, 
+      path: '/assistente' 
+    },
   ];
 
   // Estrutura do menu organizada por categorias (SEM Intranet)
@@ -512,7 +571,7 @@ export default function Sidebar({ obraAtiva }: SidebarProps) {
         </div>
       </div>
 
-      {/* NAVEGAÇÃO RÁPIDA - Somente Ícones */}
+      {/* NAVEGAÇÃO RÁPIDA - Com Tooltip Rico */}
       <div 
         className="px-4 py-3 border-b"
         style={{ borderColor: colors.borderPrimary }}
@@ -527,44 +586,102 @@ export default function Sidebar({ obraAtiva }: SidebarProps) {
             const Icon = item.icon;
             
             return (
-              <Link
-                key={item.id}
-                href={item.path}
-                className="flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-200 relative"
-                style={{
-                  backgroundColor: isActive ? `${colors.accent}` : 'transparent',
-                  color: isActive ? '#FFFFFF' : colors.textMuted,
-                }}
-                onMouseEnter={(e) => {
-                  if (!isActive) {
-                    e.currentTarget.style.backgroundColor = colors.bgCardHover;
-                    e.currentTarget.style.color = colors.accent;
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!isActive) {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = colors.textMuted;
-                  }
-                }}
-                title={item.name}
-              >
-                {/* Badge */}
-                {item.badge && (
-                  <span 
-                    className="absolute -top-1 -right-1 min-w-[16px] h-[16px] text-[9px] font-bold rounded-full flex items-center justify-center shadow-sm"
-                    style={{ backgroundColor: isActive ? '#FFFFFF' : colors.accent, color: isActive ? colors.accent : '#FFFFFF' }}
-                  >
-                    {item.badge}
-                  </span>
-                )}
+              <div key={item.id} className="relative group">
+                <Link
+                  href={item.path}
+                  className="flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-200 relative"
+                  style={{
+                    backgroundColor: isActive ? `${colors.accent}` : 'transparent',
+                    color: isActive ? '#FFFFFF' : colors.textMuted,
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.backgroundColor = colors.bgCardHover;
+                      e.currentTarget.style.color = colors.accent;
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                      e.currentTarget.style.color = colors.textMuted;
+                    }
+                  }}
+                >
+                  {/* Badge */}
+                  {item.badge && (
+                    <span 
+                      className="absolute -top-1 -right-1 min-w-[16px] h-[16px] text-[9px] font-bold rounded-full flex items-center justify-center shadow-sm"
+                      style={{ backgroundColor: isActive ? '#FFFFFF' : colors.accent, color: isActive ? colors.accent : '#FFFFFF' }}
+                    >
+                      {item.badge}
+                    </span>
+                  )}
+                  
+                  {/* Ícone */}
+                  <Icon 
+                    size={20} 
+                    strokeWidth={isActive ? 2.5 : 2}
+                  />
+                </Link>
                 
-                {/* Ícone */}
-                <Icon 
-                  size={20} 
-                  strokeWidth={isActive ? 2.5 : 2}
-                />
-              </Link>
+                {/* Tooltip Rico (Card) */}
+                <div 
+                  className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50"
+                  style={{ minWidth: '220px' }}
+                >
+                  <div 
+                    className="rounded-xl shadow-xl overflow-hidden border"
+                    style={{ backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }}
+                  >
+                    {/* Cabeçalho do Card */}
+                    <div 
+                      className="p-3 flex items-center gap-3"
+                      style={{ background: `linear-gradient(135deg, ${colors.accent}, ${colors.accent}dd)` }}
+                    >
+                      <div 
+                        className="w-10 h-10 rounded-lg flex items-center justify-center"
+                        style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}
+                      >
+                        <Icon size={22} className="text-white" />
+                      </div>
+                      <div>
+                        <div className="text-white font-semibold text-sm">{item.name}</div>
+                        <div className="text-white/70 text-xs">{item.subtitle}</div>
+                      </div>
+                    </div>
+                    
+                    {/* Corpo do Card */}
+                    <div className="p-3">
+                      <p 
+                        className="text-xs leading-relaxed mb-3"
+                        style={{ color: colors.textSecondary }}
+                      >
+                        {item.description}
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <span 
+                          className="text-[10px] font-mono px-2 py-1 rounded"
+                          style={{ backgroundColor: colors.bgCardHover, color: colors.textMuted }}
+                        >
+                          {item.shortcut}
+                        </span>
+                        <span 
+                          className="text-xs font-medium"
+                          style={{ color: colors.accent }}
+                        >
+                          Abrir →
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Seta do Tooltip */}
+                  <div 
+                    className="absolute left-1/2 -translate-x-1/2 -bottom-1.5 w-3 h-3 rotate-45 border-r border-b"
+                    style={{ backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }}
+                  />
+                </div>
+              </div>
             );
           })}
         </div>
