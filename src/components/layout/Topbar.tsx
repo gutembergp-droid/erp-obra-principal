@@ -32,29 +32,79 @@ interface TopbarProps {
 
 // Mapeamento de rotas para breadcrumb (Departamento > Página)
 const routeMap: Record<string, { depto: string; pagina: string }> = {
+  // Intranet
   '/': { depto: 'Intranet', pagina: 'Dashboard da Obra' },
   '/comunicados': { depto: 'Intranet', pagina: 'Comunicados' },
   '/tarefas': { depto: 'Intranet', pagina: 'Minhas Tarefas' },
   '/agenda': { depto: 'Intranet', pagina: 'Agenda' },
+  
+  // Corporativo
   '/clientes': { depto: 'Corporativo', pagina: 'Clientes' },
   '/contratos': { depto: 'Corporativo', pagina: 'Contratos' },
   '/portfolio': { depto: 'Corporativo', pagina: 'Portfólio de Obras' },
+  
+  // Obras
   '/gestao-obras': { depto: 'Obras', pagina: 'Gestão de Obras' },
+  
+  // Comercial
   '/estruturacao': { depto: 'Comercial', pagina: 'Estruturação (EAP)' },
   '/medicao-producao': { depto: 'Comercial', pagina: 'Medição Produção' },
   '/medicao-cliente': { depto: 'Comercial', pagina: 'Medição Cliente' },
+  
+  // Engenharia
   '/projetos': { depto: 'Engenharia', pagina: 'Projetos' },
+  
+  // Planejamento
   '/cronograma': { depto: 'Planejamento', pagina: 'Cronograma' },
+  
+  // Produção
   '/diario-obra': { depto: 'Produção', pagina: 'Diário de Obra' },
+  
+  // SUPRIMENTOS - Módulo completo para teste
+  '/suprimentos': { depto: 'Suprimentos', pagina: 'Dashboard' },
+  '/suprimentos/requisicoes': { depto: 'Suprimentos', pagina: 'Requisições' },
+  '/suprimentos/cotacoes': { depto: 'Suprimentos', pagina: 'Cotações' },
+  '/suprimentos/pedidos': { depto: 'Suprimentos', pagina: 'Pedidos de Compra' },
+  '/suprimentos/estoque': { depto: 'Suprimentos', pagina: 'Controle de Estoque' },
+  '/suprimentos/fornecedores': { depto: 'Suprimentos', pagina: 'Fornecedores' },
+  '/suprimentos/recebimento': { depto: 'Suprimentos', pagina: 'Recebimento' },
   '/requisicoes': { depto: 'Suprimentos', pagina: 'Requisições' },
   '/cotacoes': { depto: 'Suprimentos', pagina: 'Cotações' },
   '/pedidos': { depto: 'Suprimentos', pagina: 'Pedidos de Compra' },
   '/estoque': { depto: 'Suprimentos', pagina: 'Controle de Estoque' },
+  
+  // FINANCEIRO - Módulo completo para teste
+  '/financeiro': { depto: 'Financeiro', pagina: 'Dashboard' },
+  '/financeiro/contas-pagar': { depto: 'Financeiro', pagina: 'Contas a Pagar' },
+  '/financeiro/contas-receber': { depto: 'Financeiro', pagina: 'Contas a Receber' },
+  '/financeiro/fluxo-caixa': { depto: 'Financeiro', pagina: 'Fluxo de Caixa' },
+  '/financeiro/conciliacao': { depto: 'Financeiro', pagina: 'Conciliação Bancária' },
+  '/financeiro/orcamento': { depto: 'Financeiro', pagina: 'Orçamento' },
+  '/financeiro/relatorios': { depto: 'Financeiro', pagina: 'Relatórios Financeiros' },
+  
+  // RH - Módulo completo para teste
+  '/rh': { depto: 'RH', pagina: 'Dashboard' },
+  '/rh/colaboradores': { depto: 'RH', pagina: 'Colaboradores' },
+  '/rh/folha-pagamento': { depto: 'RH', pagina: 'Folha de Pagamento' },
+  '/rh/ferias': { depto: 'RH', pagina: 'Férias' },
+  '/rh/beneficios': { depto: 'RH', pagina: 'Benefícios' },
+  '/rh/ponto': { depto: 'RH', pagina: 'Controle de Ponto' },
+  '/rh/recrutamento': { depto: 'RH', pagina: 'Recrutamento' },
+  
+  // Custos
   '/custos': { depto: 'Custos', pagina: 'Apropriação de Custos' },
+  
+  // Qualidade
   '/inspecoes': { depto: 'Qualidade', pagina: 'Inspeções' },
+  
+  // SSMA
   '/seguranca': { depto: 'SSMA', pagina: 'Segurança do Trabalho' },
-  '/documentos': { depto: 'Administrativo', pagina: 'Documentos' },
   '/treinamentos': { depto: 'SSMA', pagina: 'Treinamentos' },
+  
+  // Administrativo
+  '/documentos': { depto: 'Administrativo', pagina: 'Documentos' },
+  
+  // Sistema
   '/suporte': { depto: 'Sistema', pagina: 'Suporte' },
 };
 
