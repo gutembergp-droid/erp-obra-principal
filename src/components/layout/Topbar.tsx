@@ -4,11 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { 
   Bell, 
-  User, 
   ChevronDown, 
-  CheckCircle, 
-  AlertCircle,
-  Clock,
   Sun,
   Moon,
   Palette,
@@ -34,29 +30,35 @@ interface TopbarProps {
   notificacoes?: number;
 }
 
-// Mapeamento de rotas para breadcrumb
-const routeMap: Record<string, { modulo: string; depto?: string; setor?: string }> = {
-  '/': { modulo: 'Intranet', depto: 'Dashboard da Obra' },
-  '/comunicados': { modulo: 'Intranet', depto: 'Comunicados' },
-  '/tarefas': { modulo: 'Intranet', depto: 'Minhas Tarefas' },
-  '/agenda': { modulo: 'Intranet', depto: 'Agenda' },
-  '/clientes': { modulo: 'Corporativo', depto: 'Clientes' },
-  '/contratos': { modulo: 'Corporativo', depto: 'Contratos' },
-  '/portfolio': { modulo: 'Corporativo', depto: 'Portfólio de Obras' },
-  '/gestao-obras': { modulo: 'Obras', depto: 'Gestão de Obras' },
-  '/estruturacao': { modulo: 'Comercial', depto: 'Estruturação (EAP)' },
-  '/medicao-producao': { modulo: 'Comercial', depto: 'Medição Produção' },
-  '/medicao-cliente': { modulo: 'Comercial', depto: 'Medição Cliente' },
-  '/projetos': { modulo: 'Engenharia', depto: 'Projetos' },
-  '/cronograma': { modulo: 'Planejamento', depto: 'Cronograma' },
-  '/diario-obra': { modulo: 'Produção', depto: 'Diário de Obra' },
-  '/requisicoes': { modulo: 'Suprimentos', depto: 'Requisições' },
-  '/custos': { modulo: 'Custos', depto: 'Apropriação de Custos' },
-  '/inspecoes': { modulo: 'Qualidade', depto: 'Inspeções' },
-  '/seguranca': { modulo: 'SSMA', depto: 'Segurança do Trabalho' },
+// Mapeamento de rotas para breadcrumb (Departamento > Página)
+const routeMap: Record<string, { depto: string; pagina: string }> = {
+  '/': { depto: 'Intranet', pagina: 'Dashboard da Obra' },
+  '/comunicados': { depto: 'Intranet', pagina: 'Comunicados' },
+  '/tarefas': { depto: 'Intranet', pagina: 'Minhas Tarefas' },
+  '/agenda': { depto: 'Intranet', pagina: 'Agenda' },
+  '/clientes': { depto: 'Corporativo', pagina: 'Clientes' },
+  '/contratos': { depto: 'Corporativo', pagina: 'Contratos' },
+  '/portfolio': { depto: 'Corporativo', pagina: 'Portfólio de Obras' },
+  '/gestao-obras': { depto: 'Obras', pagina: 'Gestão de Obras' },
+  '/estruturacao': { depto: 'Comercial', pagina: 'Estruturação (EAP)' },
+  '/medicao-producao': { depto: 'Comercial', pagina: 'Medição Produção' },
+  '/medicao-cliente': { depto: 'Comercial', pagina: 'Medição Cliente' },
+  '/projetos': { depto: 'Engenharia', pagina: 'Projetos' },
+  '/cronograma': { depto: 'Planejamento', pagina: 'Cronograma' },
+  '/diario-obra': { depto: 'Produção', pagina: 'Diário de Obra' },
+  '/requisicoes': { depto: 'Suprimentos', pagina: 'Requisições' },
+  '/cotacoes': { depto: 'Suprimentos', pagina: 'Cotações' },
+  '/pedidos': { depto: 'Suprimentos', pagina: 'Pedidos de Compra' },
+  '/estoque': { depto: 'Suprimentos', pagina: 'Controle de Estoque' },
+  '/custos': { depto: 'Custos', pagina: 'Apropriação de Custos' },
+  '/inspecoes': { depto: 'Qualidade', pagina: 'Inspeções' },
+  '/seguranca': { depto: 'SSMA', pagina: 'Segurança do Trabalho' },
+  '/documentos': { depto: 'Administrativo', pagina: 'Documentos' },
+  '/treinamentos': { depto: 'SSMA', pagina: 'Treinamentos' },
+  '/suporte': { depto: 'Sistema', pagina: 'Suporte' },
 };
 
-// Ações rápidas fixas
+// Ações rápidas fixas (somente ícones)
 const acoesRapidas = [
   { id: 'home', icon: Home, label: 'Tela Inicial', href: '/' },
   { id: 'suprimentos', icon: ShoppingCart, label: 'Suprimentos', href: '/requisicoes' },
@@ -95,33 +97,22 @@ export default function Topbar({
   // Valores padrão
   const user = usuario || { nome: 'Usuário', perfil: 'usuario', status: 'online' };
 
-  // Obtém o breadcrumb baseado na rota atual
+  // Obtém as iniciais do nome do usuário
+  const getIniciais = (nome: string) => {
+    const partes = nome.trim().split(' ');
+    if (partes.length >= 2) {
+      return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
+    }
+    return nome.substring(0, 2).toUpperCase();
+  };
+
+  // Obtém o breadcrumb baseado na rota atual (Departamento > Página)
   const getBreadcrumb = () => {
     const route = pathname ? routeMap[pathname] : null;
-    return route || { modulo: 'Genesis', depto: 'Dashboard' };
+    return route || { depto: 'Sistema', pagina: 'Dashboard' };
   };
 
   const breadcrumb = getBreadcrumb();
-
-  // Saudação baseada na hora do dia
-  const getSaudacao = () => {
-    const hora = new Date().getHours();
-    if (hora < 12) return 'Bom dia';
-    if (hora < 18) return 'Boa tarde';
-    return 'Boa noite';
-  };
-
-  // Data completa formatada
-  const getDataCompleta = () => {
-    const hoje = new Date();
-    const opcoes: Intl.DateTimeFormatOptions = { 
-      weekday: 'long', 
-      day: 'numeric', 
-      month: 'long', 
-      year: 'numeric' 
-    };
-    return hoje.toLocaleDateString('pt-BR', opcoes);
-  };
 
   // Ícone do tema atual
   const getThemeIcon = (themeType: ThemeType) => {
@@ -167,51 +158,27 @@ export default function Topbar({
 
   return (
     <header 
-      className="h-16 border-b flex items-center justify-between px-6 transition-colors duration-200"
+      className="h-14 border-b flex items-center justify-between px-6 transition-colors duration-200"
       style={{ 
         backgroundColor: colors.topbarBg, 
         borderColor: colors.borderPrimary,
         color: colors.topbarText 
       }}
     >
-      {/* ESQUERDA - Logo GENESIS + Breadcrumb */}
-      <div className="flex items-center gap-4">
-        {/* Logo GENESIS */}
-        <div className="flex items-center gap-2">
-          <div 
-            className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-white text-sm"
-            style={{ backgroundColor: colors.accent }}
-          >
-            G
-          </div>
-          <span className="font-bold text-lg" style={{ color: colors.textPrimary }}>
-            GENESIS
-          </span>
-        </div>
-
-        {/* Separador */}
-        <div className="h-6 w-px" style={{ backgroundColor: colors.borderPrimary }} />
-
-        {/* Breadcrumb */}
+      {/* ESQUERDA - Breadcrumb (Departamento > Página) */}
+      <div className="flex items-center gap-3">
         <nav className="flex items-center gap-2 text-sm">
-          <span style={{ color: colors.textMuted }}>{breadcrumb.modulo}</span>
-          {breadcrumb.depto && (
-            <>
-              <span style={{ color: colors.textMuted }}>&gt;</span>
-              <span className="font-medium" style={{ color: colors.textPrimary }}>{breadcrumb.depto}</span>
-            </>
-          )}
-          {breadcrumb.setor && (
-            <>
-              <span style={{ color: colors.textMuted }}>&gt;</span>
-              <span className="font-medium" style={{ color: colors.accent }}>{breadcrumb.setor}</span>
-            </>
-          )}
+          <span className="font-semibold" style={{ color: colors.accent }}>{breadcrumb.depto}</span>
+          <span style={{ color: colors.textMuted }}>/</span>
+          <span className="font-medium" style={{ color: colors.textPrimary }}>{breadcrumb.pagina}</span>
         </nav>
       </div>
 
-      {/* CENTRO - Card de Ações Rápidas */}
-      <div className="flex items-center gap-1">
+      {/* CENTRO - Card de Ações Rápidas (somente ícones com destaque) */}
+      <div 
+        className="flex items-center gap-1 px-3 py-1.5 rounded-xl"
+        style={{ backgroundColor: colors.bgCardHover }}
+      >
         {acoesRapidas.map((acao) => {
           const Icon = acao.icon;
           const isActive = pathname === acao.href;
@@ -219,34 +186,36 @@ export default function Topbar({
             <a
               key={acao.id}
               href={acao.href}
-              className="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg transition-colors"
+              className="flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-200"
               style={{ 
-                backgroundColor: isActive ? colors.bgCardHover : 'transparent',
-                color: isActive ? colors.accent : colors.textMuted 
+                backgroundColor: isActive ? colors.accent : 'transparent',
+                color: isActive ? '#FFFFFF' : colors.textMuted,
+                transform: isActive ? 'scale(1.1)' : 'scale(1)',
               }}
               onMouseEnter={(e) => {
                 if (!isActive) {
-                  e.currentTarget.style.backgroundColor = colors.bgCardHover;
+                  e.currentTarget.style.backgroundColor = colors.borderPrimary;
                   e.currentTarget.style.color = colors.textPrimary;
+                  e.currentTarget.style.transform = 'scale(1.05)';
                 }
               }}
               onMouseLeave={(e) => {
                 if (!isActive) {
                   e.currentTarget.style.backgroundColor = 'transparent';
                   e.currentTarget.style.color = colors.textMuted;
+                  e.currentTarget.style.transform = 'scale(1)';
                 }
               }}
               title={acao.label}
             >
               <Icon size={20} />
-              <span className="text-[9px] font-medium">{acao.label}</span>
             </a>
           );
         })}
       </div>
 
-      {/* DIREITA - Widget de Avatar com saudação, data, clima e Badge de Status */}
-      <div className="flex items-center gap-4">
+      {/* DIREITA - Clima, Tema, Notificações, Avatar com iniciais e nome */}
+      <div className="flex items-center gap-3">
         {/* Clima */}
         <div className="flex items-center gap-1.5 text-sm">
           {getClimaIcon()}
@@ -260,7 +229,7 @@ export default function Topbar({
         <div className="relative" ref={themeMenuRef}>
           <button 
             onClick={() => setShowThemeMenu(!showThemeMenu)}
-            className="flex items-center gap-2 px-2 py-1.5 rounded-lg transition-colors"
+            className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg transition-colors"
             style={{ 
               backgroundColor: showThemeMenu ? colors.bgCardHover : 'transparent',
               color: colors.textSecondary 
@@ -269,13 +238,13 @@ export default function Topbar({
             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = showThemeMenu ? colors.bgCardHover : 'transparent'}
           >
             {getThemeIcon(theme)}
-            <ChevronDown size={14} className={`transition-transform ${showThemeMenu ? 'rotate-180' : ''}`} />
+            <ChevronDown size={12} className={`transition-transform ${showThemeMenu ? 'rotate-180' : ''}`} />
           </button>
 
           {/* Menu dropdown de temas */}
           {showThemeMenu && (
             <div 
-              className="absolute right-0 top-full mt-2 w-48 rounded-lg border shadow-lg overflow-hidden z-50"
+              className="absolute right-0 top-full mt-2 w-44 rounded-lg border shadow-lg overflow-hidden z-50"
               style={{ 
                 backgroundColor: colors.bgCard, 
                 borderColor: colors.borderPrimary 
@@ -283,7 +252,7 @@ export default function Topbar({
             >
               <div className="p-2">
                 <p className="text-xs font-semibold uppercase tracking-wider px-2 py-1" style={{ color: colors.textMuted }}>
-                  Escolha o tema
+                  Tema
                 </p>
                 
                 {(['light', 'dark', 'vibrant'] as ThemeType[]).map((themeOption) => (
@@ -301,9 +270,8 @@ export default function Topbar({
                     onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.bgCardHover}
                     onMouseLeave={(e) => e.currentTarget.style.backgroundColor = theme === themeOption ? colors.bgCardHover : 'transparent'}
                   >
-                    {/* Preview do tema */}
                     <div 
-                      className="w-6 h-6 rounded-md border flex items-center justify-center"
+                      className="w-5 h-5 rounded-md border flex items-center justify-center"
                       style={{ 
                         backgroundColor: themePreviewColors[themeOption].bg,
                         borderColor: colors.borderPrimary
@@ -318,7 +286,7 @@ export default function Topbar({
                     <span className="flex-1 text-left text-sm">{themeNames[themeOption]}</span>
                     
                     {theme === themeOption && (
-                      <Check size={16} style={{ color: colors.accent }} />
+                      <Check size={14} style={{ color: colors.accent }} />
                     )}
                   </button>
                 ))}
@@ -340,10 +308,10 @@ export default function Topbar({
             e.currentTarget.style.color = colors.textSecondary;
           }}
         >
-          <Bell size={20} />
+          <Bell size={18} />
           {notificacoes > 0 && (
             <span 
-              className="absolute -top-1 -right-1 w-5 h-5 text-white text-xs rounded-full flex items-center justify-center"
+              className="absolute -top-0.5 -right-0.5 w-4 h-4 text-white text-[10px] rounded-full flex items-center justify-center font-medium"
               style={{ backgroundColor: colors.error }}
             >
               {notificacoes > 9 ? '9+' : notificacoes}
@@ -354,26 +322,29 @@ export default function Topbar({
         {/* Separador */}
         <div className="h-4 w-px" style={{ backgroundColor: colors.borderPrimary }} />
 
-        {/* Widget de Avatar Completo */}
+        {/* Widget de Avatar com iniciais e nome */}
         <div className="relative" ref={statusMenuRef}>
           <button 
             onClick={() => setShowStatusMenu(!showStatusMenu)}
-            className="flex items-center gap-3 px-3 py-1.5 rounded-lg transition-colors"
+            className="flex items-center gap-2.5 px-2 py-1 rounded-lg transition-colors"
             style={{ color: colors.textSecondary }}
             onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.bgCardHover}
             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
           >
-            {/* Avatar com Badge de Status */}
+            {/* Avatar com iniciais e Badge de Status */}
             <div className="relative">
               <div 
-                className="w-9 h-9 rounded-full flex items-center justify-center"
-                style={{ backgroundColor: colors.bgCardHover }}
+                className="w-8 h-8 rounded-full flex items-center justify-center font-semibold text-sm"
+                style={{ 
+                  backgroundColor: colors.accent,
+                  color: '#FFFFFF'
+                }}
               >
-                <User size={18} style={{ color: colors.textMuted }} />
+                {getIniciais(user.nome)}
               </div>
               {/* Badge de Status */}
               <div 
-                className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2"
+                className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2"
                 style={{ 
                   backgroundColor: statusConfig[userStatus].color,
                   borderColor: colors.topbarBg
@@ -381,15 +352,10 @@ export default function Topbar({
               />
             </div>
             
-            {/* Informações do Usuário */}
-            <div className="text-left">
-              <p className="text-sm font-medium" style={{ color: colors.textPrimary }}>
-                {getSaudacao()}, {user.nome.split(' ')[0]}
-              </p>
-              <p className="text-[10px]" style={{ color: colors.textMuted }}>
-                {getDataCompleta()}
-              </p>
-            </div>
+            {/* Nome do Usuário */}
+            <span className="text-sm font-medium" style={{ color: colors.textPrimary }}>
+              {user.nome}
+            </span>
             
             <ChevronDown size={14} style={{ color: colors.textMuted }} />
           </button>
@@ -397,7 +363,7 @@ export default function Topbar({
           {/* Menu de Status */}
           {showStatusMenu && (
             <div 
-              className="absolute right-0 top-full mt-2 w-56 rounded-lg border shadow-lg overflow-hidden z-50"
+              className="absolute right-0 top-full mt-2 w-48 rounded-lg border shadow-lg overflow-hidden z-50"
               style={{ 
                 backgroundColor: colors.bgCard, 
                 borderColor: colors.borderPrimary 
@@ -410,7 +376,7 @@ export default function Topbar({
               
               <div className="p-2">
                 <p className="text-xs font-semibold uppercase tracking-wider px-2 py-1" style={{ color: colors.textMuted }}>
-                  Alterar Status
+                  Status
                 </p>
                 
                 {(Object.keys(statusConfig) as Array<keyof typeof statusConfig>).map((status) => (
@@ -429,12 +395,12 @@ export default function Topbar({
                     onMouseLeave={(e) => e.currentTarget.style.backgroundColor = userStatus === status ? colors.bgCardHover : 'transparent'}
                   >
                     <div 
-                      className="w-3 h-3 rounded-full"
+                      className="w-2.5 h-2.5 rounded-full"
                       style={{ backgroundColor: statusConfig[status].color }}
                     />
                     <span className="flex-1 text-left text-sm">{statusConfig[status].label}</span>
                     {userStatus === status && (
-                      <Check size={16} style={{ color: colors.accent }} />
+                      <Check size={14} style={{ color: colors.accent }} />
                     )}
                   </button>
                 ))}
