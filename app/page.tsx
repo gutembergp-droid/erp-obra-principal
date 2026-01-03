@@ -603,14 +603,20 @@ export default function IntranetPage() {
                 <Calendar className="h-5 w-5" style={{ color: colors.textMuted }} />
                 <h2 className="text-sm font-semibold" style={{ color: colors.textPrimary }}>Calendário</h2>
               </div>
-              {/* KPI integrado no header */}
+              {/* KPI integrado no header - com ênfase */}
               <div 
-                className="flex items-center gap-1.5 rounded-md px-2.5 py-1"
-                style={{ backgroundColor: colors.accentBg, border: `1px solid ${colors.accent}30` }}
+                className="flex items-center rounded-lg shadow-sm"
+                style={{ 
+                  backgroundColor: colors.accent, 
+                  padding: '10px 16px',
+                  gap: '10px'
+                }}
               >
-                <ListTodo className="h-3.5 w-3.5" style={{ color: colors.accent }} />
-                <span className="text-xs font-medium" style={{ color: colors.accent }}>{stats.marcosPendentes}</span>
-                <span className="text-[10px]" style={{ color: colors.textMuted }}>pendentes</span>
+                <ListTodo className="h-5 w-5" style={{ color: '#fff' }} />
+                <div className="flex items-center" style={{ gap: '6px' }}>
+                  <span className="text-lg font-bold" style={{ color: '#fff' }}>{stats.marcosPendentes}</span>
+                  <span className="text-xs font-medium" style={{ color: 'rgba(255,255,255,0.85)' }}>pendentes</span>
+                </div>
               </div>
             </div>
             
