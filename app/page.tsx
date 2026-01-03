@@ -469,7 +469,7 @@ export default function IntranetPage() {
           {/* Card de Fila de Trabalho */}
           <div 
             className={`rounded-lg border ${cardHeight} transition-colors duration-200`}
-            style={{ backgroundColor: colors.bgCard, borderColor: colors.borderPrimary, marginTop: '28px' }}
+            style={{ backgroundColor: colors.bgCard, borderColor: colors.borderPrimary, marginTop: '24px' }}
           >
             <div 
               className="px-5 py-4 border-b flex items-center justify-between"
