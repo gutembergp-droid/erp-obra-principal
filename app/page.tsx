@@ -347,7 +347,7 @@ export default function IntranetPage() {
             style={{ backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }}
           >
             <div 
-              className="px-5 py-4 border-b flex items-center justify-between"
+              className="px-8 py-6 border-b flex items-center justify-between"
               style={{ borderColor: colors.borderPrimary }}
             >
               <div className="flex items-center gap-3">
@@ -472,7 +472,7 @@ export default function IntranetPage() {
             style={{ backgroundColor: colors.bgCard, borderColor: colors.borderPrimary, marginTop: '22px' }}
           >
             <div 
-              className="px-5 py-4 border-b flex items-center justify-between"
+              className="px-8 py-6 border-b flex items-center justify-between"
               style={{ borderColor: colors.borderPrimary }}
             >
               <div className="flex items-center gap-3">
