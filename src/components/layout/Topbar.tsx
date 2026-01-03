@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
+import BreadcrumbDinamico from './BreadcrumbDinamico';
 import { 
   Bell, 
   ChevronDown, 
@@ -156,13 +157,7 @@ export default function Topbar({
     return nome.substring(0, 2).toUpperCase();
   };
 
-  // Obtém o breadcrumb baseado na rota atual (Departamento > Página)
-  const getBreadcrumb = () => {
-    const route = pathname ? routeMap[pathname] : null;
-    return route || { depto: 'Sistema', pagina: 'Dashboard' };
-  };
-
-  const breadcrumb = getBreadcrumb();
+  // Breadcrumb agora é dinâmico via componente BreadcrumbDinamico
 
   // Ícone do tema atual
   const getThemeIcon = (themeType: ThemeType) => {
@@ -215,13 +210,9 @@ export default function Topbar({
         color: colors.topbarText 
       }}
     >
-      {/* ESQUERDA - Breadcrumb (Departamento > Página) */}
+      {/* ESQUERDA - Breadcrumb Dinâmico (suporta múltiplos níveis) */}
       <div className="flex items-center gap-3">
-        <nav className="flex items-center gap-2 text-sm">
-          <span className="font-semibold" style={{ color: colors.accent }}>{breadcrumb.depto}</span>
-          <span style={{ color: colors.textMuted }}>/</span>
-          <span className="font-medium" style={{ color: colors.textPrimary }}>{breadcrumb.pagina}</span>
-        </nav>
+        <BreadcrumbDinamico separator="slash" maxItems={4} />
       </div>
 
       {/* CENTRO - Card de Ações Rápidas (somente ícones com destaque) */}
