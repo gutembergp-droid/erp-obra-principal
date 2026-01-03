@@ -339,7 +339,7 @@ export default function IntranetPage() {
       {/* Grid Principal */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Coluna Esquerda - Comunicados + Fila de Trabalho */}
-        <div className="lg:col-span-8 space-y-32">
+        <div className="lg:col-span-8">
           
           {/* Card de Comunicados */}
           <div 
@@ -469,7 +469,7 @@ export default function IntranetPage() {
           {/* Card de Fila de Trabalho */}
           <div 
             className={`rounded-lg border ${cardHeight} transition-colors duration-200`}
-            style={{ backgroundColor: colors.bgCard, borderColor: colors.borderPrimary, marginTop: '80px' }}
+            style={{ backgroundColor: colors.bgCard, borderColor: colors.borderPrimary, marginTop: '32px' }}
           >
             <div 
               className="px-5 py-4 border-b flex items-center justify-between"
