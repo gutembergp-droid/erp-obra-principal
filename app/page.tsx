@@ -325,8 +325,13 @@ export default function IntranetPage() {
   // Altura fixa para os cards de Comunicados e Fila de Trabalho
   const cardHeight = "min-h-[320px]"
 
+  // Espaçamento uniforme para margens e gaps (24px = 1.5rem)
+  const espacamento = "gap-6" // 24px entre elementos
+  const margemLateral = "px-6" // 24px nas laterais
+  const margemVertical = "py-6" // 24px no topo e base
+
   return (
-    <div className="min-h-screen w-[90%] mx-auto py-6 transition-colors duration-200">
+    <div className={`min-h-screen ${margemLateral} ${margemVertical} transition-colors duration-200`}>
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight" style={{ color: colors.textPrimary }}>Intranet</h1>
@@ -334,9 +339,9 @@ export default function IntranetPage() {
       </div>
 
       {/* Grid Principal */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+      <div className={`grid grid-cols-1 lg:grid-cols-12 ${espacamento}`}>
         {/* Coluna Esquerda - Comunicados + Fila de Trabalho */}
-        <div className="lg:col-span-8 space-y-5">
+        <div className={`lg:col-span-8 space-y-6`}>
           
           {/* Card de Comunicados */}
           <div 
