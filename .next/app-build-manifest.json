@@ -20,23 +20,9 @@
       "static/chunks/fd9d1056-702bfc020e6870d3.js",
       "static/chunks/117-e438ee6ba44a3da0.js",
       "static/chunks/main-app-70a5454e0ad77fb6.js",
-      "static/css/3a8cb9b9d66a98e1.css",
+      "static/css/2c7c16e8faca936a.css",
       "static/chunks/42-7334c15ce7cbd11c.js",
       "static/chunks/app/layout-4676c969a6eba9d8.js"
-    ],
-    "/comercial/comparativo/page": [
-      "static/chunks/webpack-0f9d81f53d3d79c3.js",
-      "static/chunks/fd9d1056-702bfc020e6870d3.js",
-      "static/chunks/117-e438ee6ba44a3da0.js",
-      "static/chunks/main-app-70a5454e0ad77fb6.js",
-      "static/chunks/app/comercial/comparativo/page-a4dff722ee3c4098.js"
-    ],
-    "/comercial/medicao-mp/page": [
-      "static/chunks/webpack-0f9d81f53d3d79c3.js",
-      "static/chunks/fd9d1056-702bfc020e6870d3.js",
-      "static/chunks/117-e438ee6ba44a3da0.js",
-      "static/chunks/main-app-70a5454e0ad77fb6.js",
-      "static/chunks/app/comercial/medicao-mp/page-fbc4a6ad923e3f2c.js"
     ],
     "/comercial/medicao-mc/page": [
       "static/chunks/webpack-0f9d81f53d3d79c3.js",
@@ -44,6 +30,13 @@
       "static/chunks/117-e438ee6ba44a3da0.js",
       "static/chunks/main-app-70a5454e0ad77fb6.js",
       "static/chunks/app/comercial/medicao-mc/page-18202e439f845784.js"
+    ],
+    "/comercial/medicao-mp/page": [
+      "static/chunks/webpack-0f9d81f53d3d79c3.js",
+      "static/chunks/fd9d1056-702bfc020e6870d3.js",
+      "static/chunks/117-e438ee6ba44a3da0.js",
+      "static/chunks/main-app-70a5454e0ad77fb6.js",
+      "static/chunks/app/comercial/medicao-mp/page-fbc4a6ad923e3f2c.js"
     ],
     "/login/page": [
       "static/chunks/webpack-0f9d81f53d3d79c3.js",
@@ -75,7 +68,14 @@
       "static/chunks/fd9d1056-702bfc020e6870d3.js",
       "static/chunks/117-e438ee6ba44a3da0.js",
       "static/chunks/main-app-70a5454e0ad77fb6.js",
-      "static/chunks/app/page-87bdb32978e66d53.js"
+      "static/chunks/app/page-087d33f6eca3eb92.js"
+    ],
+    "/comercial/comparativo/page": [
+      "static/chunks/webpack-0f9d81f53d3d79c3.js",
+      "static/chunks/fd9d1056-702bfc020e6870d3.js",
+      "static/chunks/117-e438ee6ba44a3da0.js",
+      "static/chunks/main-app-70a5454e0ad77fb6.js",
+      "static/chunks/app/comercial/comparativo/page-a4dff722ee3c4098.js"
     ]
   }
 }

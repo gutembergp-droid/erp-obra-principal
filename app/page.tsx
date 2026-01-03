@@ -614,9 +614,9 @@ export default function IntranetPage() {
               </div>
             </div>
             
-            <div className="p-6">
+            <div style={{ padding: '24px 28px' }}>
               {/* Subtitulo e navegação do mês */}
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center justify-between" style={{ marginBottom: '20px' }}>
                 <p className="text-xs" style={{ color: colors.textMuted }}>Marcos e eventos da obra</p>
                 <div className="flex items-center gap-1">
                   <button 
@@ -643,19 +643,19 @@ export default function IntranetPage() {
 
               {/* Mini Calendário Mensal */}
               <div 
-                className="rounded-lg p-4 mb-5"
-                style={{ backgroundColor: colors.bgCardHover, border: `1px solid ${colors.borderSecondary}` }}
+                className="rounded-lg"
+                style={{ backgroundColor: colors.bgCardHover, border: `1px solid ${colors.borderSecondary}`, padding: '16px 14px', marginBottom: '24px' }}
               >
                 {/* Dias da semana */}
-                <div className="grid grid-cols-7 gap-1 mb-2">
+                <div className="grid grid-cols-7" style={{ gap: '4px', marginBottom: '12px' }}>
                   {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map((dia) => (
-                    <div key={dia} className="text-center text-[9px] font-medium py-1" style={{ color: colors.textMuted }}>
+                    <div key={dia} className="text-center text-[9px] font-medium" style={{ color: colors.textMuted, padding: '4px 0' }}>
                       {dia}
                     </div>
                   ))}
                 </div>
                 {/* Dias do mês */}
-                <div className="grid grid-cols-7 gap-1">
+                <div className="grid grid-cols-7" style={{ gap: '4px' }}>
                   {(() => {
                     const primeiroDia = new Date(mesAtual.getFullYear(), mesAtual.getMonth(), 1).getDay();
                     const ultimoDia = new Date(mesAtual.getFullYear(), mesAtual.getMonth() + 1, 0).getDate();
@@ -664,7 +664,7 @@ export default function IntranetPage() {
                     
                     // Dias vazios antes do primeiro dia do mês
                     for (let i = 0; i < primeiroDia; i++) {
-                      dias.push(<div key={`empty-${i}`} className="text-center py-1" />);
+                      dias.push(<div key={`empty-${i}`} style={{ padding: '6px 0' }} />);
                     }
                     
                     // Dias do mês
@@ -683,8 +683,9 @@ export default function IntranetPage() {
                       dias.push(
                         <div 
                           key={dia} 
-                          className={`text-center py-1 text-[10px] rounded cursor-pointer transition-colors ${ehHoje ? 'font-bold' : ''}`}
+                          className={`text-center text-[10px] rounded cursor-pointer transition-colors ${ehHoje ? 'font-bold' : ''}`}
                           style={{ 
+                            padding: '6px 0',
                             backgroundColor: ehHoje ? colors.accent : temMarco ? `${colors.warning}30` : 'transparent',
                             color: ehHoje ? '#fff' : temMarco ? colors.warning : colors.textSecondary,
                             border: temMarco && !ehHoje ? `1px solid ${colors.warning}50` : 'none'
@@ -700,50 +701,49 @@ export default function IntranetPage() {
                 </div>
               </div>
 
-              {/* Divisória */}
-              <div className="border-t mb-5" style={{ borderColor: colors.borderPrimary }} />
-
               {/* Tarefas / Marcos do Mês */}
-              <div className="space-y-3 mb-5">
-                <h4 className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: colors.textMuted }}>Marcos do Mês</h4>
+              <div style={{ marginBottom: '24px' }}>
+                <h4 className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: colors.textMuted, marginBottom: '14px' }}>Marcos do Mês</h4>
                 {marcosDoMes.length === 0 ? (
-                  <p className="text-xs text-center py-3" style={{ color: colors.textMuted }}>Nenhum marco neste mês</p>
+                  <p className="text-xs text-center" style={{ color: colors.textMuted, padding: '16px 0' }}>Nenhum marco neste mês</p>
                 ) : (
-                  marcosDoMes.map((marco) => (
-                    <div 
-                      key={marco.id} 
-                      className="flex items-center justify-between p-3 rounded-lg border"
-                      style={{ backgroundColor: colors.bgCardHover, borderColor: colors.borderSecondary }}
-                    >
-                      <div className="flex items-center gap-2">
-                        <div className="h-2 w-2 rounded-full" style={{ backgroundColor: tipoMarcoColors[marco.tipo] }} />
-                        <div>
-                          <span className="text-xs font-medium" style={{ color: colors.textPrimary }}>{marco.titulo}</span>
-                          <p className="text-[10px]" style={{ color: colors.textMuted }}>{formatDateShort(marco.data)}</p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {marcosDoMes.map((marco) => (
+                      <div 
+                        key={marco.id} 
+                        className="flex items-center justify-between rounded-lg border"
+                        style={{ backgroundColor: colors.bgCardHover, borderColor: colors.borderSecondary, padding: '14px 16px' }}
+                      >
+                        <div className="flex items-center" style={{ gap: '10px' }}>
+                          <div className="rounded-full" style={{ height: '8px', width: '8px', backgroundColor: tipoMarcoColors[marco.tipo] }} />
+                          <div>
+                            <span className="text-xs font-medium" style={{ color: colors.textPrimary }}>{marco.titulo}</span>
+                            <p className="text-[10px]" style={{ color: colors.textMuted, marginTop: '2px' }}>{formatDateShort(marco.data)}</p>
+                          </div>
                         </div>
+                        {!marco.concluido && (
+                          <button 
+                            className="text-[10px] font-semibold transition-colors"
+                            style={{ color: colors.accent }}
+                            onMouseEnter={(e) => e.currentTarget.style.color = colors.accentHover}
+                            onMouseLeave={(e) => e.currentTarget.style.color = colors.accent}
+                          >
+                            Concluir
+                          </button>
+                        )}
                       </div>
-                      {!marco.concluido && (
-                        <button 
-                          className="text-[10px] font-semibold transition-colors"
-                          style={{ color: colors.accent }}
-                          onMouseEnter={(e) => e.currentTarget.style.color = colors.accentHover}
-                          onMouseLeave={(e) => e.currentTarget.style.color = colors.accent}
-                        >
-                          Concluir
-                        </button>
-                      )}
-                    </div>
-                  ))
+                    ))}
+                  </div>
                 )}
               </div>
 
               {/* Próximos Marcos */}
-              <div className="border-t pt-4" style={{ borderColor: colors.borderPrimary }}>
-                <h4 className="text-[10px] font-semibold uppercase tracking-wider mb-3" style={{ color: colors.textMuted }}>Próximos Marcos</h4>
-                <div className="space-y-2">
+              <div className="border-t" style={{ borderColor: colors.borderPrimary, paddingTop: '20px', marginBottom: '20px' }}>
+                <h4 className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: colors.textMuted, marginBottom: '14px' }}>Próximos Marcos</h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                   {marcos.filter((m) => !m.concluido).slice(0, 5).map((marco) => (
-                    <div key={marco.id} className="flex items-center gap-2 text-xs">
-                      <Circle className="h-2 w-2 flex-shrink-0" style={{ color: colors.textMuted }} />
+                    <div key={marco.id} className="flex items-center text-xs" style={{ gap: '10px' }}>
+                      <Circle className="flex-shrink-0" style={{ height: '6px', width: '6px', color: colors.textMuted }} />
                       <span className="flex-1 text-xs" style={{ color: colors.textSecondary }}>{marco.titulo}</span>
                       <span className="text-[10px]" style={{ color: colors.textMuted }}>{formatDateShort(marco.data)}</span>
                     </div>
@@ -752,23 +752,23 @@ export default function IntranetPage() {
               </div>
 
               {/* Legenda */}
-              <div className="border-t pt-4 mt-4" style={{ borderColor: colors.borderPrimary }}>
-                <h4 className="text-[10px] font-semibold uppercase tracking-wider mb-2" style={{ color: colors.textMuted }}>Legenda</h4>
-                <div className="grid grid-cols-2 gap-1">
-                  <div className="flex items-center gap-1.5">
-                    <div className="h-2 w-2 rounded-full" style={{ backgroundColor: tipoMarcoColors.marco }} />
+              <div className="border-t" style={{ borderColor: colors.borderPrimary, paddingTop: '20px' }}>
+                <h4 className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: colors.textMuted, marginBottom: '12px' }}>Legenda</h4>
+                <div className="grid grid-cols-2" style={{ gap: '8px' }}>
+                  <div className="flex items-center" style={{ gap: '8px' }}>
+                    <div className="rounded-full" style={{ height: '8px', width: '8px', backgroundColor: tipoMarcoColors.marco }} />
                     <span className="text-[10px]" style={{ color: colors.textSecondary }}>Marco</span>
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <div className="h-2 w-2 rounded-full" style={{ backgroundColor: tipoMarcoColors.medicao }} />
+                  <div className="flex items-center" style={{ gap: '8px' }}>
+                    <div className="rounded-full" style={{ height: '8px', width: '8px', backgroundColor: tipoMarcoColors.medicao }} />
                     <span className="text-[10px]" style={{ color: colors.textSecondary }}>Medição</span>
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <div className="h-2 w-2 rounded-full" style={{ backgroundColor: tipoMarcoColors.entrega }} />
+                  <div className="flex items-center" style={{ gap: '8px' }}>
+                    <div className="rounded-full" style={{ height: '8px', width: '8px', backgroundColor: tipoMarcoColors.entrega }} />
                     <span className="text-[10px]" style={{ color: colors.textSecondary }}>Entrega</span>
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <div className="h-2 w-2 rounded-full" style={{ backgroundColor: tipoMarcoColors.reuniao }} />
+                  <div className="flex items-center" style={{ gap: '8px' }}>
+                    <div className="rounded-full" style={{ height: '8px', width: '8px', backgroundColor: tipoMarcoColors.reuniao }} />
                     <span className="text-[10px]" style={{ color: colors.textSecondary }}>Reunião</span>
                   </div>
                 </div>
