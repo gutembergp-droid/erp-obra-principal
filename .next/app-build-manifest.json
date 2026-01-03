@@ -20,10 +20,10 @@
       "static/chunks/fd9d1056-85db25c1d06814bd.js",
       "static/chunks/117-dfa1287ad30fd871.js",
       "static/chunks/main-app-70a5454e0ad77fb6.js",
-      "static/css/4f8d1bad86fcc840.css",
+      "static/css/f33ce264c8656076.css",
       "static/chunks/216-c126542d025c5b8a.js",
-      "static/chunks/395-18d58f3615ecad13.js",
-      "static/chunks/app/layout-ee181b0f8da0af6a.js"
+      "static/chunks/704-becd36b7ef630516.js",
+      "static/chunks/app/layout-3e520997d595253c.js"
     ],
     "/comercial/comparativo/page": [
       "static/chunks/webpack-0f9d81f53d3d79c3.js",
@@ -39,13 +39,6 @@
       "static/chunks/main-app-70a5454e0ad77fb6.js",
       "static/chunks/app/comercial/medicao-mc/page-45b3e06708fc7b54.js"
     ],
-    "/comercial/medicao-mp/page": [
-      "static/chunks/webpack-0f9d81f53d3d79c3.js",
-      "static/chunks/fd9d1056-85db25c1d06814bd.js",
-      "static/chunks/117-dfa1287ad30fd871.js",
-      "static/chunks/main-app-70a5454e0ad77fb6.js",
-      "static/chunks/app/comercial/medicao-mp/page-7b5824d70505ead0.js"
-    ],
     "/financeiro/contas-pagar/page": [
       "static/chunks/webpack-0f9d81f53d3d79c3.js",
       "static/chunks/fd9d1056-85db25c1d06814bd.js",
@@ -53,6 +46,13 @@
       "static/chunks/main-app-70a5454e0ad77fb6.js",
       "static/chunks/216-c126542d025c5b8a.js",
       "static/chunks/app/financeiro/contas-pagar/page-85f0ff2314e78571.js"
+    ],
+    "/comercial/medicao-mp/page": [
+      "static/chunks/webpack-0f9d81f53d3d79c3.js",
+      "static/chunks/fd9d1056-85db25c1d06814bd.js",
+      "static/chunks/117-dfa1287ad30fd871.js",
+      "static/chunks/main-app-70a5454e0ad77fb6.js",
+      "static/chunks/app/comercial/medicao-mp/page-7b5824d70505ead0.js"
     ],
     "/financeiro/page": [
       "static/chunks/webpack-0f9d81f53d3d79c3.js",
@@ -95,14 +95,6 @@
       "static/chunks/216-c126542d025c5b8a.js",
       "static/chunks/app/rh/colaboradores/[id]/page-52a0aa951604507c.js"
     ],
-    "/rh/folha-pagamento/page": [
-      "static/chunks/webpack-0f9d81f53d3d79c3.js",
-      "static/chunks/fd9d1056-85db25c1d06814bd.js",
-      "static/chunks/117-dfa1287ad30fd871.js",
-      "static/chunks/main-app-70a5454e0ad77fb6.js",
-      "static/chunks/216-c126542d025c5b8a.js",
-      "static/chunks/app/rh/folha-pagamento/page-ea62ad14b44ab458.js"
-    ],
     "/page": [
       "static/chunks/webpack-0f9d81f53d3d79c3.js",
       "static/chunks/fd9d1056-85db25c1d06814bd.js",
@@ -117,6 +109,14 @@
       "static/chunks/main-app-70a5454e0ad77fb6.js",
       "static/chunks/216-c126542d025c5b8a.js",
       "static/chunks/app/rh/colaboradores/page-224c78c07ef2ff9b.js"
+    ],
+    "/rh/folha-pagamento/page": [
+      "static/chunks/webpack-0f9d81f53d3d79c3.js",
+      "static/chunks/fd9d1056-85db25c1d06814bd.js",
+      "static/chunks/117-dfa1287ad30fd871.js",
+      "static/chunks/main-app-70a5454e0ad77fb6.js",
+      "static/chunks/216-c126542d025c5b8a.js",
+      "static/chunks/app/rh/folha-pagamento/page-ea62ad14b44ab458.js"
     ],
     "/rh/page": [
       "static/chunks/webpack-0f9d81f53d3d79c3.js",
@@ -141,14 +141,6 @@
       "static/chunks/main-app-70a5454e0ad77fb6.js",
       "static/chunks/app/suprimentos/page-61859ed46212a6d6.js"
     ],
-    "/suprimentos/requisicoes/page": [
-      "static/chunks/webpack-0f9d81f53d3d79c3.js",
-      "static/chunks/fd9d1056-85db25c1d06814bd.js",
-      "static/chunks/117-dfa1287ad30fd871.js",
-      "static/chunks/main-app-70a5454e0ad77fb6.js",
-      "static/chunks/216-c126542d025c5b8a.js",
-      "static/chunks/app/suprimentos/requisicoes/page-331224374a6c7a0a.js"
-    ],
     "/suprimentos/requisicoes/[id]/page": [
       "static/chunks/webpack-0f9d81f53d3d79c3.js",
       "static/chunks/fd9d1056-85db25c1d06814bd.js",
@@ -156,6 +148,14 @@
       "static/chunks/main-app-70a5454e0ad77fb6.js",
       "static/chunks/216-c126542d025c5b8a.js",
       "static/chunks/app/suprimentos/requisicoes/[id]/page-d0bd913bc3d7cdf0.js"
+    ],
+    "/suprimentos/requisicoes/page": [
+      "static/chunks/webpack-0f9d81f53d3d79c3.js",
+      "static/chunks/fd9d1056-85db25c1d06814bd.js",
+      "static/chunks/117-dfa1287ad30fd871.js",
+      "static/chunks/main-app-70a5454e0ad77fb6.js",
+      "static/chunks/216-c126542d025c5b8a.js",
+      "static/chunks/app/suprimentos/requisicoes/page-331224374a6c7a0a.js"
     ]
   }
 }

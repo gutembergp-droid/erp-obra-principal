@@ -34,8 +34,9 @@ import {
   LogOut,
   HardHat,
   Home,
-  Settings,
   Search,
+  TrendingUp,
+  FolderOpen,
 } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { logout } from '@/services/api/authApi';
@@ -48,12 +49,26 @@ interface MenuItem {
   badge?: number;
 }
 
-interface MenuGroup {
+interface SubSection {
   id: string;
   title: string;
   icon: React.ElementType;
   items: MenuItem[];
+}
+
+interface MenuGroup {
+  id: string;
+  title: string;
+  icon: React.ElementType;
+  items?: MenuItem[];
+  subSections?: SubSection[];
   defaultOpen?: boolean;
+}
+
+interface MenuCategory {
+  id: string;
+  label: string;
+  groups: MenuGroup[];
 }
 
 interface SidebarProps {
@@ -75,6 +90,9 @@ export default function Sidebar({ obraAtiva }: SidebarProps) {
     'intranet': true,
   });
 
+  // Estado para controlar subseções expandidas
+  const [expandedSubSections, setExpandedSubSections] = useState<Record<string, boolean>>({});
+
   // Dados padrão da obra ativa
   const obra = obraAtiva || {
     id: '',
@@ -84,16 +102,6 @@ export default function Sidebar({ obraAtiva }: SidebarProps) {
     status: 'Em Andamento',
   };
 
-  // Detecta qual grupo deve estar aberto baseado na rota atual
-  useEffect(() => {
-    const currentGroup = menuGroups.find(group => 
-      group.items.some(item => pathname.startsWith(item.path) || pathname === item.path)
-    );
-    if (currentGroup) {
-      setExpandedGroups(prev => ({ ...prev, [currentGroup.id]: true }));
-    }
-  }, [pathname]);
-
   // Toggle de grupo
   const toggleGroup = (groupId: string) => {
     setExpandedGroups(prev => ({
@@ -102,140 +110,180 @@ export default function Sidebar({ obraAtiva }: SidebarProps) {
     }));
   };
 
-  // Estrutura do menu reorganizada e simplificada
-  const menuGroups: MenuGroup[] = [
+  // Toggle de subseção
+  const toggleSubSection = (subSectionId: string) => {
+    setExpandedSubSections(prev => ({
+      ...prev,
+      [subSectionId]: !prev[subSectionId],
+    }));
+  };
+
+  // Estrutura do menu organizada por categorias
+  const menuCategories: MenuCategory[] = [
     {
-      id: 'intranet',
-      title: 'Intranet',
-      icon: Home,
-      defaultOpen: true,
-      items: [
-        { name: 'Dashboard da Obra', icon: Building2, path: '/' },
-        { name: 'Comunicados', icon: MessageSquare, path: '/comunicados', badge: 2 },
-        { name: 'Minhas Tarefas', icon: ListTodo, path: '/tarefas', badge: 5 },
-        { name: 'Agenda', icon: Calendar, path: '/agenda' },
-        { name: 'Alertas de Gates', icon: AlertTriangle, path: '/alertas-gates' },
-        { name: 'Assistente IA', icon: Bot, path: '/assistente' },
+      id: 'comum',
+      label: 'COMUM',
+      groups: [
+        {
+          id: 'intranet',
+          title: 'Intranet',
+          icon: Home,
+          defaultOpen: true,
+          items: [
+            { name: 'Dashboard da Obra', icon: Building2, path: '/' },
+            { name: 'Comunicados', icon: MessageSquare, path: '/comunicados', badge: 2 },
+            { name: 'Minhas Tarefas', icon: ListTodo, path: '/tarefas', badge: 5 },
+            { name: 'Agenda', icon: Calendar, path: '/agenda' },
+            { name: 'Alertas de Gates', icon: AlertTriangle, path: '/alertas-gates' },
+            { name: 'Assistente IA', icon: Bot, path: '/assistente' },
+          ],
+        },
       ],
     },
     {
       id: 'corporativo',
-      title: 'Corporativo',
-      icon: Briefcase,
-      items: [
-        { name: 'Clientes', icon: Users, path: '/corporativo/clientes' },
-        { name: 'Contratos', icon: FileText, path: '/corporativo/contratos' },
-        { name: 'Portfólio de Obras', icon: Building2, path: '/corporativo/portfolio' },
-        { name: 'Homologações', icon: CheckCircle2, path: '/corporativo/homologacoes' },
+      label: 'MÓDULO CORPORATIVO',
+      groups: [
+        {
+          id: 'corporativo',
+          title: 'Corporativo',
+          icon: Briefcase,
+          items: [
+            { name: 'Clientes', icon: Users, path: '/corporativo/clientes' },
+            { name: 'Contratos', icon: FileText, path: '/corporativo/contratos' },
+            { name: 'Portfólio de Obras', icon: Building2, path: '/corporativo/portfolio' },
+            { name: 'Homologações', icon: CheckCircle2, path: '/corporativo/homologacoes' },
+          ],
+        },
+        {
+          id: 'obras',
+          title: 'Gestão de Obras',
+          icon: HardHat,
+          items: [
+            { name: 'Todas as Obras', icon: Building2, path: '/obras' },
+          ],
+        },
       ],
     },
     {
-      id: 'obras',
-      title: 'Gestão de Obras',
-      icon: HardHat,
-      items: [
-        { name: 'Todas as Obras', icon: Building2, path: '/obras' },
-      ],
-    },
-    {
-      id: 'comercial',
-      title: 'Comercial',
-      icon: DollarSign,
-      items: [
-        { name: 'Estruturação (EAP)', icon: FileSpreadsheet, path: '/comercial/estruturacao' },
-        { name: 'Medição Produção', icon: ClipboardList, path: '/comercial/medicao-mp' },
-        { name: 'Medição Cliente', icon: DollarSign, path: '/comercial/medicao-mc' },
-        { name: 'Comparativo MP x MC', icon: ArrowLeftRight, path: '/comercial/comparativo' },
-        { name: 'Aditivos', icon: FilePlus, path: '/comercial/aditivos' },
-        { name: 'Glosas', icon: FileX, path: '/comercial/glosas' },
-        { name: 'Faturamento', icon: Receipt, path: '/comercial/faturamento' },
-      ],
-    },
-    {
-      id: 'engenharia',
-      title: 'Engenharia',
-      icon: Wrench,
-      items: [
-        { name: 'Projetos', icon: FileText, path: '/engenharia/projetos' },
-        { name: 'Métodos Construtivos', icon: Wrench, path: '/engenharia/metodos' },
-      ],
-    },
-    {
-      id: 'planejamento',
-      title: 'Planejamento',
-      icon: Calendar,
-      items: [
-        { name: 'Cronograma', icon: Calendar, path: '/planejamento/cronograma' },
-        { name: 'Avanço Físico', icon: ClipboardList, path: '/planejamento/avanco' },
-        { name: 'Fechamento Mensal', icon: CheckCircle2, path: '/planejamento/fechamento' },
-      ],
-    },
-    {
-      id: 'producao',
-      title: 'Produção',
-      icon: Factory,
-      items: [
-        { name: 'Diário de Obra', icon: FileText, path: '/producao/diario' },
-        { name: 'Apontamentos', icon: ClipboardList, path: '/producao/apontamentos' },
-        { name: 'Equipamentos', icon: Factory, path: '/producao/equipamentos' },
-      ],
-    },
-    {
-      id: 'suprimentos',
-      title: 'Suprimentos',
-      icon: Package,
-      items: [
-        { name: 'Requisições', icon: FileText, path: '/suprimentos/requisicoes' },
-        { name: 'Pedidos de Compra', icon: Package, path: '/suprimentos/pedidos' },
-        { name: 'Controle de Estoque', icon: Package, path: '/suprimentos/estoque' },
-      ],
-    },
-    {
-      id: 'custos',
-      title: 'Custos',
-      icon: Wallet,
-      items: [
-        { name: 'Apropriação', icon: Wallet, path: '/custos/apropriacao' },
-        { name: 'Análise de Desvios', icon: ArrowLeftRight, path: '/custos/desvios' },
-      ],
-    },
-    {
-      id: 'qualidade',
-      title: 'Qualidade',
-      icon: CheckCircle2,
-      items: [
-        { name: 'Inspeções', icon: CheckCircle2, path: '/qualidade/inspecoes' },
-        { name: 'Não Conformidades', icon: AlertTriangle, path: '/qualidade/nao-conformidades' },
-        { name: 'Ensaios', icon: FileText, path: '/qualidade/ensaios' },
-      ],
-    },
-    {
-      id: 'ssma',
-      title: 'SSMA',
-      icon: Shield,
-      items: [
-        { name: 'Segurança', icon: Shield, path: '/ssma/seguranca' },
-        { name: 'Incidentes', icon: AlertTriangle, path: '/ssma/incidentes' },
-        { name: 'Treinamentos', icon: Users, path: '/ssma/treinamentos' },
-      ],
-    },
-    {
-      id: 'meio-ambiente',
-      title: 'Meio Ambiente',
-      icon: Leaf,
-      items: [
-        { name: 'Licenças', icon: FileText, path: '/meio-ambiente/licencas' },
-        { name: 'Monitoramento', icon: Leaf, path: '/meio-ambiente/monitoramento' },
-      ],
-    },
-    {
-      id: 'administrativo',
-      title: 'Administrativo',
-      icon: Building,
-      items: [
-        { name: 'RH / Pessoal', icon: Users, path: '/administrativo/rh' },
-        { name: 'Patrimônio', icon: Building, path: '/administrativo/patrimonio' },
-        { name: 'Documentos', icon: FileText, path: '/administrativo/documentos' },
+      id: 'departamentos',
+      label: 'DEPARTAMENTOS DA OBRA',
+      groups: [
+        {
+          id: 'comercial',
+          title: 'Comercial',
+          icon: DollarSign,
+          subSections: [
+            {
+              id: 'estruturacao',
+              title: 'Estruturação',
+              icon: FileSpreadsheet,
+              items: [
+                { name: 'Estruturação (EAP)', icon: FileSpreadsheet, path: '/comercial/estruturacao' },
+              ],
+            },
+            {
+              id: 'receita',
+              title: 'Receita',
+              icon: TrendingUp,
+              items: [
+                { name: 'Medição Produção (MP)', icon: ClipboardList, path: '/comercial/medicao-mp' },
+                { name: 'Medição Cliente (MC)', icon: DollarSign, path: '/comercial/medicao-mc' },
+                { name: 'Comparativo MP x MC', icon: ArrowLeftRight, path: '/comercial/comparativo' },
+                { name: 'Aditivos', icon: FilePlus, path: '/comercial/aditivos' },
+                { name: 'Glosas', icon: FileX, path: '/comercial/glosas' },
+                { name: 'Faturamento', icon: Receipt, path: '/comercial/faturamento' },
+              ],
+            },
+            {
+              id: 'suprimentos',
+              title: 'Suprimentos',
+              icon: Package,
+              items: [
+                { name: 'Requisições', icon: FileText, path: '/suprimentos/requisicoes' },
+                { name: 'Pedidos de Compra', icon: Package, path: '/suprimentos/pedidos' },
+                { name: 'Controle de Estoque', icon: Package, path: '/suprimentos/estoque' },
+              ],
+            },
+            {
+              id: 'custos',
+              title: 'Custos',
+              icon: Wallet,
+              items: [
+                { name: 'Apropriação', icon: Wallet, path: '/custos/apropriacao' },
+                { name: 'Análise de Desvios', icon: ArrowLeftRight, path: '/custos/desvios' },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'engenharia',
+          title: 'Engenharia',
+          icon: Wrench,
+          items: [
+            { name: 'Projetos', icon: FileText, path: '/engenharia/projetos' },
+            { name: 'Métodos Construtivos', icon: Wrench, path: '/engenharia/metodos' },
+          ],
+        },
+        {
+          id: 'planejamento',
+          title: 'Planejamento',
+          icon: Calendar,
+          items: [
+            { name: 'Cronograma', icon: Calendar, path: '/planejamento/cronograma' },
+            { name: 'Avanço Físico', icon: ClipboardList, path: '/planejamento/avanco' },
+            { name: 'Fechamento Mensal', icon: CheckCircle2, path: '/planejamento/fechamento' },
+          ],
+        },
+        {
+          id: 'producao',
+          title: 'Produção',
+          icon: Factory,
+          items: [
+            { name: 'Diário de Obra', icon: FileText, path: '/producao/diario' },
+            { name: 'Apontamentos', icon: ClipboardList, path: '/producao/apontamentos' },
+            { name: 'Equipamentos', icon: Factory, path: '/producao/equipamentos' },
+          ],
+        },
+        {
+          id: 'qualidade',
+          title: 'Qualidade',
+          icon: CheckCircle2,
+          items: [
+            { name: 'Inspeções', icon: CheckCircle2, path: '/qualidade/inspecoes' },
+            { name: 'Não Conformidades', icon: AlertTriangle, path: '/qualidade/nao-conformidades' },
+            { name: 'Ensaios', icon: FileText, path: '/qualidade/ensaios' },
+          ],
+        },
+        {
+          id: 'ssma',
+          title: 'SSMA',
+          icon: Shield,
+          items: [
+            { name: 'Segurança', icon: Shield, path: '/ssma/seguranca' },
+            { name: 'Incidentes', icon: AlertTriangle, path: '/ssma/incidentes' },
+            { name: 'Treinamentos', icon: Users, path: '/ssma/treinamentos' },
+          ],
+        },
+        {
+          id: 'meio-ambiente',
+          title: 'Meio Ambiente',
+          icon: Leaf,
+          items: [
+            { name: 'Licenças', icon: FileText, path: '/meio-ambiente/licencas' },
+            { name: 'Monitoramento', icon: Leaf, path: '/meio-ambiente/monitoramento' },
+          ],
+        },
+        {
+          id: 'administrativo',
+          title: 'Administrativo',
+          icon: Building,
+          items: [
+            { name: 'RH / Pessoal', icon: Users, path: '/administrativo/rh' },
+            { name: 'Patrimônio', icon: Building, path: '/administrativo/patrimonio' },
+            { name: 'Documentos', icon: FileText, path: '/administrativo/documentos' },
+          ],
+        },
       ],
     },
   ];
@@ -248,11 +296,24 @@ export default function Sidebar({ obraAtiva }: SidebarProps) {
 
   // Verifica se um grupo tem item ativo
   const hasActiveItem = (group: MenuGroup): boolean => {
-    return group.items.some(item => isItemActive(item.path));
+    if (group.items) {
+      return group.items.some(item => isItemActive(item.path));
+    }
+    if (group.subSections) {
+      return group.subSections.some(sub => 
+        sub.items.some(item => isItemActive(item.path))
+      );
+    }
+    return false;
+  };
+
+  // Verifica se uma subseção tem item ativo
+  const hasActiveSubSection = (subSection: SubSection): boolean => {
+    return subSection.items.some(item => isItemActive(item.path));
   };
 
   // Renderiza um item de menu
-  const renderMenuItem = (item: MenuItem) => {
+  const renderMenuItem = (item: MenuItem, indent: number = 0) => {
     const isActive = isItemActive(item.path);
     const Icon = item.icon;
 
@@ -262,6 +323,7 @@ export default function Sidebar({ obraAtiva }: SidebarProps) {
         href={item.path}
         className="flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all duration-200"
         style={{
+          marginLeft: indent > 0 ? `${indent * 8}px` : 0,
           backgroundColor: isActive ? `${colors.accent}15` : 'transparent',
           color: isActive ? colors.accent : colors.textSecondary,
         }}
@@ -279,8 +341,8 @@ export default function Sidebar({ obraAtiva }: SidebarProps) {
         }}
       >
         <div className="flex items-center gap-3">
-          <Icon size={18} style={{ opacity: isActive ? 1 : 0.7 }} />
-          <span className="font-medium">{item.name}</span>
+          <Icon size={16} style={{ opacity: isActive ? 1 : 0.7 }} />
+          <span>{item.name}</span>
         </div>
         {item.badge && (
           <span 
@@ -291,6 +353,51 @@ export default function Sidebar({ obraAtiva }: SidebarProps) {
           </span>
         )}
       </Link>
+    );
+  };
+
+  // Renderiza uma subseção (para o Comercial)
+  const renderSubSection = (subSection: SubSection) => {
+    const isExpanded = expandedSubSections[subSection.id];
+    const hasActive = hasActiveSubSection(subSection);
+    const Icon = subSection.icon;
+
+    return (
+      <div key={subSection.id} className="mb-1">
+        <button
+          onClick={() => toggleSubSection(subSection.id)}
+          className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all duration-200"
+          style={{
+            backgroundColor: hasActive && !isExpanded ? `${colors.accent}10` : 'transparent',
+            color: hasActive ? colors.accent : colors.textSecondary,
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = colors.bgCardHover;
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = hasActive && !isExpanded ? `${colors.accent}10` : 'transparent';
+          }}
+        >
+          <div className="flex items-center gap-3">
+            <Icon size={16} style={{ color: hasActive ? colors.accent : colors.textMuted }} />
+            <span className="font-medium">{subSection.title}</span>
+          </div>
+          {isExpanded ? (
+            <ChevronDown size={14} style={{ color: colors.textMuted }} />
+          ) : (
+            <ChevronRight size={14} style={{ color: colors.textMuted }} />
+          )}
+        </button>
+
+        {isExpanded && (
+          <div 
+            className="ml-4 mt-1 pl-3 space-y-0.5 border-l"
+            style={{ borderColor: hasActive ? colors.accent : colors.borderPrimary }}
+          >
+            {subSection.items.map(item => renderMenuItem(item, 0))}
+          </div>
+        )}
+      </div>
     );
   };
 
@@ -317,19 +424,10 @@ export default function Sidebar({ obraAtiva }: SidebarProps) {
           }}
         >
           <div className="flex items-center gap-3">
-            <Icon size={20} style={{ color: hasActive ? colors.accent : colors.textMuted }} />
+            <Icon size={18} style={{ color: hasActive ? colors.accent : colors.textMuted }} />
             <span>{group.title}</span>
           </div>
           <div className="flex items-center gap-2">
-            {/* Badge total do grupo */}
-            {group.items.some(i => i.badge) && !isExpanded && (
-              <span 
-                className="px-1.5 py-0.5 text-xs font-semibold rounded-full"
-                style={{ backgroundColor: colors.accent, color: '#FFFFFF' }}
-              >
-                {group.items.reduce((sum, i) => sum + (i.badge || 0), 0)}
-              </span>
-            )}
             {isExpanded ? (
               <ChevronDown size={16} style={{ color: colors.textMuted }} />
             ) : (
@@ -338,13 +436,14 @@ export default function Sidebar({ obraAtiva }: SidebarProps) {
           </div>
         </button>
 
-        {/* Itens do grupo */}
+        {/* Itens ou Subseções do grupo */}
         {isExpanded && (
           <div 
             className="ml-3 mt-1 pl-3 space-y-0.5 border-l-2"
             style={{ borderColor: hasActive ? colors.accent : colors.borderPrimary }}
           >
-            {group.items.map(item => renderMenuItem(item))}
+            {group.items && group.items.map(item => renderMenuItem(item))}
+            {group.subSections && group.subSections.map(sub => renderSubSection(sub))}
           </div>
         )}
       </div>
@@ -355,7 +454,7 @@ export default function Sidebar({ obraAtiva }: SidebarProps) {
     <aside 
       className="w-64 flex flex-col h-screen border-r transition-colors duration-200"
       style={{ 
-        backgroundColor: colors.sidebarBg, 
+        backgroundColor: colors.topbarBg, // Mesmo fundo do Topbar (claro)
         borderColor: colors.borderPrimary 
       }}
     >
@@ -428,10 +527,23 @@ export default function Sidebar({ obraAtiva }: SidebarProps) {
 
       {/* Menu de Navegação */}
       <nav className="flex-1 overflow-y-auto px-3 pb-3">
-        {menuGroups.map(group => renderMenuGroup(group))}
+        {menuCategories.map(category => (
+          <div key={category.id} className="mb-4">
+            {/* Título da Categoria */}
+            <div 
+              className="px-3 py-2 text-xs font-bold tracking-wider"
+              style={{ color: colors.textMuted }}
+            >
+              {category.label}
+            </div>
+            
+            {/* Grupos da Categoria */}
+            {category.groups.map(group => renderMenuGroup(group))}
+          </div>
+        ))}
       </nav>
 
-      {/* Rodapé - Configurações e Logout */}
+      {/* Rodapé - Logout */}
       <div 
         className="p-3 border-t"
         style={{ borderColor: colors.borderPrimary }}
