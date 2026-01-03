@@ -512,31 +512,16 @@ export default function Sidebar({ obraAtiva }: SidebarProps) {
         </div>
       </div>
 
-      {/* NAVEGAÇÃO RÁPIDA - Redesenhada */}
+      {/* NAVEGAÇÃO RÁPIDA - Somente Ícones */}
       <div 
         className="px-4 py-3 border-b"
         style={{ borderColor: colors.borderPrimary }}
       >
-        {/* Título da seção */}
-        <div className="flex items-center justify-between mb-3">
-          <span 
-            className="text-xs font-semibold uppercase tracking-wider"
-            style={{ color: colors.textMuted }}
-          >
-            Acesso Rápido
-          </span>
-          {totalBadges > 0 && (
-            <span 
-              className="text-xs font-bold px-2 py-0.5 rounded-full"
-              style={{ backgroundColor: colors.accent, color: '#FFFFFF' }}
-            >
-              {totalBadges}
-            </span>
-          )}
-        </div>
-        
-        {/* Grid de ícones 3x2 */}
-        <div className="grid grid-cols-3 gap-2">
+        {/* Barra horizontal de ícones */}
+        <div 
+          className="flex items-center justify-between p-2 rounded-xl"
+          style={{ backgroundColor: colors.bgCard, border: `1px solid ${colors.borderPrimary}` }}
+        >
           {quickNavItems.map((item) => {
             const isActive = isItemActive(item.path);
             const Icon = item.icon;
@@ -545,26 +530,21 @@ export default function Sidebar({ obraAtiva }: SidebarProps) {
               <Link
                 key={item.id}
                 href={item.path}
-                className="flex flex-col items-center justify-center p-2.5 rounded-xl transition-all duration-200 relative group"
+                className="flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-200 relative"
                 style={{
-                  backgroundColor: isActive ? `${colors.accent}15` : colors.bgCard,
-                  color: isActive ? colors.accent : colors.textSecondary,
-                  border: `1px solid ${isActive ? colors.accent + '30' : colors.borderPrimary}`,
+                  backgroundColor: isActive ? `${colors.accent}` : 'transparent',
+                  color: isActive ? '#FFFFFF' : colors.textMuted,
                 }}
                 onMouseEnter={(e) => {
                   if (!isActive) {
                     e.currentTarget.style.backgroundColor = colors.bgCardHover;
-                    e.currentTarget.style.borderColor = colors.accent + '20';
-                    e.currentTarget.style.color = colors.textPrimary;
-                    e.currentTarget.style.transform = 'translateY(-1px)';
+                    e.currentTarget.style.color = colors.accent;
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (!isActive) {
-                    e.currentTarget.style.backgroundColor = colors.bgCard;
-                    e.currentTarget.style.borderColor = colors.borderPrimary;
-                    e.currentTarget.style.color = colors.textSecondary;
-                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = colors.textMuted;
                   }
                 }}
                 title={item.name}
@@ -572,8 +552,8 @@ export default function Sidebar({ obraAtiva }: SidebarProps) {
                 {/* Badge */}
                 {item.badge && (
                   <span 
-                    className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] text-[10px] font-bold rounded-full flex items-center justify-center px-1 shadow-sm"
-                    style={{ backgroundColor: colors.accent, color: '#FFFFFF' }}
+                    className="absolute -top-1 -right-1 min-w-[16px] h-[16px] text-[9px] font-bold rounded-full flex items-center justify-center shadow-sm"
+                    style={{ backgroundColor: isActive ? '#FFFFFF' : colors.accent, color: isActive ? colors.accent : '#FFFFFF' }}
                   >
                     {item.badge}
                   </span>
@@ -583,16 +563,7 @@ export default function Sidebar({ obraAtiva }: SidebarProps) {
                 <Icon 
                   size={20} 
                   strokeWidth={isActive ? 2.5 : 2}
-                  className="mb-1"
                 />
-                
-                {/* Label */}
-                <span 
-                  className="text-[11px] font-medium text-center leading-tight"
-                  style={{ color: isActive ? colors.accent : colors.textMuted }}
-                >
-                  {item.shortName}
-                </span>
               </Link>
             );
           })}
