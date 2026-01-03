@@ -1,10 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  LayoutDashboard,
   Building2,
   MessageSquare,
   ListTodo,
@@ -36,7 +35,6 @@ import {
   Home,
   Search,
   TrendingUp,
-  FolderOpen,
 } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { logout } from '@/services/api/authApi';
@@ -71,6 +69,14 @@ interface MenuCategory {
   groups: MenuGroup[];
 }
 
+interface QuickNavItem {
+  id: string;
+  name: string;
+  icon: React.ElementType;
+  path: string;
+  badge?: number;
+}
+
 interface SidebarProps {
   obraAtiva?: {
     id: string;
@@ -86,9 +92,7 @@ export default function Sidebar({ obraAtiva }: SidebarProps) {
   const { colors } = useTheme();
   
   // Estado para controlar grupos expandidos
-  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({
-    'intranet': true,
-  });
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
 
   // Estado para controlar subseções expandidas
   const [expandedSubSections, setExpandedSubSections] = useState<Record<string, boolean>>({});
@@ -118,28 +122,18 @@ export default function Sidebar({ obraAtiva }: SidebarProps) {
     }));
   };
 
-  // Estrutura do menu organizada por categorias
+  // Itens de navegação rápida (substitui a Intranet)
+  const quickNavItems: QuickNavItem[] = [
+    { id: 'home', name: 'Home', icon: Home, path: '/' },
+    { id: 'comunicados', name: 'Msgs', icon: MessageSquare, path: '/comunicados', badge: 2 },
+    { id: 'tarefas', name: 'Tarefas', icon: ListTodo, path: '/tarefas', badge: 5 },
+    { id: 'agenda', name: 'Agenda', icon: Calendar, path: '/agenda' },
+    { id: 'alertas', name: 'Alertas', icon: AlertTriangle, path: '/alertas-gates' },
+    { id: 'ia', name: 'IA', icon: Bot, path: '/assistente' },
+  ];
+
+  // Estrutura do menu organizada por categorias (SEM Intranet)
   const menuCategories: MenuCategory[] = [
-    {
-      id: 'comum',
-      label: 'COMUM',
-      groups: [
-        {
-          id: 'intranet',
-          title: 'Intranet',
-          icon: Home,
-          defaultOpen: true,
-          items: [
-            { name: 'Dashboard da Obra', icon: Building2, path: '/' },
-            { name: 'Comunicados', icon: MessageSquare, path: '/comunicados', badge: 2 },
-            { name: 'Minhas Tarefas', icon: ListTodo, path: '/tarefas', badge: 5 },
-            { name: 'Agenda', icon: Calendar, path: '/agenda' },
-            { name: 'Alertas de Gates', icon: AlertTriangle, path: '/alertas-gates' },
-            { name: 'Assistente IA', icon: Bot, path: '/assistente' },
-          ],
-        },
-      ],
-    },
     {
       id: 'corporativo',
       label: 'MÓDULO CORPORATIVO',
@@ -454,7 +448,7 @@ export default function Sidebar({ obraAtiva }: SidebarProps) {
     <aside 
       className="w-64 flex flex-col h-screen border-r transition-colors duration-200"
       style={{ 
-        backgroundColor: colors.topbarBg, // Mesmo fundo do Topbar (claro)
+        backgroundColor: colors.topbarBg,
         borderColor: colors.borderPrimary 
       }}
     >
@@ -506,6 +500,58 @@ export default function Sidebar({ obraAtiva }: SidebarProps) {
           >
             {obra.nome}
           </p>
+        </div>
+      </div>
+
+      {/* NAVEGAÇÃO RÁPIDA - Ícones + Badges (Opção 1) */}
+      <div 
+        className="px-4 py-3 border-b"
+        style={{ borderColor: colors.borderPrimary }}
+      >
+        <div 
+          className="flex items-center justify-between p-2 rounded-lg"
+          style={{ backgroundColor: colors.bgCardHover }}
+        >
+          {quickNavItems.map((item) => {
+            const isActive = isItemActive(item.path);
+            const Icon = item.icon;
+            
+            return (
+              <Link
+                key={item.id}
+                href={item.path}
+                className="flex flex-col items-center p-2 rounded-lg transition-all duration-200 relative"
+                style={{
+                  backgroundColor: isActive ? `${colors.accent}15` : 'transparent',
+                  color: isActive ? colors.accent : colors.textMuted,
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.backgroundColor = colors.bgCard;
+                    e.currentTarget.style.color = colors.textPrimary;
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = colors.textMuted;
+                  }
+                }}
+                title={item.name}
+              >
+                <Icon size={18} />
+                {item.badge && (
+                  <span 
+                    className="absolute -top-1 -right-1 w-4 h-4 text-[10px] font-bold rounded-full flex items-center justify-center"
+                    style={{ backgroundColor: colors.accent, color: '#FFFFFF' }}
+                  >
+                    {item.badge}
+                  </span>
+                )}
+                <span className="text-[10px] mt-1 font-medium">{item.name}</span>
+              </Link>
+            );
+          })}
         </div>
       </div>
 
