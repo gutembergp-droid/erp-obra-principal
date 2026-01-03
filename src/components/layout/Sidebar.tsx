@@ -1,12 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
   Building2,
-  HardHat,
   MessageSquare,
   ListTodo,
   Calendar,
@@ -33,28 +32,28 @@ import {
   ChevronDown,
   ChevronRight,
   LogOut,
+  HardHat,
+  Home,
+  Settings,
+  Search,
 } from 'lucide-react';
+import { useTheme } from '@/contexts/ThemeContext';
 import { logout } from '@/services/api/authApi';
 
 // Tipos
 interface MenuItem {
   name: string;
-  icon: React.ReactNode;
+  icon: React.ElementType;
   path: string;
-  badge?: number;
-  submenu?: SubMenuItem[];
-}
-
-interface SubMenuItem {
-  name: string;
-  path: string;
-  icon?: React.ReactNode;
   badge?: number;
 }
 
-interface MenuSection {
+interface MenuGroup {
+  id: string;
   title: string;
+  icon: React.ElementType;
   items: MenuItem[];
+  defaultOpen?: boolean;
 }
 
 interface SidebarProps {
@@ -68,243 +67,226 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ obraAtiva }: SidebarProps) {
-  const pathname = usePathname();
+  const pathname = usePathname() || '';
+  const { colors } = useTheme();
   
-  // Estado para controlar seções expandidas
-  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
-    'INTRANET / COMUM': true,
-    'COMERCIAL DA OBRA': true,
+  // Estado para controlar grupos expandidos
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({
+    'intranet': true,
   });
-
-  // Estado para controlar submenus expandidos
-  const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({});
 
   // Dados padrão da obra ativa
   const obra = obraAtiva || {
     id: '',
-    codigo: 'SEM-OBRA',
-    nome: 'Selecione uma Obra',
-    cliente: '-',
-    status: 'Inativo',
+    codigo: 'BR-101-LOTE 2',
+    nome: 'Duplicação Rodovia BR-101 - Lote 2',
+    cliente: 'DNIT',
+    status: 'Em Andamento',
   };
 
-  // Toggle de seção
-  const toggleSection = (title: string) => {
-    setExpandedSections(prev => ({
+  // Detecta qual grupo deve estar aberto baseado na rota atual
+  useEffect(() => {
+    const currentGroup = menuGroups.find(group => 
+      group.items.some(item => pathname.startsWith(item.path) || pathname === item.path)
+    );
+    if (currentGroup) {
+      setExpandedGroups(prev => ({ ...prev, [currentGroup.id]: true }));
+    }
+  }, [pathname]);
+
+  // Toggle de grupo
+  const toggleGroup = (groupId: string) => {
+    setExpandedGroups(prev => ({
       ...prev,
-      [title]: !prev[title],
+      [groupId]: !prev[groupId],
     }));
   };
 
-  // Toggle de submenu
-  const toggleMenu = (name: string) => {
-    setExpandedMenus(prev => ({
-      ...prev,
-      [name]: !prev[name],
-    }));
-  };
-
-  // Estrutura do menu conforme Memorial Descritivo
-  const menuSections: MenuSection[] = [
+  // Estrutura do menu reorganizada e simplificada
+  const menuGroups: MenuGroup[] = [
     {
-      title: 'INTRANET / COMUM',
+      id: 'intranet',
+      title: 'Intranet',
+      icon: Home,
+      defaultOpen: true,
       items: [
-        { name: 'Dashboard Corporativo', icon: <LayoutDashboard size={18} />, path: '/dashboard-corporativo' },
-        { name: 'Dashboard da Obra', icon: <Building2 size={18} />, path: '/' },
-        { name: 'Comunicados', icon: <MessageSquare size={18} />, path: '/comunicados', badge: 2 },
-        { name: 'Minhas Tarefas', icon: <ListTodo size={18} />, path: '/tarefas', badge: 5 },
-        { name: 'Agenda', icon: <Calendar size={18} />, path: '/agenda' },
-        { name: 'Alertas de Gates', icon: <AlertTriangle size={18} />, path: '/alertas-gates' },
-        { name: 'Assistente IA', icon: <Bot size={18} />, path: '/assistente' },
+        { name: 'Dashboard da Obra', icon: Building2, path: '/' },
+        { name: 'Comunicados', icon: MessageSquare, path: '/comunicados', badge: 2 },
+        { name: 'Minhas Tarefas', icon: ListTodo, path: '/tarefas', badge: 5 },
+        { name: 'Agenda', icon: Calendar, path: '/agenda' },
+        { name: 'Alertas de Gates', icon: AlertTriangle, path: '/alertas-gates' },
+        { name: 'Assistente IA', icon: Bot, path: '/assistente' },
       ],
     },
     {
-      title: 'MÓDULO CORPORATIVO',
+      id: 'corporativo',
+      title: 'Corporativo',
+      icon: Briefcase,
       items: [
-        { name: 'Clientes', icon: <Users size={18} />, path: '/corporativo/clientes' },
-        { name: 'Contratos', icon: <FileText size={18} />, path: '/corporativo/contratos' },
-        { name: 'Portfólio de Obras', icon: <Briefcase size={18} />, path: '/corporativo/portfolio' },
-        { name: 'Homologações', icon: <CheckCircle2 size={18} />, path: '/corporativo/homologacoes' },
+        { name: 'Clientes', icon: Users, path: '/corporativo/clientes' },
+        { name: 'Contratos', icon: FileText, path: '/corporativo/contratos' },
+        { name: 'Portfólio de Obras', icon: Building2, path: '/corporativo/portfolio' },
+        { name: 'Homologações', icon: CheckCircle2, path: '/corporativo/homologacoes' },
       ],
     },
     {
-      title: 'OBRAS',
+      id: 'obras',
+      title: 'Gestão de Obras',
+      icon: HardHat,
       items: [
-        { name: 'Gestão de Obras', icon: <HardHat size={18} />, path: '/obras' },
+        { name: 'Todas as Obras', icon: Building2, path: '/obras' },
       ],
     },
     {
-      title: 'COMERCIAL DA OBRA',
+      id: 'comercial',
+      title: 'Comercial',
+      icon: DollarSign,
       items: [
-        { 
-          name: 'Estruturação (EAP)', 
-          icon: <FileSpreadsheet size={18} />, 
-          path: '/comercial/estruturacao',
-          submenu: [
-            { name: 'Baseline Comercial', path: '/comercial/baseline' },
-          ],
-        },
-        { name: 'Medição Produção (MP)', icon: <ClipboardList size={18} />, path: '/comercial/medicao-mp' },
-        { name: 'Medição Cliente (MC)', icon: <DollarSign size={18} />, path: '/comercial/medicao-mc' },
-        { name: 'Comparativo MP x MC', icon: <ArrowLeftRight size={18} />, path: '/comercial/comparativo' },
-        { name: 'Aditivos', icon: <FilePlus size={18} />, path: '/comercial/aditivos' },
-        { name: 'Glosas', icon: <FileX size={18} />, path: '/comercial/glosas' },
-        { name: 'Faturamento', icon: <Receipt size={18} />, path: '/comercial/faturamento' },
+        { name: 'Estruturação (EAP)', icon: FileSpreadsheet, path: '/comercial/estruturacao' },
+        { name: 'Medição Produção', icon: ClipboardList, path: '/comercial/medicao-mp' },
+        { name: 'Medição Cliente', icon: DollarSign, path: '/comercial/medicao-mc' },
+        { name: 'Comparativo MP x MC', icon: ArrowLeftRight, path: '/comercial/comparativo' },
+        { name: 'Aditivos', icon: FilePlus, path: '/comercial/aditivos' },
+        { name: 'Glosas', icon: FileX, path: '/comercial/glosas' },
+        { name: 'Faturamento', icon: Receipt, path: '/comercial/faturamento' },
       ],
     },
     {
-      title: 'ENGENHARIA',
+      id: 'engenharia',
+      title: 'Engenharia',
+      icon: Wrench,
       items: [
-        { name: 'Projetos', icon: <FileText size={18} />, path: '/engenharia/projetos' },
-        { name: 'Métodos Construtivos', icon: <Wrench size={18} />, path: '/engenharia/metodos' },
+        { name: 'Projetos', icon: FileText, path: '/engenharia/projetos' },
+        { name: 'Métodos Construtivos', icon: Wrench, path: '/engenharia/metodos' },
       ],
     },
     {
-      title: 'PLANEJAMENTO & CONTROLE',
+      id: 'planejamento',
+      title: 'Planejamento',
+      icon: Calendar,
       items: [
-        { name: 'Cronograma', icon: <Calendar size={18} />, path: '/planejamento/cronograma' },
-        { name: 'Avanço Físico', icon: <ClipboardList size={18} />, path: '/planejamento/avanco' },
-        { name: 'Fechamento Mensal', icon: <CheckCircle2 size={18} />, path: '/planejamento/fechamento' },
+        { name: 'Cronograma', icon: Calendar, path: '/planejamento/cronograma' },
+        { name: 'Avanço Físico', icon: ClipboardList, path: '/planejamento/avanco' },
+        { name: 'Fechamento Mensal', icon: CheckCircle2, path: '/planejamento/fechamento' },
       ],
     },
     {
-      title: 'PRODUÇÃO',
+      id: 'producao',
+      title: 'Produção',
+      icon: Factory,
       items: [
-        { name: 'Diário de Obra', icon: <FileText size={18} />, path: '/producao/diario' },
-        { name: 'Apontamentos', icon: <ClipboardList size={18} />, path: '/producao/apontamentos' },
-        { name: 'Equipamentos', icon: <Factory size={18} />, path: '/producao/equipamentos' },
+        { name: 'Diário de Obra', icon: FileText, path: '/producao/diario' },
+        { name: 'Apontamentos', icon: ClipboardList, path: '/producao/apontamentos' },
+        { name: 'Equipamentos', icon: Factory, path: '/producao/equipamentos' },
       ],
     },
     {
-      title: 'SUPRIMENTOS',
+      id: 'suprimentos',
+      title: 'Suprimentos',
+      icon: Package,
       items: [
-        { name: 'Requisições', icon: <FileText size={18} />, path: '/suprimentos/requisicoes' },
-        { name: 'Pedidos de Compra', icon: <Package size={18} />, path: '/suprimentos/pedidos' },
-        { name: 'Controle de Estoque', icon: <Package size={18} />, path: '/suprimentos/estoque' },
+        { name: 'Requisições', icon: FileText, path: '/suprimentos/requisicoes' },
+        { name: 'Pedidos de Compra', icon: Package, path: '/suprimentos/pedidos' },
+        { name: 'Controle de Estoque', icon: Package, path: '/suprimentos/estoque' },
       ],
     },
     {
-      title: 'CUSTOS',
+      id: 'custos',
+      title: 'Custos',
+      icon: Wallet,
       items: [
-        { name: 'Apropriação de Custos', icon: <Wallet size={18} />, path: '/custos/apropriacao' },
-        { name: 'Análise de Desvios', icon: <ArrowLeftRight size={18} />, path: '/custos/desvios' },
+        { name: 'Apropriação', icon: Wallet, path: '/custos/apropriacao' },
+        { name: 'Análise de Desvios', icon: ArrowLeftRight, path: '/custos/desvios' },
       ],
     },
     {
-      title: 'QUALIDADE',
+      id: 'qualidade',
+      title: 'Qualidade',
+      icon: CheckCircle2,
       items: [
-        { name: 'Inspeções', icon: <CheckCircle2 size={18} />, path: '/qualidade/inspecoes' },
-        { name: 'Não Conformidades', icon: <AlertTriangle size={18} />, path: '/qualidade/nao-conformidades' },
-        { name: 'Ensaios', icon: <FileText size={18} />, path: '/qualidade/ensaios' },
+        { name: 'Inspeções', icon: CheckCircle2, path: '/qualidade/inspecoes' },
+        { name: 'Não Conformidades', icon: AlertTriangle, path: '/qualidade/nao-conformidades' },
+        { name: 'Ensaios', icon: FileText, path: '/qualidade/ensaios' },
       ],
     },
     {
+      id: 'ssma',
       title: 'SSMA',
+      icon: Shield,
       items: [
-        { name: 'Segurança do Trabalho', icon: <Shield size={18} />, path: '/ssma/seguranca' },
-        { name: 'Incidentes', icon: <AlertTriangle size={18} />, path: '/ssma/incidentes' },
-        { name: 'Treinamentos', icon: <Users size={18} />, path: '/ssma/treinamentos' },
+        { name: 'Segurança', icon: Shield, path: '/ssma/seguranca' },
+        { name: 'Incidentes', icon: AlertTriangle, path: '/ssma/incidentes' },
+        { name: 'Treinamentos', icon: Users, path: '/ssma/treinamentos' },
       ],
     },
     {
-      title: 'MEIO AMBIENTE',
+      id: 'meio-ambiente',
+      title: 'Meio Ambiente',
+      icon: Leaf,
       items: [
-        { name: 'Licenças', icon: <FileText size={18} />, path: '/meio-ambiente/licencas' },
-        { name: 'Monitoramento', icon: <Leaf size={18} />, path: '/meio-ambiente/monitoramento' },
+        { name: 'Licenças', icon: FileText, path: '/meio-ambiente/licencas' },
+        { name: 'Monitoramento', icon: Leaf, path: '/meio-ambiente/monitoramento' },
       ],
     },
     {
-      title: 'DEPTO. ADMINISTRATIVO',
+      id: 'administrativo',
+      title: 'Administrativo',
+      icon: Building,
       items: [
-        { name: 'RH / Pessoal', icon: <Users size={18} />, path: '/administrativo/rh' },
-        { name: 'Patrimônio', icon: <Building size={18} />, path: '/administrativo/patrimonio' },
-        { name: 'Documentos', icon: <FileText size={18} />, path: '/administrativo/documentos' },
+        { name: 'RH / Pessoal', icon: Users, path: '/administrativo/rh' },
+        { name: 'Patrimônio', icon: Building, path: '/administrativo/patrimonio' },
+        { name: 'Documentos', icon: FileText, path: '/administrativo/documentos' },
       ],
     },
   ];
 
   // Verifica se um item está ativo
-  const isItemActive = (item: MenuItem): boolean => {
-    if (pathname === item.path) return true;
-    if (item.submenu) {
-      return item.submenu.some(sub => pathname === sub.path);
-    }
-    return false;
+  const isItemActive = (path: string): boolean => {
+    if (path === '/') return pathname === '/';
+    return pathname.startsWith(path);
+  };
+
+  // Verifica se um grupo tem item ativo
+  const hasActiveItem = (group: MenuGroup): boolean => {
+    return group.items.some(item => isItemActive(item.path));
   };
 
   // Renderiza um item de menu
   const renderMenuItem = (item: MenuItem) => {
-    const isActive = isItemActive(item);
-    const hasSubmenu = item.submenu && item.submenu.length > 0;
-    const isExpanded = expandedMenus[item.name];
-
-    if (hasSubmenu) {
-      return (
-        <div key={item.name}>
-          <button
-            onClick={() => toggleMenu(item.name)}
-            className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-sm transition-colors ${
-              isActive
-                ? 'bg-red-900/30 text-red-400'
-                : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'
-            }`}
-          >
-            <div className="flex items-center gap-3">
-              <span className={isActive ? 'text-red-400' : 'text-gray-500'}>{item.icon}</span>
-              <span>{item.name}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              {item.badge && (
-                <span className="px-1.5 py-0.5 bg-red-600 text-white text-xs rounded-full">
-                  {item.badge}
-                </span>
-              )}
-              {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-            </div>
-          </button>
-          {isExpanded && (
-            <div className="ml-6 mt-1 space-y-1 border-l border-gray-700 pl-3">
-              {item.submenu!.map(sub => (
-                <Link
-                  key={sub.path}
-                  href={sub.path}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-colors ${
-                    pathname === sub.path
-                      ? 'text-red-400 bg-red-900/20'
-                      : 'text-gray-500 hover:text-gray-300 hover:bg-gray-800'
-                  }`}
-                >
-                  {sub.icon && <span>{sub.icon}</span>}
-                  <span>{sub.name}</span>
-                  {sub.badge && (
-                    <span className="px-1.5 py-0.5 bg-red-600 text-white text-xs rounded-full">
-                      {sub.badge}
-                    </span>
-                  )}
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
-      );
-    }
+    const isActive = isItemActive(item.path);
+    const Icon = item.icon;
 
     return (
       <Link
         key={item.path}
         href={item.path}
-        className={`flex items-center justify-between px-3 py-2 rounded-md text-sm transition-colors ${
-          isActive
-            ? 'bg-red-900/30 text-red-400'
-            : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'
-        }`}
+        className="flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all duration-200"
+        style={{
+          backgroundColor: isActive ? `${colors.accent}15` : 'transparent',
+          color: isActive ? colors.accent : colors.textSecondary,
+        }}
+        onMouseEnter={(e) => {
+          if (!isActive) {
+            e.currentTarget.style.backgroundColor = colors.bgCardHover;
+            e.currentTarget.style.color = colors.textPrimary;
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (!isActive) {
+            e.currentTarget.style.backgroundColor = 'transparent';
+            e.currentTarget.style.color = colors.textSecondary;
+          }
+        }}
       >
         <div className="flex items-center gap-3">
-          <span className={isActive ? 'text-red-400' : 'text-gray-500'}>{item.icon}</span>
-          <span>{item.name}</span>
+          <Icon size={18} style={{ opacity: isActive ? 1 : 0.7 }} />
+          <span className="font-medium">{item.name}</span>
         </div>
         {item.badge && (
-          <span className="px-1.5 py-0.5 bg-red-600 text-white text-xs rounded-full">
+          <span 
+            className="px-2 py-0.5 text-xs font-semibold rounded-full"
+            style={{ backgroundColor: colors.accent, color: '#FFFFFF' }}
+          >
             {item.badge}
           </span>
         )}
@@ -312,73 +294,163 @@ export default function Sidebar({ obraAtiva }: SidebarProps) {
     );
   };
 
+  // Renderiza um grupo de menu
+  const renderMenuGroup = (group: MenuGroup) => {
+    const isExpanded = expandedGroups[group.id];
+    const hasActive = hasActiveItem(group);
+    const Icon = group.icon;
+
+    return (
+      <div key={group.id} className="mb-1">
+        <button
+          onClick={() => toggleGroup(group.id)}
+          className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200"
+          style={{
+            backgroundColor: hasActive && !isExpanded ? `${colors.accent}10` : 'transparent',
+            color: hasActive ? colors.accent : colors.textPrimary,
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = colors.bgCardHover;
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = hasActive && !isExpanded ? `${colors.accent}10` : 'transparent';
+          }}
+        >
+          <div className="flex items-center gap-3">
+            <Icon size={20} style={{ color: hasActive ? colors.accent : colors.textMuted }} />
+            <span>{group.title}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            {/* Badge total do grupo */}
+            {group.items.some(i => i.badge) && !isExpanded && (
+              <span 
+                className="px-1.5 py-0.5 text-xs font-semibold rounded-full"
+                style={{ backgroundColor: colors.accent, color: '#FFFFFF' }}
+              >
+                {group.items.reduce((sum, i) => sum + (i.badge || 0), 0)}
+              </span>
+            )}
+            {isExpanded ? (
+              <ChevronDown size={16} style={{ color: colors.textMuted }} />
+            ) : (
+              <ChevronRight size={16} style={{ color: colors.textMuted }} />
+            )}
+          </div>
+        </button>
+
+        {/* Itens do grupo */}
+        {isExpanded && (
+          <div 
+            className="ml-3 mt-1 pl-3 space-y-0.5 border-l-2"
+            style={{ borderColor: hasActive ? colors.accent : colors.borderPrimary }}
+          >
+            {group.items.map(item => renderMenuItem(item))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
-    <aside className="w-64 bg-gray-900 border-r border-gray-800 flex flex-col h-screen">
-      {/* Cabeçalho - Logo e Obra Ativa */}
-      <div className="p-4 border-b border-gray-800">
+    <aside 
+      className="w-64 flex flex-col h-screen border-r transition-colors duration-200"
+      style={{ 
+        backgroundColor: colors.sidebarBg, 
+        borderColor: colors.borderPrimary 
+      }}
+    >
+      {/* Cabeçalho Compacto - Logo + Obra */}
+      <div 
+        className="p-4 border-b"
+        style={{ borderColor: colors.borderPrimary }}
+      >
         {/* Logo */}
-        <div className="flex items-center gap-2 mb-4">
-          <div className="w-8 h-8 bg-red-700 rounded flex items-center justify-center">
+        <div className="flex items-center gap-2 mb-3">
+          <div 
+            className="w-8 h-8 rounded-lg flex items-center justify-center"
+            style={{ backgroundColor: colors.accent }}
+          >
             <span className="text-white font-bold text-sm">G</span>
           </div>
-          <div>
-            <span className="text-red-500 font-bold text-lg">G</span>
-            <span className="text-white font-bold text-lg">ENESIS</span>
+          <div className="flex items-baseline">
+            <span style={{ color: colors.accent }} className="font-bold text-lg">G</span>
+            <span style={{ color: colors.textPrimary }} className="font-bold text-lg">ENESIS</span>
           </div>
         </div>
 
-        {/* Obra Ativa */}
-        <div className="bg-gray-800 rounded-lg p-3">
-          <p className="text-gray-500 text-xs mb-1">{obra.codigo}</p>
-          <p className="text-white font-medium text-sm truncate">{obra.nome}</p>
-          <p className="text-gray-500 text-xs truncate mt-1">{obra.cliente}</p>
-          <span className={`inline-block mt-2 px-2 py-0.5 rounded text-xs font-medium ${
-            obra.status === 'em_andamento' || obra.status === 'Em Andamento'
-              ? 'bg-green-900/50 text-green-400'
-              : obra.status === 'planejamento'
-              ? 'bg-yellow-900/50 text-yellow-400'
-              : 'bg-gray-700 text-gray-400'
-          }`}>
-            {obra.status === 'em_andamento' ? 'Em Execução' : obra.status}
-          </span>
+        {/* Obra Ativa - Compacta */}
+        <div 
+          className="p-3 rounded-lg"
+          style={{ backgroundColor: colors.bgCardHover }}
+        >
+          <div className="flex items-center justify-between mb-1">
+            <span 
+              className="text-xs font-semibold px-2 py-0.5 rounded"
+              style={{ backgroundColor: `${colors.accent}20`, color: colors.accent }}
+            >
+              {obra.codigo}
+            </span>
+            <span 
+              className="text-xs px-2 py-0.5 rounded"
+              style={{ 
+                backgroundColor: obra.status === 'Em Andamento' ? '#10B98120' : colors.bgCard,
+                color: obra.status === 'Em Andamento' ? '#10B981' : colors.textMuted 
+              }}
+            >
+              {obra.status === 'Em Andamento' ? 'Ativo' : obra.status}
+            </span>
+          </div>
+          <p 
+            className="text-sm font-medium truncate"
+            style={{ color: colors.textPrimary }}
+            title={obra.nome}
+          >
+            {obra.nome}
+          </p>
+        </div>
+      </div>
+
+      {/* Busca Rápida */}
+      <div className="px-4 py-3">
+        <div 
+          className="flex items-center gap-2 px-3 py-2 rounded-lg"
+          style={{ backgroundColor: colors.bgCardHover }}
+        >
+          <Search size={16} style={{ color: colors.textMuted }} />
+          <input
+            type="text"
+            placeholder="Buscar no menu..."
+            className="bg-transparent text-sm flex-1 outline-none"
+            style={{ color: colors.textPrimary }}
+          />
         </div>
       </div>
 
       {/* Menu de Navegação */}
-      <nav className="flex-1 overflow-y-auto p-2">
-        {menuSections.map(section => {
-          const isExpanded = expandedSections[section.title] !== false;
-          
-          return (
-            <div key={section.title} className="mb-2">
-              {/* Título da Seção */}
-              <button
-                onClick={() => toggleSection(section.title)}
-                className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider hover:text-gray-300"
-              >
-                <span>{section.title}</span>
-                {isExpanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
-              </button>
-
-              {/* Itens da Seção */}
-              {isExpanded && (
-                <div className="space-y-0.5">
-                  {section.items.map(item => renderMenuItem(item))}
-                </div>
-              )}
-            </div>
-          );
-        })}
+      <nav className="flex-1 overflow-y-auto px-3 pb-3">
+        {menuGroups.map(group => renderMenuGroup(group))}
       </nav>
 
-      {/* Rodapé - Logout */}
-      <div className="p-4 border-t border-gray-800">
+      {/* Rodapé - Configurações e Logout */}
+      <div 
+        className="p-3 border-t"
+        style={{ borderColor: colors.borderPrimary }}
+      >
         <button
           onClick={() => logout()}
-          className="flex items-center gap-3 px-3 py-2 w-full text-gray-400 hover:text-red-400 hover:bg-gray-800 rounded-md transition-colors"
+          className="flex items-center gap-3 px-3 py-2 w-full rounded-lg transition-all duration-200"
+          style={{ color: colors.textMuted }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#EF444420';
+            e.currentTarget.style.color = '#EF4444';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'transparent';
+            e.currentTarget.style.color = colors.textMuted;
+          }}
         >
           <LogOut size={18} />
-          <span className="text-sm">Sair</span>
+          <span className="text-sm font-medium">Sair</span>
         </button>
       </div>
     </aside>
