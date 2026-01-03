@@ -32,9 +32,10 @@ import {
   ChevronRight,
   LogOut,
   HardHat,
-  Home,
+  LayoutDashboard,
   Search,
   TrendingUp,
+  Bell,
 } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { logout } from '@/services/api/authApi';
@@ -72,6 +73,7 @@ interface MenuCategory {
 interface QuickNavItem {
   id: string;
   name: string;
+  shortName: string;
   icon: React.ElementType;
   path: string;
   badge?: number;
@@ -122,14 +124,14 @@ export default function Sidebar({ obraAtiva }: SidebarProps) {
     }));
   };
 
-  // Itens de navegação rápida (substitui a Intranet)
+  // Itens de navegação rápida (redesenhado)
   const quickNavItems: QuickNavItem[] = [
-    { id: 'home', name: 'Home', icon: Home, path: '/' },
-    { id: 'comunicados', name: 'Msgs', icon: MessageSquare, path: '/comunicados', badge: 2 },
-    { id: 'tarefas', name: 'Tarefas', icon: ListTodo, path: '/tarefas', badge: 5 },
-    { id: 'agenda', name: 'Agenda', icon: Calendar, path: '/agenda' },
-    { id: 'alertas', name: 'Alertas', icon: AlertTriangle, path: '/alertas-gates' },
-    { id: 'ia', name: 'IA', icon: Bot, path: '/assistente' },
+    { id: 'home', name: 'Dashboard', shortName: 'Início', icon: LayoutDashboard, path: '/' },
+    { id: 'comunicados', name: 'Comunicados', shortName: 'Msgs', icon: MessageSquare, path: '/comunicados', badge: 2 },
+    { id: 'tarefas', name: 'Minhas Tarefas', shortName: 'Tarefas', icon: ListTodo, path: '/tarefas', badge: 5 },
+    { id: 'agenda', name: 'Agenda', shortName: 'Agenda', icon: Calendar, path: '/agenda' },
+    { id: 'alertas', name: 'Alertas de Gates', shortName: 'Alertas', icon: Bell, path: '/alertas-gates' },
+    { id: 'ia', name: 'Assistente IA', shortName: 'IA', icon: Bot, path: '/assistente' },
   ];
 
   // Estrutura do menu organizada por categorias (SEM Intranet)
@@ -444,6 +446,9 @@ export default function Sidebar({ obraAtiva }: SidebarProps) {
     );
   };
 
+  // Calcula total de badges para exibir
+  const totalBadges = quickNavItems.reduce((sum, item) => sum + (item.badge || 0), 0);
+
   return (
     <aside 
       className="w-64 flex flex-col h-screen border-r transition-colors duration-200"
@@ -452,44 +457,48 @@ export default function Sidebar({ obraAtiva }: SidebarProps) {
         borderColor: colors.borderPrimary 
       }}
     >
-      {/* Cabeçalho Compacto - Logo + Obra */}
+      {/* Cabeçalho - Logo + Obra */}
       <div 
         className="p-4 border-b"
         style={{ borderColor: colors.borderPrimary }}
       >
         {/* Logo */}
-        <div className="flex items-center gap-2 mb-3">
+        <div className="flex items-center gap-3 mb-4">
           <div 
-            className="w-8 h-8 rounded-lg flex items-center justify-center"
+            className="w-9 h-9 rounded-lg flex items-center justify-center shadow-sm"
             style={{ backgroundColor: colors.accent }}
           >
-            <span className="text-white font-bold text-sm">G</span>
+            <span className="text-white font-bold text-base">G</span>
           </div>
           <div className="flex items-baseline">
-            <span style={{ color: colors.accent }} className="font-bold text-lg">G</span>
-            <span style={{ color: colors.textPrimary }} className="font-bold text-lg">ENESIS</span>
+            <span style={{ color: colors.accent }} className="font-bold text-xl tracking-tight">G</span>
+            <span style={{ color: colors.textPrimary }} className="font-bold text-xl tracking-tight">ENESIS</span>
           </div>
         </div>
 
-        {/* Obra Ativa - Compacta */}
+        {/* Obra Ativa */}
         <div 
-          className="p-3 rounded-lg"
-          style={{ backgroundColor: colors.bgCardHover }}
+          className="p-3 rounded-xl border"
+          style={{ 
+            backgroundColor: colors.bgCard,
+            borderColor: colors.borderPrimary
+          }}
         >
-          <div className="flex items-center justify-between mb-1">
+          <div className="flex items-center justify-between mb-2">
             <span 
-              className="text-xs font-semibold px-2 py-0.5 rounded"
-              style={{ backgroundColor: `${colors.accent}20`, color: colors.accent }}
+              className="text-xs font-bold px-2 py-1 rounded-md"
+              style={{ backgroundColor: `${colors.accent}15`, color: colors.accent }}
             >
               {obra.codigo}
             </span>
             <span 
-              className="text-xs px-2 py-0.5 rounded"
+              className="text-xs font-medium px-2 py-1 rounded-md flex items-center gap-1"
               style={{ 
-                backgroundColor: obra.status === 'Em Andamento' ? '#10B98120' : colors.bgCard,
+                backgroundColor: obra.status === 'Em Andamento' ? '#10B98115' : colors.bgCardHover,
                 color: obra.status === 'Em Andamento' ? '#10B981' : colors.textMuted 
               }}
             >
+              <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: obra.status === 'Em Andamento' ? '#10B981' : colors.textMuted }}></span>
               {obra.status === 'Em Andamento' ? 'Ativo' : obra.status}
             </span>
           </div>
@@ -503,15 +512,31 @@ export default function Sidebar({ obraAtiva }: SidebarProps) {
         </div>
       </div>
 
-      {/* NAVEGAÇÃO RÁPIDA - Ícones + Badges (Opção 1) */}
+      {/* NAVEGAÇÃO RÁPIDA - Redesenhada */}
       <div 
         className="px-4 py-3 border-b"
         style={{ borderColor: colors.borderPrimary }}
       >
-        <div 
-          className="flex items-center justify-between p-2 rounded-lg"
-          style={{ backgroundColor: colors.bgCardHover }}
-        >
+        {/* Título da seção */}
+        <div className="flex items-center justify-between mb-3">
+          <span 
+            className="text-xs font-semibold uppercase tracking-wider"
+            style={{ color: colors.textMuted }}
+          >
+            Acesso Rápido
+          </span>
+          {totalBadges > 0 && (
+            <span 
+              className="text-xs font-bold px-2 py-0.5 rounded-full"
+              style={{ backgroundColor: colors.accent, color: '#FFFFFF' }}
+            >
+              {totalBadges}
+            </span>
+          )}
+        </div>
+        
+        {/* Grid de ícones 3x2 */}
+        <div className="grid grid-cols-3 gap-2">
           {quickNavItems.map((item) => {
             const isActive = isItemActive(item.path);
             const Icon = item.icon;
@@ -520,35 +545,54 @@ export default function Sidebar({ obraAtiva }: SidebarProps) {
               <Link
                 key={item.id}
                 href={item.path}
-                className="flex flex-col items-center p-2 rounded-lg transition-all duration-200 relative"
+                className="flex flex-col items-center justify-center p-2.5 rounded-xl transition-all duration-200 relative group"
                 style={{
-                  backgroundColor: isActive ? `${colors.accent}15` : 'transparent',
-                  color: isActive ? colors.accent : colors.textMuted,
+                  backgroundColor: isActive ? `${colors.accent}15` : colors.bgCard,
+                  color: isActive ? colors.accent : colors.textSecondary,
+                  border: `1px solid ${isActive ? colors.accent + '30' : colors.borderPrimary}`,
                 }}
                 onMouseEnter={(e) => {
                   if (!isActive) {
-                    e.currentTarget.style.backgroundColor = colors.bgCard;
+                    e.currentTarget.style.backgroundColor = colors.bgCardHover;
+                    e.currentTarget.style.borderColor = colors.accent + '20';
                     e.currentTarget.style.color = colors.textPrimary;
+                    e.currentTarget.style.transform = 'translateY(-1px)';
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (!isActive) {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = colors.textMuted;
+                    e.currentTarget.style.backgroundColor = colors.bgCard;
+                    e.currentTarget.style.borderColor = colors.borderPrimary;
+                    e.currentTarget.style.color = colors.textSecondary;
+                    e.currentTarget.style.transform = 'translateY(0)';
                   }
                 }}
                 title={item.name}
               >
-                <Icon size={18} />
+                {/* Badge */}
                 {item.badge && (
                   <span 
-                    className="absolute -top-1 -right-1 w-4 h-4 text-[10px] font-bold rounded-full flex items-center justify-center"
+                    className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] text-[10px] font-bold rounded-full flex items-center justify-center px-1 shadow-sm"
                     style={{ backgroundColor: colors.accent, color: '#FFFFFF' }}
                   >
                     {item.badge}
                   </span>
                 )}
-                <span className="text-[10px] mt-1 font-medium">{item.name}</span>
+                
+                {/* Ícone */}
+                <Icon 
+                  size={20} 
+                  strokeWidth={isActive ? 2.5 : 2}
+                  className="mb-1"
+                />
+                
+                {/* Label */}
+                <span 
+                  className="text-[11px] font-medium text-center leading-tight"
+                  style={{ color: isActive ? colors.accent : colors.textMuted }}
+                >
+                  {item.shortName}
+                </span>
               </Link>
             );
           })}
@@ -558,14 +602,17 @@ export default function Sidebar({ obraAtiva }: SidebarProps) {
       {/* Busca Rápida */}
       <div className="px-4 py-3">
         <div 
-          className="flex items-center gap-2 px-3 py-2 rounded-lg"
-          style={{ backgroundColor: colors.bgCardHover }}
+          className="flex items-center gap-2 px-3 py-2.5 rounded-xl border transition-all duration-200"
+          style={{ 
+            backgroundColor: colors.bgCard,
+            borderColor: colors.borderPrimary
+          }}
         >
           <Search size={16} style={{ color: colors.textMuted }} />
           <input
             type="text"
             placeholder="Buscar no menu..."
-            className="bg-transparent text-sm flex-1 outline-none"
+            className="bg-transparent text-sm flex-1 outline-none placeholder-opacity-60"
             style={{ color: colors.textPrimary }}
           />
         </div>
@@ -577,7 +624,7 @@ export default function Sidebar({ obraAtiva }: SidebarProps) {
           <div key={category.id} className="mb-4">
             {/* Título da Categoria */}
             <div 
-              className="px-3 py-2 text-xs font-bold tracking-wider"
+              className="px-3 py-2 text-[11px] font-bold tracking-wider uppercase"
               style={{ color: colors.textMuted }}
             >
               {category.label}
@@ -596,10 +643,10 @@ export default function Sidebar({ obraAtiva }: SidebarProps) {
       >
         <button
           onClick={() => logout()}
-          className="flex items-center gap-3 px-3 py-2 w-full rounded-lg transition-all duration-200"
+          className="flex items-center gap-3 px-3 py-2.5 w-full rounded-xl transition-all duration-200"
           style={{ color: colors.textMuted }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = '#EF444420';
+            e.currentTarget.style.backgroundColor = '#EF444415';
             e.currentTarget.style.color = '#EF4444';
           }}
           onMouseLeave={(e) => {
@@ -608,7 +655,7 @@ export default function Sidebar({ obraAtiva }: SidebarProps) {
           }}
         >
           <LogOut size={18} />
-          <span className="text-sm font-medium">Sair</span>
+          <span className="text-sm font-medium">Sair do Sistema</span>
         </button>
       </div>
     </aside>
