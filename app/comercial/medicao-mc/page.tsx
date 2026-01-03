@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { api } from '../../../src/lib/api';
 import { 
   Plus, 
   Calendar,
@@ -93,29 +94,23 @@ export default function MedicaoClientePage() {
     setLoading(true);
     try {
       // Carrega medições MC
-      const resMedicoes = await fetch(`/api/medicoes/obra/${obraId}?tipo=MC&periodo_referencia=${competencia}`);
-      if (resMedicoes.ok) {
-        const data = await resMedicoes.json();
-        setMedicoes(data.filter((m: any) => m.tipo === 'MC'));
-      }
+      const medicoesData = await api.get<any[]>(`/medicoes/obra/${obraId}?tipo=MC&periodo_referencia=${competencia}`);
+      setMedicoes(medicoesData.filter((m: any) => m.tipo === 'MC'));
 
       // Carrega itens da EAP (apenas folhas - itens medíveis)
-      const resEap = await fetch(`/api/eap/obra/${obraId}`);
-      if (resEap.ok) {
-        const data = await resEap.json();
-        // Filtra apenas EAPs folha e mapeia para o formato esperado
-        const eapsFolha = data
-          .filter((e: any) => e.is_folha === true)
-          .map((e: any) => ({
-            id: e.id,
-            codigo: e.codigo,
-            descricao: e.descricao,
-            unidade: e.unidade_medida || '-',
-            quantidade_total: parseFloat(e.quantidade) || 0,
-            valor_unitario: parseFloat(e.valor_unitario) || 0,
-          }));
-        setEapItems(eapsFolha);
-      }
+      const eapData = await api.get<any[]>(`/eap/obra/${obraId}`);
+      // Filtra apenas EAPs folha e mapeia para o formato esperado
+      const eapsFolha = eapData
+        .filter((e: any) => e.is_folha === true)
+        .map((e: any) => ({
+          id: e.id,
+          codigo: e.codigo,
+          descricao: e.descricao,
+          unidade: e.unidade_medida || '-',
+          quantidade_total: parseFloat(e.quantidade) || 0,
+          valor_unitario: parseFloat(e.valor_unitario) || 0,
+        }));
+      setEapItems(eapsFolha);
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
     } finally {
@@ -157,20 +152,16 @@ export default function MedicaoClientePage() {
     try {
       for (const linha of novasMedicoes) {
         if (linha.eap_id && linha.quantidade_medida > 0) {
-          await fetch('/api/medicoes', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              obra_id: obraId,
-              eap_id: linha.eap_id,
-              tipo: 'MC',
-              periodo_referencia: competencia,
-              data_medicao: new Date().toISOString(),
-              quantidade_medida: linha.quantidade_medida,
-              valor_medido: calcularValor(linha.eap_id, linha.quantidade_medida),
-              observacoes: linha.observacoes,
-              status: 'rascunho',
-            }),
+          await api.post('/medicoes', {
+            obra_id: obraId,
+            eap_id: linha.eap_id,
+            tipo: 'MC',
+            periodo_referencia: competencia,
+            data_medicao: new Date().toISOString(),
+            quantidade_medida: linha.quantidade_medida,
+            valor_medido: calcularValor(linha.eap_id, linha.quantidade_medida),
+            observacoes: linha.observacoes,
+            status: 'rascunho',
           });
         }
       }
@@ -187,11 +178,7 @@ export default function MedicaoClientePage() {
   // Envia medição para aprovação do cliente
   const enviarParaCliente = async (id: string) => {
     try {
-      await fetch(`/api/medicoes/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'enviada' }),
-      });
+      await api.put(`/medicoes/${id}`, { status: 'enviada' });
       carregarDados();
     } catch (error) {
       console.error('Erro ao enviar medição:', error);
@@ -201,13 +188,9 @@ export default function MedicaoClientePage() {
   // Aprova medição (simula aprovação do cliente)
   const aprovarMedicao = async (id: string) => {
     try {
-      await fetch(`/api/medicoes/${id}/aprovar`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          aprovado_por_id: 'user-admin-001', // TODO: pegar do contexto de autenticação
-          observacoes: 'Aprovado pelo cliente'
-        }),
+      await api.post(`/medicoes/${id}/aprovar`, { 
+        aprovado_por_id: 'user-admin-001', // TODO: pegar do contexto de autenticação
+        observacoes: 'Aprovado pelo cliente'
       });
       carregarDados();
     } catch (error) {
