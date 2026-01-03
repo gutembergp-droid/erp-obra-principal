@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 import BreadcrumbDinamico from './BreadcrumbDinamico';
 import { 
   Bell, 
@@ -11,11 +12,13 @@ import {
   Palette,
   Check,
   Home,
-  ShoppingCart,
+  MessageSquare,
+  ClipboardList,
   Calendar,
   FileText,
   GraduationCap,
-  HelpCircle,
+  Headphones,
+  Bot,
   Cloud,
   CloudRain,
   CloudSun,
@@ -107,16 +110,94 @@ const routeMap: Record<string, { depto: string; pagina: string }> = {
   
   // Sistema
   '/suporte': { depto: 'Sistema', pagina: 'Suporte' },
+  '/assistente': { depto: 'Sistema', pagina: 'Assistente IA' },
 };
 
-// Ações rápidas fixas (somente ícones)
-const acoesRapidas = [
-  { id: 'home', icon: Home, label: 'Tela Inicial', href: '/' },
-  { id: 'suprimentos', icon: ShoppingCart, label: 'Suprimentos', href: '/requisicoes' },
-  { id: 'calendario', icon: Calendar, label: 'Calendário', href: '/agenda' },
-  { id: 'documentacao', icon: FileText, label: 'Documentação', href: '/documentos' },
-  { id: 'treinamento', icon: GraduationCap, label: 'Treinamento', href: '/treinamentos' },
-  { id: 'suporte', icon: HelpCircle, label: 'Suporte', href: '/suporte' },
+// Interface para ações rápidas com tooltip rico
+interface AcaoRapida {
+  id: string;
+  icon: React.ElementType;
+  name: string;
+  subtitle: string;
+  description: string;
+  shortcut: string;
+  href: string;
+}
+
+// Ações rápidas permanentes (8 ícones com tooltip rico)
+const acoesRapidas: AcaoRapida[] = [
+  { 
+    id: 'home', 
+    icon: Home, 
+    name: 'Tela Inicial', 
+    subtitle: 'Dashboard',
+    description: 'Acesse o painel principal com resumo da obra, tarefas e indicadores.',
+    shortcut: 'Ctrl+H',
+    href: '/' 
+  },
+  { 
+    id: 'chat', 
+    icon: MessageSquare, 
+    name: 'Chat', 
+    subtitle: 'Comunicados',
+    description: 'Visualize comunicados, avisos e mensagens importantes da obra.',
+    shortcut: 'Ctrl+M',
+    href: '/comunicados' 
+  },
+  { 
+    id: 'requisicao', 
+    icon: ClipboardList, 
+    name: 'Requisição', 
+    subtitle: 'Solicitações',
+    description: 'Crie e acompanhe requisições de materiais, serviços e equipamentos.',
+    shortcut: 'Ctrl+R',
+    href: '/suprimentos/requisicoes' 
+  },
+  { 
+    id: 'calendario', 
+    icon: Calendar, 
+    name: 'Calendário', 
+    subtitle: 'Agenda',
+    description: 'Consulte marcos, reuniões, medições e eventos programados.',
+    shortcut: 'Ctrl+A',
+    href: '/agenda' 
+  },
+  { 
+    id: 'documentacao', 
+    icon: FileText, 
+    name: 'Documentação', 
+    subtitle: 'Arquivos',
+    description: 'Acesse documentos, manuais, procedimentos e arquivos da obra.',
+    shortcut: 'Ctrl+D',
+    href: '/documentos' 
+  },
+  { 
+    id: 'treinamento', 
+    icon: GraduationCap, 
+    name: 'Treinamento', 
+    subtitle: 'Capacitação',
+    description: 'Acesse cursos, treinamentos e materiais de capacitação.',
+    shortcut: 'Ctrl+T',
+    href: '/treinamentos' 
+  },
+  { 
+    id: 'suporte', 
+    icon: Headphones, 
+    name: 'Suporte', 
+    subtitle: 'Atendimento',
+    description: 'Entre em contato com o suporte técnico para dúvidas e problemas.',
+    shortcut: 'Ctrl+S',
+    href: '/suporte' 
+  },
+  { 
+    id: 'ia', 
+    icon: Bot, 
+    name: 'Assistente IA', 
+    subtitle: 'Inteligência Artificial',
+    description: 'Converse com a IA para tirar dúvidas, gerar relatórios e obter insights.',
+    shortcut: 'Ctrl+I',
+    href: '/assistente' 
+  },
 ];
 
 export default function Topbar({
@@ -156,8 +237,6 @@ export default function Topbar({
     }
     return nome.substring(0, 2).toUpperCase();
   };
-
-  // Breadcrumb agora é dinâmico via componente BreadcrumbDinamico
 
   // Ícone do tema atual
   const getThemeIcon = (themeType: ThemeType) => {
@@ -215,7 +294,7 @@ export default function Topbar({
         <BreadcrumbDinamico separator="slash" maxItems={4} />
       </div>
 
-      {/* CENTRO - Card de Ações Rápidas (somente ícones com destaque) */}
+      {/* CENTRO - Card de Ações Rápidas Permanentes (8 ícones com Tooltip Rico) */}
       <div 
         className="flex items-center gap-1 px-3 py-1.5 rounded-xl"
         style={{ backgroundColor: colors.bgCardHover }}
@@ -224,33 +303,91 @@ export default function Topbar({
           const Icon = acao.icon;
           const isActive = pathname === acao.href;
           return (
-            <a
-              key={acao.id}
-              href={acao.href}
-              className="flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-200"
-              style={{ 
-                backgroundColor: isActive ? colors.accent : 'transparent',
-                color: isActive ? '#FFFFFF' : colors.textMuted,
-                transform: isActive ? 'scale(1.1)' : 'scale(1)',
-              }}
-              onMouseEnter={(e) => {
-                if (!isActive) {
-                  e.currentTarget.style.backgroundColor = colors.borderPrimary;
-                  e.currentTarget.style.color = colors.textPrimary;
-                  e.currentTarget.style.transform = 'scale(1.05)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isActive) {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                  e.currentTarget.style.color = colors.textMuted;
-                  e.currentTarget.style.transform = 'scale(1)';
-                }
-              }}
-              title={acao.label}
-            >
-              <Icon size={20} />
-            </a>
+            <div key={acao.id} className="relative group">
+              <Link
+                href={acao.href}
+                className="flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-200"
+                style={{ 
+                  backgroundColor: isActive ? colors.accent : 'transparent',
+                  color: isActive ? '#FFFFFF' : colors.textMuted,
+                  transform: isActive ? 'scale(1.1)' : 'scale(1)',
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.backgroundColor = colors.borderPrimary;
+                    e.currentTarget.style.color = colors.textPrimary;
+                    e.currentTarget.style.transform = 'scale(1.05)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = colors.textMuted;
+                    e.currentTarget.style.transform = 'scale(1)';
+                  }
+                }}
+              >
+                <Icon size={20} />
+              </Link>
+              
+              {/* Tooltip Rico (Card) */}
+              <div 
+                className="absolute left-1/2 -translate-x-1/2 top-full mt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50"
+                style={{ minWidth: '220px' }}
+              >
+                <div 
+                  className="rounded-xl shadow-xl overflow-hidden border"
+                  style={{ backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }}
+                >
+                  {/* Cabeçalho do Card */}
+                  <div 
+                    className="p-3 flex items-center gap-3"
+                    style={{ background: `linear-gradient(135deg, ${colors.accent}, ${colors.accent}dd)` }}
+                  >
+                    <div 
+                      className="w-10 h-10 rounded-lg flex items-center justify-center"
+                      style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}
+                    >
+                      <Icon size={22} className="text-white" />
+                    </div>
+                    <div>
+                      <div className="text-white font-semibold text-sm">{acao.name}</div>
+                      <div className="text-white/70 text-xs">{acao.subtitle}</div>
+                    </div>
+                  </div>
+                  
+                  {/* Corpo do Card */}
+                  <div className="p-3">
+                    <p 
+                      className="text-xs leading-relaxed mb-3"
+                      style={{ color: colors.textSecondary }}
+                    >
+                      {acao.description}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span 
+                        className="text-[10px] font-mono px-2 py-1 rounded"
+                        style={{ backgroundColor: colors.bgCardHover, color: colors.textMuted }}
+                      >
+                        {acao.shortcut}
+                      </span>
+                      <span 
+                        className="text-xs font-medium"
+                        style={{ color: colors.accent }}
+                      >
+                        Abrir →
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Seta do Tooltip (apontando para cima) */}
+                <div 
+                  className="absolute left-1/2 -translate-x-1/2 -top-1.5 w-3 h-3 rotate-45 border-l border-t"
+                  style={{ backgroundColor: colors.accent, borderColor: colors.accent }}
+                />
+              </div>
+            </div>
           );
         })}
       </div>
@@ -306,16 +443,15 @@ export default function Topbar({
                     className="w-full flex items-center gap-3 px-2 py-2 rounded-md transition-colors"
                     style={{ 
                       backgroundColor: theme === themeOption ? colors.bgCardHover : 'transparent',
-                      color: colors.textPrimary 
                     }}
                     onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.bgCardHover}
                     onMouseLeave={(e) => e.currentTarget.style.backgroundColor = theme === themeOption ? colors.bgCardHover : 'transparent'}
                   >
                     <div 
-                      className="w-5 h-5 rounded-md border flex items-center justify-center"
+                      className="w-6 h-6 rounded-md flex items-center justify-center"
                       style={{ 
                         backgroundColor: themePreviewColors[themeOption].bg,
-                        borderColor: colors.borderPrimary
+                        border: `1px solid ${colors.borderPrimary}`
                       }}
                     >
                       <div 
@@ -323,9 +459,9 @@ export default function Topbar({
                         style={{ backgroundColor: themePreviewColors[themeOption].accent }}
                       />
                     </div>
-                    
-                    <span className="flex-1 text-left text-sm">{themeNames[themeOption]}</span>
-                    
+                    <span className="text-sm flex-1 text-left" style={{ color: colors.textPrimary }}>
+                      {themeNames[themeOption]}
+                    </span>
                     {theme === themeOption && (
                       <Check size={14} style={{ color: colors.accent }} />
                     )}
@@ -336,54 +472,45 @@ export default function Topbar({
           )}
         </div>
 
+        {/* Separador */}
+        <div className="h-4 w-px" style={{ backgroundColor: colors.borderPrimary }} />
+
         {/* Notificações */}
         <button 
           className="relative p-2 rounded-lg transition-colors"
           style={{ color: colors.textSecondary }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = colors.bgCardHover;
-            e.currentTarget.style.color = colors.textPrimary;
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'transparent';
-            e.currentTarget.style.color = colors.textSecondary;
-          }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.bgCardHover}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
         >
           <Bell size={18} />
           {notificacoes > 0 && (
             <span 
-              className="absolute -top-0.5 -right-0.5 w-4 h-4 text-white text-[10px] rounded-full flex items-center justify-center font-medium"
-              style={{ backgroundColor: colors.error }}
+              className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] text-[10px] font-bold rounded-full flex items-center justify-center px-1"
+              style={{ backgroundColor: colors.accent, color: '#FFFFFF' }}
             >
               {notificacoes > 9 ? '9+' : notificacoes}
             </span>
           )}
         </button>
 
-        {/* Separador */}
-        <div className="h-4 w-px" style={{ backgroundColor: colors.borderPrimary }} />
-
-        {/* Widget de Avatar com iniciais e nome */}
+        {/* Avatar com iniciais, nome e status */}
         <div className="relative" ref={statusMenuRef}>
           <button 
             onClick={() => setShowStatusMenu(!showStatusMenu)}
-            className="flex items-center gap-2.5 px-2 py-1 rounded-lg transition-colors"
-            style={{ color: colors.textSecondary }}
+            className="flex items-center gap-2 px-2 py-1.5 rounded-lg transition-colors"
+            style={{ backgroundColor: showStatusMenu ? colors.bgCardHover : 'transparent' }}
             onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.bgCardHover}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = showStatusMenu ? colors.bgCardHover : 'transparent'}
           >
-            {/* Avatar com iniciais e Badge de Status */}
+            {/* Avatar com iniciais e badge de status */}
             <div className="relative">
               <div 
-                className="w-8 h-8 rounded-full flex items-center justify-center font-semibold text-sm"
-                style={{ 
-                  backgroundColor: colors.accent,
-                  color: '#FFFFFF'
-                }}
+                className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold"
+                style={{ backgroundColor: colors.accent, color: '#FFFFFF' }}
               >
                 {getIniciais(user.nome)}
               </div>
-              {/* Badge de Status */}
+              {/* Badge de status */}
               <div 
                 className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2"
                 style={{ 
@@ -393,15 +520,15 @@ export default function Topbar({
               />
             </div>
             
-            {/* Nome do Usuário */}
+            {/* Nome do usuário */}
             <span className="text-sm font-medium" style={{ color: colors.textPrimary }}>
               {user.nome}
             </span>
             
-            <ChevronDown size={14} style={{ color: colors.textMuted }} />
+            <ChevronDown size={14} style={{ color: colors.textMuted }} className={`transition-transform ${showStatusMenu ? 'rotate-180' : ''}`} />
           </button>
 
-          {/* Menu de Status */}
+          {/* Menu de status */}
           {showStatusMenu && (
             <div 
               className="absolute right-0 top-full mt-2 w-48 rounded-lg border shadow-lg overflow-hidden z-50"
@@ -410,11 +537,6 @@ export default function Topbar({
                 borderColor: colors.borderPrimary 
               }}
             >
-              <div className="p-3 border-b" style={{ borderColor: colors.borderPrimary }}>
-                <p className="text-sm font-medium" style={{ color: colors.textPrimary }}>{user.nome}</p>
-                <p className="text-xs capitalize" style={{ color: colors.textMuted }}>{user.perfil}</p>
-              </div>
-              
               <div className="p-2">
                 <p className="text-xs font-semibold uppercase tracking-wider px-2 py-1" style={{ color: colors.textMuted }}>
                   Status
@@ -430,18 +552,19 @@ export default function Topbar({
                     className="w-full flex items-center gap-3 px-2 py-2 rounded-md transition-colors"
                     style={{ 
                       backgroundColor: userStatus === status ? colors.bgCardHover : 'transparent',
-                      color: colors.textPrimary 
                     }}
                     onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.bgCardHover}
                     onMouseLeave={(e) => e.currentTarget.style.backgroundColor = userStatus === status ? colors.bgCardHover : 'transparent'}
                   >
                     <div 
-                      className="w-2.5 h-2.5 rounded-full"
+                      className="w-3 h-3 rounded-full"
                       style={{ backgroundColor: statusConfig[status].color }}
                     />
-                    <span className="flex-1 text-left text-sm">{statusConfig[status].label}</span>
+                    <span className="text-sm" style={{ color: colors.textPrimary }}>
+                      {statusConfig[status].label}
+                    </span>
                     {userStatus === status && (
-                      <Check size={14} style={{ color: colors.accent }} />
+                      <Check size={14} className="ml-auto" style={{ color: colors.accent }} />
                     )}
                   </button>
                 ))}
