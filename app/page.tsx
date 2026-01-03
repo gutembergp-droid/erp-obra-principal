@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { Clock, CheckCircle, Bell, ListTodo, Eye, Check, X, FileCheck, ShoppingCart, Receipt, FileText, Megaphone, AlertTriangle, Users, Calendar, ChevronLeft, ChevronRight, Circle, Plus, Loader2 } from "lucide-react"
+import { Clock, CheckCircle, Bell, ListTodo, Eye, Check, X, FileCheck, ShoppingCart, Receipt, FileText, Megaphone, AlertTriangle, Users, Calendar, ChevronLeft, ChevronRight, Circle, Loader2 } from "lucide-react"
 
 // ============================================================================
 // CORES AAHBRANT - Identidade Visual Oficial
@@ -58,15 +58,6 @@ interface Comunicado {
   lido: boolean
   prioridade: string
   exigeConfirmacao: boolean
-}
-
-interface Requisicao {
-  id: string
-  numero: string
-  descricao: string
-  valor: number
-  data: string
-  status: string
 }
 
 interface Marco {
@@ -134,17 +125,6 @@ const tarefasMock: Tarefa[] = [
   },
 ]
 
-const requisicoesMock: Requisicao[] = [
-  {
-    id: "1",
-    numero: "REQ-2025-0001",
-    descricao: "Aço CA-50 para armaduras de fundação",
-    valor: 5754000,
-    data: "2025-01-18",
-    status: "enviada",
-  },
-]
-
 const marcosMock: Marco[] = [
   { id: "1", titulo: "Início da Mobilização", data: "2025-01-15", tipo: "marco", concluido: false },
   { id: "2", titulo: "Medição #01", data: "2025-02-05", tipo: "medicao", concluido: false },
@@ -194,7 +174,6 @@ export default function IntranetPage() {
   const [mesAtual, setMesAtual] = useState(new Date(2025, 0, 1))
   const [tarefas] = useState<Tarefa[]>(tarefasMock)
   const [comunicados, setComunicados] = useState<Comunicado[]>([])
-  const [requisicoes] = useState<Requisicao[]>(requisicoesMock)
   const [marcos] = useState<Marco[]>(marcosMock)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -417,8 +396,8 @@ export default function IntranetPage() {
 
       {/* Grid Principal */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Coluna Esquerda - Fila de Trabalho + Requisições */}
-        <div className="lg:col-span-2 space-y-6">
+        {/* Coluna Esquerda - Fila de Trabalho */}
+        <div className="lg:col-span-2">
           {/* Fila de Trabalho */}
           <div className="bg-gray-900 rounded-lg border border-gray-800">
             <div className="p-4 border-b border-gray-800">
@@ -493,49 +472,6 @@ export default function IntranetPage() {
                   })}
                 </tbody>
               </table>
-            </div>
-          </div>
-
-          {/* Requisições */}
-          <div className="bg-gray-900 rounded-lg border border-gray-800">
-            <div className="p-4 border-b border-gray-800 flex items-center justify-between">
-              <div>
-                <div className="flex items-center gap-2">
-                  <ShoppingCart className="h-5 w-5 text-gray-400" />
-                  <h2 className="font-semibold text-gray-100">Requisições</h2>
-                </div>
-                <p className="text-sm text-gray-500 mt-1">{requisicoes.length} pendente de aprovação</p>
-              </div>
-              <button className="flex items-center gap-1 px-3 py-1.5 bg-[#96110D] text-white text-sm font-medium rounded-lg hover:bg-[#7a0e0b] transition-colors">
-                <Plus className="h-4 w-4" />
-                Nova
-              </button>
-            </div>
-            <div className="p-4">
-              {requisicoes.map((req) => (
-                <div key={req.id} className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg border border-gray-700/50">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-mono text-gray-400">{req.numero}</span>
-                      <span className="inline-flex px-2 py-0.5 text-xs font-medium rounded bg-amber-900/30 text-amber-400 border border-amber-700/30">
-                        {req.status}
-                      </span>
-                    </div>
-                    <p className="text-sm font-medium text-gray-200 mt-1">{req.descricao}</p>
-                    <p className="text-xs text-gray-500">
-                      {formatCurrency(req.valor)} • {formatDate(req.data)}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <button className="p-1.5 hover:bg-emerald-900/50 rounded transition-colors">
-                      <Check className="h-4 w-4 text-emerald-500" />
-                    </button>
-                    <button className="p-1.5 hover:bg-red-900/50 rounded transition-colors">
-                      <X className="h-4 w-4 text-red-500" />
-                    </button>
-                  </div>
-                </div>
-              ))}
             </div>
           </div>
         </div>
