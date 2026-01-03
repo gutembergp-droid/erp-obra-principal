@@ -330,26 +330,16 @@ export default function Topbar({
                 <Icon size={20} />
               </Link>
               
-              {/* Tooltip Compacto */}
+              {/* Tooltip Simples - Apenas Nome + Atalho */}
               <div 
                 className="absolute left-1/2 -translate-x-1/2 top-full mt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 pointer-events-none"
               >
                 <div 
-                  className="px-3 py-2 rounded-lg shadow-lg border whitespace-nowrap"
+                  className="px-3 py-1.5 rounded-lg shadow-lg border whitespace-nowrap text-center"
                   style={{ backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }}
                 >
-                  <div className="flex items-center gap-2">
-                    <div 
-                      className="w-6 h-6 rounded flex items-center justify-center"
-                      style={{ backgroundColor: colors.accent }}
-                    >
-                      <Icon size={14} className="text-white" />
-                    </div>
-                    <div>
-                      <div className="text-xs font-semibold" style={{ color: colors.textPrimary }}>{acao.name}</div>
-                      <div className="text-[10px]" style={{ color: colors.textMuted }}>{acao.shortcut}</div>
-                    </div>
-                  </div>
+                  <div className="text-xs font-semibold" style={{ color: colors.textPrimary }}>{acao.name}</div>
+                  <div className="text-[10px]" style={{ color: colors.textMuted }}>{acao.shortcut}</div>
                 </div>
                 
                 {/* Seta do Tooltip */}
