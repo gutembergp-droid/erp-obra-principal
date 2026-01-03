@@ -354,22 +354,22 @@ export default function IntranetPage() {
                 <Megaphone className="h-3.5 w-3.5" style={{ color: colors.textMuted }} />
                 <h2 className="text-xs font-semibold" style={{ color: colors.textPrimary }}>Comunicados</h2>
               </div>
-              {/* KPIs integrados no header - com mais ênfase */}
-              <div className="flex items-center gap-2">
+              {/* KPIs integrados no header - badges maiores */}
+              <div className="flex items-center gap-3">
                 <div 
-                  className="flex items-center gap-1.5 rounded-md px-3 py-1"
+                  className="flex items-center gap-2 rounded-lg px-4 py-1.5"
                   style={{ backgroundColor: colors.infoBg, border: `1px solid ${colors.info}50` }}
                 >
-                  <Bell className="h-3.5 w-3.5" style={{ color: colors.info }} />
-                  <span className="text-xs font-bold" style={{ color: colors.info }}>{stats.comunicadosNaoLidos}</span>
-                  <span className="text-[10px] font-medium" style={{ color: colors.textMuted }}>não lidos</span>
+                  <Bell className="h-4 w-4" style={{ color: colors.info }} />
+                  <span className="text-sm font-bold" style={{ color: colors.info }}>{stats.comunicadosNaoLidos}</span>
+                  <span className="text-xs font-medium" style={{ color: colors.textMuted }}>não lidos</span>
                 </div>
                 <div 
-                  className="flex items-center gap-1.5 rounded-md px-3 py-1"
+                  className="flex items-center gap-2 rounded-lg px-4 py-1.5"
                   style={{ backgroundColor: colors.bgCardHover, border: `1px solid ${colors.borderSecondary}` }}
                 >
-                  <span className="text-xs font-bold" style={{ color: colors.textSecondary }}>{stats.comunicadosTotal}</span>
-                  <span className="text-[10px] font-medium" style={{ color: colors.textMuted }}>total</span>
+                  <span className="text-sm font-bold" style={{ color: colors.textSecondary }}>{stats.comunicadosTotal}</span>
+                  <span className="text-xs font-medium" style={{ color: colors.textMuted }}>total</span>
                 </div>
               </div>
             </div>
@@ -479,23 +479,23 @@ export default function IntranetPage() {
                 <Clock className="h-3.5 w-3.5" style={{ color: colors.textMuted }} />
                 <h2 className="text-xs font-semibold" style={{ color: colors.textPrimary }}>Fila de Trabalho</h2>
               </div>
-              {/* KPIs integrados no header - com mais ênfase */}
-              <div className="flex items-center gap-2">
+              {/* KPIs integrados no header - badges maiores */}
+              <div className="flex items-center gap-3">
                 <div 
-                  className="flex items-center gap-1.5 rounded-md px-3 py-1"
+                  className="flex items-center gap-2 rounded-lg px-4 py-1.5"
                   style={{ backgroundColor: colors.warningBg, border: `1px solid ${colors.warning}50` }}
                 >
-                  <Clock className="h-3.5 w-3.5" style={{ color: colors.warning }} />
-                  <span className="text-xs font-bold" style={{ color: colors.warning }}>{stats.tarefasPendentes}</span>
-                  <span className="text-[10px] font-medium" style={{ color: colors.textMuted }}>pendentes</span>
+                  <Clock className="h-4 w-4" style={{ color: colors.warning }} />
+                  <span className="text-sm font-bold" style={{ color: colors.warning }}>{stats.tarefasPendentes}</span>
+                  <span className="text-xs font-medium" style={{ color: colors.textMuted }}>pendentes</span>
                 </div>
                 <div 
-                  className="flex items-center gap-1.5 rounded-md px-3 py-1"
+                  className="flex items-center gap-2 rounded-lg px-4 py-1.5"
                   style={{ backgroundColor: colors.successBg, border: `1px solid ${colors.success}50` }}
                 >
-                  <CheckCircle className="h-3.5 w-3.5" style={{ color: colors.success }} />
-                  <span className="text-xs font-bold" style={{ color: colors.success }}>{stats.tarefasConcluidas}</span>
-                  <span className="text-[10px] font-medium" style={{ color: colors.textMuted }}>concluídas</span>
+                  <CheckCircle className="h-4 w-4" style={{ color: colors.success }} />
+                  <span className="text-sm font-bold" style={{ color: colors.success }}>{stats.tarefasConcluidas}</span>
+                  <span className="text-xs font-medium" style={{ color: colors.textMuted }}>concluídas</span>
                 </div>
               </div>
             </div>
@@ -604,17 +604,17 @@ export default function IntranetPage() {
                 <Calendar className="h-3.5 w-3.5" style={{ color: colors.textMuted }} />
                 <h2 className="text-xs font-semibold" style={{ color: colors.textPrimary }}>Calendário</h2>
               </div>
-              {/* KPI integrado no header - com mais ênfase */}
+              {/* KPI integrado no header - badge maior */}
               <div 
-                className="flex items-center rounded-md px-3 py-1"
+                className="flex items-center rounded-lg px-4 py-1.5"
                 style={{ 
                   backgroundColor: colors.accent, 
-                  gap: '6px'
+                  gap: '8px'
                 }}
               >
-                <ListTodo className="h-3.5 w-3.5" style={{ color: '#fff' }} />
-                <span className="text-xs font-bold" style={{ color: '#fff' }}>{stats.marcosPendentes}</span>
-                <span className="text-[10px] font-medium" style={{ color: 'rgba(255,255,255,0.9)' }}>pendentes</span>
+                <ListTodo className="h-4 w-4" style={{ color: '#fff' }} />
+                <span className="text-sm font-bold" style={{ color: '#fff' }}>{stats.marcosPendentes}</span>
+                <span className="text-xs font-medium" style={{ color: 'rgba(255,255,255,0.9)' }}>pendentes</span>
               </div>
             </div>
             

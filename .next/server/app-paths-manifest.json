@@ -1,10 +1,10 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
   "/comercial/medicao-mc/page": "app/comercial/medicao-mc/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
   "/comercial/medicao-mp/page": "app/comercial/medicao-mp/page.js",
-  "/obras/[id]/page": "app/obras/[id]/page.js",
-  "/comercial/comparativo/page": "app/comercial/comparativo/page.js",
   "/login/page": "app/login/page.js",
+  "/comercial/comparativo/page": "app/comercial/comparativo/page.js",
+  "/obras/[id]/page": "app/obras/[id]/page.js",
   "/obras/page": "app/obras/page.js",
   "/page": "app/page.js",
   "/api/[...all]/route": "app/api/[...all]/route.js"
