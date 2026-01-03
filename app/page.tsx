@@ -347,8 +347,8 @@ export default function IntranetPage() {
             style={{ backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }}
           >
             <div 
-              className="px-10 py-10 border-b flex items-center justify-between"
-              style={{ borderColor: colors.borderPrimary }}
+              className="border-b flex items-center justify-between"
+              style={{ borderColor: colors.borderPrimary, padding: '40px' }}
             >
               <div className="flex items-center gap-3">
                 <Megaphone className="h-5 w-5" style={{ color: colors.textMuted }} />
