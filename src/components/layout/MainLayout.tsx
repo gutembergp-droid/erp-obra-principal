@@ -25,6 +25,9 @@ interface Usuario {
   perfil: string;
 }
 
+// Espaçamento uniforme para todas as margens (32px = 2rem)
+const ESPACAMENTO_UNIFORME = '2rem';
+
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { colors } = useTheme();
@@ -113,10 +116,13 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
           notificacoes={3}
         />
 
-        {/* Conteúdo */}
+        {/* Conteúdo com padding uniforme */}
         <main 
           className="flex-1 overflow-y-auto transition-colors duration-200"
-          style={{ backgroundColor: colors.bgPrimary }}
+          style={{ 
+            backgroundColor: colors.bgPrimary,
+            padding: ESPACAMENTO_UNIFORME,
+          }}
         >
           {children}
         </main>

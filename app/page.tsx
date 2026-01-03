@@ -325,12 +325,11 @@ export default function IntranetPage() {
   // Altura fixa para os cards de Comunicados e Fila de Trabalho
   const cardHeight = "min-h-[320px]"
 
-  // Espaçamento uniforme em todas as direções (32px = 2rem)
-  // Margem esquerda = Margem direita = Margem topo = Margem base = Gap entre cards
-  const espacamentoUniforme = "p-8" // 32px em todas as direções
+  // O espaçamento uniforme (32px) é aplicado no MainLayout
+  // Aqui apenas definimos o gap entre os cards (também 32px para uniformidade)
 
   return (
-    <div className={`min-h-screen ${espacamentoUniforme} transition-colors duration-200`}>
+    <div className="min-h-full transition-colors duration-200">
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight" style={{ color: colors.textPrimary }}>Intranet</h1>
