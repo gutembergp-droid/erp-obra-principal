@@ -199,9 +199,10 @@ export default function Topbar({
                 href={acao.href}
                 className="flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-200"
                 style={{ 
-                  backgroundColor: isActive ? colors.accent : isHovered ? colors.borderPrimary : 'transparent',
-                  color: isActive ? '#FFFFFF' : isHovered ? colors.textPrimary : colors.textMuted,
-                  transform: isHovered ? 'scale(1.05)' : 'scale(1)',
+                  backgroundColor: isActive ? colors.accent : isHovered ? 'rgba(150, 17, 13, 0.15)' : 'transparent',
+                  color: isActive ? '#FFFFFF' : isHovered ? colors.accent : colors.textMuted,
+                  transform: isHovered && !isActive ? 'scale(1.15)' : 'scale(1)',
+                  boxShadow: isHovered && !isActive ? '0 2px 8px rgba(150, 17, 13, 0.2)' : 'none',
                 }}
               >
                 <Icon size={20} />
@@ -275,9 +276,10 @@ export default function Topbar({
                 href={acao.href}
                 className="flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-200"
                 style={{ 
-                  backgroundColor: isActive ? colors.accent : isHovered ? colors.borderPrimary : 'transparent',
-                  color: isActive ? '#FFFFFF' : isHovered ? colors.textPrimary : colors.textMuted,
-                  transform: isHovered ? 'scale(1.05)' : 'scale(1)',
+                  backgroundColor: isActive ? colors.accent : isHovered ? 'rgba(150, 17, 13, 0.15)' : 'transparent',
+                  color: isActive ? '#FFFFFF' : isHovered ? colors.accent : colors.textMuted,
+                  transform: isHovered && !isActive ? 'scale(1.15)' : 'scale(1)',
+                  boxShadow: isHovered && !isActive ? '0 2px 8px rgba(150, 17, 13, 0.2)' : 'none',
                 }}
               >
                 <Icon size={20} />
