@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { Clock, CheckCircle, Bell, ListTodo, Eye, Check, X, FileCheck, ShoppingCart, Receipt, FileText, Megaphone, AlertTriangle, Users, Calendar, ChevronLeft, ChevronRight, Circle, Loader2 } from "lucide-react"
+import { Clock, CheckCircle, Bell, ListTodo, Eye, Check, X, FileCheck, ShoppingCart, Receipt, FileText, Megaphone, AlertTriangle, Calendar, ChevronLeft, ChevronRight, Circle, Loader2 } from "lucide-react"
 
 // ============================================================================
 // CORES AAHBRANT - Identidade Visual Oficial
@@ -300,6 +300,8 @@ export default function IntranetPage() {
     alta: "bg-orange-900/30 text-orange-400 border border-orange-700/30",
     media: "bg-yellow-900/30 text-yellow-400 border border-yellow-700/30",
     baixa: "bg-gray-700/30 text-gray-400 border border-gray-600/30",
+    normal: "bg-blue-900/30 text-blue-400 border border-blue-700/30",
+    info: "bg-blue-900/30 text-blue-400 border border-blue-700/30",
   }
 
   const tipoMarcoColors: Record<string, string> = {
@@ -394,11 +396,99 @@ export default function IntranetPage() {
         </div>
       </div>
 
-      {/* Grid Principal */}
+      {/* Grid Principal - Novo Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Coluna Esquerda - Fila de Trabalho */}
-        <div className="lg:col-span-2">
-          {/* Fila de Trabalho */}
+        {/* Coluna Esquerda - Comunicados + Fila de Trabalho (empilhados) */}
+        <div className="lg:col-span-2 space-y-6">
+          
+          {/* Card de Comunicados (formato tabela, igual ao Fila de Trabalho) */}
+          <div className="bg-gray-900 rounded-lg border border-gray-800">
+            <div className="p-4 border-b border-gray-800">
+              <div className="flex items-center gap-2">
+                <Megaphone className="h-5 w-5 text-gray-400" />
+                <h2 className="font-semibold text-gray-100">Comunicados</h2>
+              </div>
+              <p className="text-sm text-gray-500 mt-1">
+                {loading ? 'Carregando...' : `${stats.comunicadosNaoLidos} comunicados não lidos`}
+              </p>
+            </div>
+            <div className="overflow-x-auto">
+              {loading ? (
+                <div className="flex items-center justify-center py-12">
+                  <Loader2 className="h-6 w-6 text-gray-400 animate-spin" />
+                </div>
+              ) : error ? (
+                <div className="text-center py-8 text-gray-500 text-sm">{error}</div>
+              ) : comunicados.length === 0 ? (
+                <div className="text-center py-8 text-gray-500 text-sm">Nenhum comunicado disponível</div>
+              ) : (
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-gray-800">
+                      <th className="text-left text-xs font-medium text-gray-500 px-4 py-3">Status</th>
+                      <th className="text-left text-xs font-medium text-gray-500 px-4 py-3">Título</th>
+                      <th className="text-left text-xs font-medium text-gray-500 px-4 py-3">Origem</th>
+                      <th className="text-left text-xs font-medium text-gray-500 px-4 py-3">Data</th>
+                      <th className="text-left text-xs font-medium text-gray-500 px-4 py-3">Prioridade</th>
+                      <th className="text-right text-xs font-medium text-gray-500 px-4 py-3">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {comunicados.map((comunicado) => (
+                      <tr key={comunicado.id} className={`border-b border-gray-800/50 hover:bg-gray-800/50 ${!comunicado.lido ? 'bg-blue-900/10' : ''}`}>
+                        <td className="px-4 py-3">
+                          {comunicado.tipo === "urgente" ? (
+                            <AlertTriangle className="h-4 w-4 text-[#96110D]" />
+                          ) : (
+                            <Megaphone className="h-4 w-4 text-blue-400" />
+                          )}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div>
+                            <span className={`text-sm font-medium text-gray-200 ${!comunicado.lido ? 'font-semibold' : ''}`}>
+                              {comunicado.titulo}
+                            </span>
+                            <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{comunicado.conteudo}</p>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className="text-sm text-gray-300">{comunicado.autor}</span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className="text-sm text-gray-300">{formatDate(comunicado.data)}</span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span
+                            className={`inline-flex px-2 py-1 text-xs font-medium rounded ${prioridadeColors[comunicado.tipo] || prioridadeColors.info}`}
+                          >
+                            {comunicado.tipo === "urgente" ? "urgente" : "normal"}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center justify-end gap-1">
+                            <button className="p-1.5 hover:bg-gray-700 rounded transition-colors">
+                              <Eye className="h-4 w-4 text-gray-400" />
+                            </button>
+                            {!comunicado.lido && (
+                              <button 
+                                onClick={() => marcarComoLido(comunicado.id)}
+                                className="p-1.5 hover:bg-emerald-900/50 rounded transition-colors"
+                                title={comunicado.exigeConfirmacao ? "Confirmar leitura" : "Marcar como lido"}
+                              >
+                                <Check className="h-4 w-4 text-emerald-500" />
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </div>
+
+          {/* Card de Fila de Trabalho */}
           <div className="bg-gray-900 rounded-lg border border-gray-800">
             <div className="p-4 border-b border-gray-800">
               <div className="flex items-center gap-2">
@@ -476,88 +566,10 @@ export default function IntranetPage() {
           </div>
         </div>
 
-        {/* Coluna Direita - Comunicados + Calendário */}
-        <div className="space-y-6">
-          {/* Comunicados */}
-          <div className="bg-gray-900 rounded-lg border border-gray-800">
-            <div className="p-4 border-b border-gray-800">
-              <div className="flex items-center gap-2">
-                <Megaphone className="h-5 w-5 text-gray-400" />
-                <h2 className="font-semibold text-gray-100">Comunicados</h2>
-              </div>
-              <p className="text-sm text-gray-500 mt-1">
-                {loading ? 'Carregando...' : `${stats.comunicadosNaoLidos} comunicados não lidos`}
-              </p>
-            </div>
-            <div className="p-4 space-y-3">
-              {loading ? (
-                <div className="flex items-center justify-center py-8">
-                  <Loader2 className="h-6 w-6 text-gray-400 animate-spin" />
-                </div>
-              ) : error ? (
-                <div className="text-center py-4 text-gray-500 text-sm">{error}</div>
-              ) : comunicados.length === 0 ? (
-                <div className="text-center py-4 text-gray-500 text-sm">Nenhum comunicado disponível</div>
-              ) : (
-                comunicados.map((comunicado) => (
-                  <div
-                    key={comunicado.id}
-                    className={`p-3 rounded-lg border ${!comunicado.lido ? "bg-blue-900/20 border-blue-700/30" : "bg-gray-800/30 border-gray-700/30"}`}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div
-                        className={`rounded-full p-1.5 ${
-                          comunicado.tipo === "urgente"
-                            ? "bg-[#96110D]/30"
-                            : comunicado.tipo === "info"
-                              ? "bg-blue-900/30"
-                              : "bg-gray-700/30"
-                        }`}
-                      >
-                        {comunicado.tipo === "urgente" ? (
-                          <AlertTriangle className="h-3 w-3 text-[#96110D]" />
-                        ) : comunicado.tipo === "info" ? (
-                          <Megaphone className="h-3 w-3 text-blue-400" />
-                        ) : (
-                          <Users className="h-3 w-3 text-gray-400" />
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <h4 className={`text-sm font-medium text-gray-200 ${!comunicado.lido ? "font-semibold" : ""}`}>
-                            {comunicado.titulo}
-                          </h4>
-                          {comunicado.tipo === "urgente" && (
-                            <span className="px-1.5 py-0.5 text-[10px] font-medium bg-[#96110D] text-white rounded">
-                              URGENTE
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-xs text-gray-400 mt-1 line-clamp-2">{comunicado.conteudo}</p>
-                        <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
-                          <span>{comunicado.autor}</span>
-                          <span>•</span>
-                          <span>{formatDate(comunicado.data)}</span>
-                        </div>
-                      </div>
-                      {!comunicado.lido && (
-                        <button 
-                          onClick={() => marcarComoLido(comunicado.id)}
-                          className="p-1 hover:bg-blue-900/30 rounded transition-colors"
-                          title={comunicado.exigeConfirmacao ? "Confirmar leitura" : "Marcar como lido"}
-                        >
-                          <Check className="h-4 w-4 text-blue-400" />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
+        {/* Coluna Direita - Apenas Calendário */}
+        <div>
           {/* Calendário */}
-          <div className="bg-gray-900 rounded-lg border border-gray-800">
+          <div className="bg-gray-900 rounded-lg border border-gray-800 h-full">
             <div className="p-4 border-b border-gray-800">
               <div className="flex items-center justify-between">
                 <div>
@@ -580,14 +592,15 @@ export default function IntranetPage() {
             </div>
             <div className="p-4">
               {/* Marcos do Mês */}
-              <div className="space-y-2 mb-4">
+              <div className="space-y-2 mb-6">
+                <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">Marcos do Mês</h4>
                 {marcosDoMes.length === 0 ? (
                   <p className="text-sm text-gray-500 text-center py-4">Nenhum marco neste mês</p>
                 ) : (
                   marcosDoMes.map((marco) => (
-                    <div key={marco.id} className="flex items-center justify-between p-2 rounded-lg border border-gray-700/50 bg-gray-800/30">
+                    <div key={marco.id} className="flex items-center justify-between p-3 rounded-lg border border-gray-700/50 bg-gray-800/30">
                       <div className="flex items-center gap-3">
-                        <div className={`h-2 w-2 rounded-full ${tipoMarcoColors[marco.tipo]}`} />
+                        <div className={`h-2.5 w-2.5 rounded-full ${tipoMarcoColors[marco.tipo]}`} />
                         <div>
                           <span className="text-sm font-medium text-gray-200">{marco.titulo}</span>
                           <p className="text-xs text-gray-500">{formatDateShort(marco.data)}</p>
@@ -605,15 +618,38 @@ export default function IntranetPage() {
 
               {/* Próximos Marcos */}
               <div className="border-t border-gray-800 pt-4">
-                <h4 className="text-sm font-medium text-gray-200 mb-3">Próximos Marcos</h4>
-                <div className="space-y-2">
+                <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">Próximos Marcos</h4>
+                <div className="space-y-3">
                   {marcos.filter((m) => !m.concluido).map((marco) => (
-                    <div key={marco.id} className="flex items-center gap-2 text-sm">
-                      <Circle className="h-3 w-3 text-gray-600" />
+                    <div key={marco.id} className="flex items-center gap-3 text-sm">
+                      <Circle className="h-3 w-3 text-gray-600 flex-shrink-0" />
                       <span className="flex-1 text-gray-400">{marco.titulo}</span>
                       <span className="text-xs text-gray-500">{formatDateShort(marco.data)}</span>
                     </div>
                   ))}
+                </div>
+              </div>
+
+              {/* Legenda */}
+              <div className="border-t border-gray-800 pt-4 mt-6">
+                <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">Legenda</h4>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="flex items-center gap-2">
+                    <div className="h-2.5 w-2.5 rounded-full bg-amber-500" />
+                    <span className="text-xs text-gray-400">Marco</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
+                    <span className="text-xs text-gray-400">Medição</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="h-2.5 w-2.5 rounded-full bg-blue-500" />
+                    <span className="text-xs text-gray-400">Entrega</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="h-2.5 w-2.5 rounded-full bg-purple-500" />
+                    <span className="text-xs text-gray-400">Reunião</span>
+                  </div>
                 </div>
               </div>
             </div>
