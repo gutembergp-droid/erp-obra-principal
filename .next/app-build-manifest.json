@@ -20,16 +20,9 @@
       "static/chunks/fd9d1056-40b79e7c88ed9f33.js",
       "static/chunks/117-379997217309cc81.js",
       "static/chunks/main-app-70a5454e0ad77fb6.js",
-      "static/css/01a6f278bce6ed7d.css",
+      "static/css/b5fc558974a4e338.css",
       "static/chunks/384-5ba95bc447d43ecd.js",
-      "static/chunks/app/layout-3d29a2c1ca206e4d.js"
-    ],
-    "/comercial/medicao-mc/page": [
-      "static/chunks/webpack-0f9d81f53d3d79c3.js",
-      "static/chunks/fd9d1056-40b79e7c88ed9f33.js",
-      "static/chunks/117-379997217309cc81.js",
-      "static/chunks/main-app-70a5454e0ad77fb6.js",
-      "static/chunks/app/comercial/medicao-mc/page-4bdaa0d7854f707b.js"
+      "static/chunks/app/layout-a0134b69cc8988a4.js"
     ],
     "/comercial/comparativo/page": [
       "static/chunks/webpack-0f9d81f53d3d79c3.js",
@@ -44,6 +37,13 @@
       "static/chunks/117-379997217309cc81.js",
       "static/chunks/main-app-70a5454e0ad77fb6.js",
       "static/chunks/app/comercial/medicao-mp/page-312d71124c3f3131.js"
+    ],
+    "/comercial/medicao-mc/page": [
+      "static/chunks/webpack-0f9d81f53d3d79c3.js",
+      "static/chunks/fd9d1056-40b79e7c88ed9f33.js",
+      "static/chunks/117-379997217309cc81.js",
+      "static/chunks/main-app-70a5454e0ad77fb6.js",
+      "static/chunks/app/comercial/medicao-mc/page-4bdaa0d7854f707b.js"
     ],
     "/login/page": [
       "static/chunks/webpack-0f9d81f53d3d79c3.js",
@@ -75,7 +75,7 @@
       "static/chunks/fd9d1056-40b79e7c88ed9f33.js",
       "static/chunks/117-379997217309cc81.js",
       "static/chunks/main-app-70a5454e0ad77fb6.js",
-      "static/chunks/app/page-d3dd16c37e634f8a.js"
+      "static/chunks/app/page-d082c15dea41d5fc.js"
     ]
   }
 }
