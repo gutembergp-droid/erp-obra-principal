@@ -13,7 +13,6 @@ import {
   Check,
   Home,
   MessageSquare,
-  ClipboardList,
   Calendar,
   FileText,
   GraduationCap,
@@ -22,6 +21,9 @@ import {
   Cloud,
   CloudRain,
   CloudSun,
+  Star,
+  ShoppingCart,
+  Video,
 } from 'lucide-react';
 import { useTheme, ThemeType, themeNames } from '@/contexts/ThemeContext';
 
@@ -90,14 +92,16 @@ interface AcaoRapida {
   shortcut: string;
   href: string;
   group: 'left' | 'center' | 'right';
+  hasVideo?: boolean;
 }
 
 // Ações rápidas organizadas: ESQUERDA (Tarefas) | CENTRO (Home) | DIREITA (Apoio)
 const acoesRapidas: AcaoRapida[] = [
   // ESQUERDA - Executam Tarefas
-  { id: 'requisicao', icon: ClipboardList, name: 'Requisição', shortcut: 'Ctrl+R', href: '/suprimentos/requisicoes', group: 'left' },
+  { id: 'favoritos', icon: Star, name: 'Favoritos', shortcut: 'Ctrl+F', href: '/favoritos', group: 'left' },
+  { id: 'requisicao', icon: ShoppingCart, name: 'Requisição', shortcut: 'Ctrl+R', href: '/suprimentos/requisicoes', group: 'left' },
   { id: 'calendario', icon: Calendar, name: 'Calendário', shortcut: 'Ctrl+A', href: '/agenda', group: 'left' },
-  { id: 'chat', icon: MessageSquare, name: 'Chat', shortcut: 'Ctrl+M', href: '/comunicados', group: 'left' },
+  { id: 'chat', icon: MessageSquare, name: 'Chat & Vídeo', shortcut: 'Ctrl+M', href: '/comunicados', group: 'left', hasVideo: true },
   // CENTRO - Home
   { id: 'home', icon: Home, name: 'Início', shortcut: 'Ctrl+H', href: '/', group: 'center' },
   // DIREITA - Apoio/Suporte
@@ -207,11 +211,16 @@ export default function Topbar({
                   minWidth: '36px',
                 }}
               >
-                <Icon size={20} className="flex-shrink-0" />
+                <div className="relative flex-shrink-0">
+                  <Icon size={20} />
+                  {acao.hasVideo && (
+                    <Video size={10} className="absolute -bottom-0.5 -right-1" style={{ backgroundColor: isActive ? colors.accent : isHovered ? 'rgba(150, 17, 13, 0.15)' : colors.bgCardHover, borderRadius: '2px' }} />
+                  )}
+                </div>
                 <span 
                   className="text-xs font-medium whitespace-nowrap overflow-hidden transition-all duration-300"
                   style={{
-                    maxWidth: isHovered && !isActive ? '80px' : '0px',
+                    maxWidth: isHovered && !isActive ? '100px' : '0px',
                     opacity: isHovered && !isActive ? 1 : 0,
                     marginLeft: isHovered && !isActive ? '8px' : '0px',
                   }}
@@ -219,15 +228,15 @@ export default function Topbar({
                   {acao.name}
                 </span>
               </Link>
-              {/* Tooltip preto */}
+              {/* Tooltip preto com maior espaçamento */}
               {isHovered && (
-                <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 pointer-events-none">
-                  <div className="px-3 py-1.5 rounded-md shadow-lg whitespace-nowrap flex items-center gap-2" style={{ backgroundColor: '#1a1a1a' }}>
-                    <span className="text-xs font-medium text-white">{acao.name}</span>
-                    <span className="text-xs text-gray-400">•</span>
-                    <span className="text-xs text-gray-400">{acao.shortcut}</span>
+                <div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 pointer-events-none">
+                  <div className="px-4 py-2 rounded-lg shadow-xl whitespace-nowrap flex items-center gap-3" style={{ backgroundColor: '#1a1a1a' }}>
+                    <span className="text-sm font-medium text-white">{acao.name}</span>
+                    <span className="text-sm text-gray-500">•</span>
+                    <span className="text-sm text-gray-400">{acao.shortcut}</span>
                   </div>
-                  <div className="absolute left-1/2 -translate-x-1/2 -top-1 w-2 h-2 rotate-45" style={{ backgroundColor: '#1a1a1a' }} />
+                  <div className="absolute left-1/2 -translate-x-1/2 -top-2 w-3 h-3 rotate-45" style={{ backgroundColor: '#1a1a1a' }} />
                 </div>
               )}
             </div>
@@ -255,15 +264,15 @@ export default function Topbar({
             >
               <Home size={22} />
             </Link>
-            {/* Tooltip preto */}
+            {/* Tooltip preto com maior espaçamento */}
             {hoveredAction === centerAction.id && (
-              <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 pointer-events-none">
-                <div className="px-3 py-1.5 rounded-md shadow-lg whitespace-nowrap flex items-center gap-2" style={{ backgroundColor: '#1a1a1a' }}>
-                  <span className="text-xs font-medium text-white">{centerAction.name}</span>
-                  <span className="text-xs text-gray-400">•</span>
-                  <span className="text-xs text-gray-400">{centerAction.shortcut}</span>
+              <div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 pointer-events-none">
+                <div className="px-4 py-2 rounded-lg shadow-xl whitespace-nowrap flex items-center gap-3" style={{ backgroundColor: '#1a1a1a' }}>
+                  <span className="text-sm font-medium text-white">{centerAction.name}</span>
+                  <span className="text-sm text-gray-500">•</span>
+                  <span className="text-sm text-gray-400">{centerAction.shortcut}</span>
                 </div>
-                <div className="absolute left-1/2 -translate-x-1/2 -top-1 w-2 h-2 rotate-45" style={{ backgroundColor: '#1a1a1a' }} />
+                <div className="absolute left-1/2 -translate-x-1/2 -top-2 w-3 h-3 rotate-45" style={{ backgroundColor: '#1a1a1a' }} />
               </div>
             )}
           </div>
@@ -308,15 +317,15 @@ export default function Topbar({
                   {acao.name}
                 </span>
               </Link>
-              {/* Tooltip preto */}
+              {/* Tooltip preto com maior espaçamento */}
               {isHovered && (
-                <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 pointer-events-none">
-                  <div className="px-3 py-1.5 rounded-md shadow-lg whitespace-nowrap flex items-center gap-2" style={{ backgroundColor: '#1a1a1a' }}>
-                    <span className="text-xs font-medium text-white">{acao.name}</span>
-                    <span className="text-xs text-gray-400">•</span>
-                    <span className="text-xs text-gray-400">{acao.shortcut}</span>
+                <div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 pointer-events-none">
+                  <div className="px-4 py-2 rounded-lg shadow-xl whitespace-nowrap flex items-center gap-3" style={{ backgroundColor: '#1a1a1a' }}>
+                    <span className="text-sm font-medium text-white">{acao.name}</span>
+                    <span className="text-sm text-gray-500">•</span>
+                    <span className="text-sm text-gray-400">{acao.shortcut}</span>
                   </div>
-                  <div className="absolute left-1/2 -translate-x-1/2 -top-1 w-2 h-2 rotate-45" style={{ backgroundColor: '#1a1a1a' }} />
+                  <div className="absolute left-1/2 -translate-x-1/2 -top-2 w-3 h-3 rotate-45" style={{ backgroundColor: '#1a1a1a' }} />
                 </div>
               )}
             </div>
