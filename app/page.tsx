@@ -348,28 +348,28 @@ export default function IntranetPage() {
           >
             <div 
               className="border-b flex items-center justify-between"
-              style={{ borderColor: colors.borderPrimary, padding: '40px' }}
+              style={{ borderColor: colors.borderPrimary, padding: '20px 24px' }}
             >
-              <div className="flex items-center gap-3">
-                <Megaphone className="h-5 w-5" style={{ color: colors.textMuted }} />
-                <h2 className="text-base font-semibold" style={{ color: colors.textPrimary }}>Comunicados</h2>
+              <div className="flex items-center gap-2">
+                <Megaphone className="h-4 w-4" style={{ color: colors.textMuted }} />
+                <h2 className="text-sm font-semibold" style={{ color: colors.textPrimary }}>Comunicados</h2>
               </div>
               {/* KPIs integrados no header */}
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 <div 
-                  className="flex items-center gap-2 rounded-lg px-3 py-1.5"
+                  className="flex items-center gap-1.5 rounded-md px-2.5 py-1"
                   style={{ backgroundColor: colors.infoBg, border: `1px solid ${colors.info}30` }}
                 >
-                  <Bell className="h-4 w-4" style={{ color: colors.info }} />
-                  <span className="text-sm font-medium" style={{ color: colors.info }}>{stats.comunicadosNaoLidos}</span>
-                  <span className="text-xs" style={{ color: colors.textMuted }}>não lidos</span>
+                  <Bell className="h-3.5 w-3.5" style={{ color: colors.info }} />
+                  <span className="text-xs font-medium" style={{ color: colors.info }}>{stats.comunicadosNaoLidos}</span>
+                  <span className="text-[10px]" style={{ color: colors.textMuted }}>não lidos</span>
                 </div>
                 <div 
-                  className="flex items-center gap-2 rounded-lg px-3 py-1.5"
+                  className="flex items-center gap-1.5 rounded-md px-2.5 py-1"
                   style={{ backgroundColor: colors.bgCardHover, border: `1px solid ${colors.borderSecondary}` }}
                 >
-                  <span className="text-sm font-medium" style={{ color: colors.textSecondary }}>{stats.comunicadosTotal}</span>
-                  <span className="text-xs" style={{ color: colors.textMuted }}>total</span>
+                  <span className="text-xs font-medium" style={{ color: colors.textSecondary }}>{stats.comunicadosTotal}</span>
+                  <span className="text-[10px]" style={{ color: colors.textMuted }}>total</span>
                 </div>
               </div>
             </div>
@@ -472,30 +472,30 @@ export default function IntranetPage() {
             style={{ backgroundColor: colors.bgCard, borderColor: colors.borderPrimary, marginTop: '22px' }}
           >
             <div 
-              className="px-8 py-6 border-b flex items-center justify-between"
-              style={{ borderColor: colors.borderPrimary }}
+              className="border-b flex items-center justify-between"
+              style={{ borderColor: colors.borderPrimary, padding: '20px 24px' }}
             >
-              <div className="flex items-center gap-3">
-                <Clock className="h-5 w-5" style={{ color: colors.textMuted }} />
-                <h2 className="text-base font-semibold" style={{ color: colors.textPrimary }}>Fila de Trabalho</h2>
+              <div className="flex items-center gap-2">
+                <Clock className="h-4 w-4" style={{ color: colors.textMuted }} />
+                <h2 className="text-sm font-semibold" style={{ color: colors.textPrimary }}>Fila de Trabalho</h2>
               </div>
               {/* KPIs integrados no header */}
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 <div 
-                  className="flex items-center gap-2 rounded-lg px-3 py-1.5"
+                  className="flex items-center gap-1.5 rounded-md px-2.5 py-1"
                   style={{ backgroundColor: colors.warningBg, border: `1px solid ${colors.warning}30` }}
                 >
-                  <Clock className="h-4 w-4" style={{ color: colors.warning }} />
-                  <span className="text-sm font-medium" style={{ color: colors.warning }}>{stats.tarefasPendentes}</span>
-                  <span className="text-xs" style={{ color: colors.textMuted }}>pendentes</span>
+                  <Clock className="h-3.5 w-3.5" style={{ color: colors.warning }} />
+                  <span className="text-xs font-medium" style={{ color: colors.warning }}>{stats.tarefasPendentes}</span>
+                  <span className="text-[10px]" style={{ color: colors.textMuted }}>pendentes</span>
                 </div>
                 <div 
-                  className="flex items-center gap-2 rounded-lg px-3 py-1.5"
+                  className="flex items-center gap-1.5 rounded-md px-2.5 py-1"
                   style={{ backgroundColor: colors.successBg, border: `1px solid ${colors.success}30` }}
                 >
-                  <CheckCircle className="h-4 w-4" style={{ color: colors.success }} />
-                  <span className="text-sm font-medium" style={{ color: colors.success }}>{stats.tarefasConcluidas}</span>
-                  <span className="text-xs" style={{ color: colors.textMuted }}>concluídas</span>
+                  <CheckCircle className="h-3.5 w-3.5" style={{ color: colors.success }} />
+                  <span className="text-xs font-medium" style={{ color: colors.success }}>{stats.tarefasConcluidas}</span>
+                  <span className="text-[10px]" style={{ color: colors.textMuted }}>concluídas</span>
                 </div>
               </div>
             </div>
