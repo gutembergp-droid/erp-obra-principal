@@ -4,13 +4,6 @@ import { useState, useEffect, useCallback } from "react"
 import { Clock, CheckCircle, Bell, ListTodo, Eye, Check, X, FileCheck, ShoppingCart, Receipt, FileText, Megaphone, AlertTriangle, Calendar, ChevronLeft, ChevronRight, Circle, Loader2 } from "lucide-react"
 
 // ============================================================================
-// CORES AAHBRANT - Identidade Visual Oficial
-// ============================================================================
-// Preto: #1A1A1A
-// Cinza: #F5F5F5
-// Vermelho: #96110D
-
-// ============================================================================
 // TIPOS
 // ============================================================================
 
@@ -69,7 +62,7 @@ interface Marco {
 }
 
 // ============================================================================
-// DADOS MOCK PARA TAREFAS E MARCOS (até implementar APIs)
+// DADOS MOCK
 // ============================================================================
 
 const tarefasMock: Tarefa[] = [
@@ -154,7 +147,6 @@ function formatDateShort(dateStr: string): string {
   return date.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" }).replace(".", "")
 }
 
-// Mapeia prioridade da API para tipo de exibição
 function mapPrioridadeToTipo(prioridade: string): string {
   switch (prioridade) {
     case 'urgente':
@@ -178,18 +170,14 @@ export default function IntranetPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // Busca comunicados da API
   const fetchComunicados = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
       
-      // Busca obra ativa do localStorage
       const obraAtivaStr = localStorage.getItem('obraAtiva')
       const obraAtiva = obraAtivaStr ? JSON.parse(obraAtivaStr) : null
       const obraId = obraAtiva?.id || ''
-      
-      // Busca token de autenticação
       const token = localStorage.getItem('token')
       
       const response = await fetch(`/api/comunicados/intranet?obra_id=${obraId}`, {
@@ -204,8 +192,6 @@ export default function IntranetPage() {
       }
       
       const data = await response.json()
-      
-      // Mapeia os comunicados da API para o formato do componente
       const todosComunicados: ComunicadoAPI[] = data.todos || []
       const comunicadosMapeados: Comunicado[] = todosComunicados.map((c: ComunicadoAPI) => ({
         id: c.id,
@@ -223,7 +209,6 @@ export default function IntranetPage() {
     } catch (err) {
       console.error('Erro ao buscar comunicados:', err)
       setError('Não foi possível carregar os comunicados')
-      // Fallback para dados mock em caso de erro
       setComunicados([
         {
           id: "1",
@@ -272,6 +257,7 @@ export default function IntranetPage() {
     tarefasPendentes: tarefas.length,
     tarefasConcluidas: 0,
     comunicadosNaoLidos: comunicados.filter((c) => !c.lido).length,
+    comunicadosTotal: comunicados.length,
     marcosPendentes: marcos.filter((m) => !m.concluido).length,
   }
 
@@ -294,7 +280,6 @@ export default function IntranetPage() {
     contrato: FileText,
   }
 
-  // Cores de prioridade com tema AahBrant
   const prioridadeColors: Record<string, string> = {
     urgente: "bg-[#96110D]/20 text-[#96110D] border border-[#96110D]/30",
     alta: "bg-orange-900/30 text-orange-400 border border-orange-700/30",
@@ -311,11 +296,9 @@ export default function IntranetPage() {
     reuniao: "bg-purple-500",
   }
 
-  // Marcar comunicado como lido
   const marcarComoLido = async (id: string) => {
     try {
       const token = localStorage.getItem('token')
-      
       await fetch(`/api/comunicados/${id}/confirmar-leitura`, {
         method: 'POST',
         headers: {
@@ -323,77 +306,22 @@ export default function IntranetPage() {
           'Content-Type': 'application/json'
         }
       })
-      
-      // Atualiza estado local
       setComunicados(prev => prev.map(c => c.id === id ? { ...c, lido: true } : c))
     } catch (err) {
       console.error('Erro ao confirmar leitura:', err)
-      // Atualiza estado local mesmo em caso de erro
       setComunicados(prev => prev.map(c => c.id === id ? { ...c, lido: true } : c))
     }
   }
 
+  // Altura fixa para os cards de Comunicados e Fila de Trabalho
+  const cardHeight = "min-h-[320px]"
+
   return (
-    <div className="min-h-screen p-2">
+    <div className="min-h-screen w-[90%] mx-auto py-6">
       {/* Header */}
-      <div className="mb-8">
+      <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-100 tracking-tight">Intranet</h1>
         <p className="text-sm text-gray-400 mt-1">Visão geral da obra e tarefas pendentes</p>
-      </div>
-
-      {/* KPIs */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-        <div className="bg-gray-900/80 rounded-lg border border-gray-800/60 p-5">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Tarefas Pendentes</p>
-              <p className="text-3xl font-bold text-gray-100 mt-2">{stats.tarefasPendentes}</p>
-              <p className="text-xs text-gray-500 mt-1">Aguardando ação</p>
-            </div>
-            <div className="bg-amber-900/30 rounded-lg p-2.5">
-              <Clock className="h-5 w-5 text-amber-500" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-gray-900/80 rounded-lg border border-gray-800/60 p-5">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Tarefas Concluídas</p>
-              <p className="text-3xl font-bold text-gray-100 mt-2">{stats.tarefasConcluidas}</p>
-              <p className="text-xs text-gray-500 mt-1">Finalizadas</p>
-            </div>
-            <div className="bg-emerald-900/30 rounded-lg p-2.5">
-              <CheckCircle className="h-5 w-5 text-emerald-500" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-gray-900/80 rounded-lg border border-gray-800/60 p-5">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Comunicados</p>
-              <p className="text-3xl font-bold text-gray-100 mt-2">{stats.comunicadosNaoLidos}</p>
-              <p className="text-xs text-gray-500 mt-1">Não lidos</p>
-            </div>
-            <div className="bg-blue-900/30 rounded-lg p-2.5">
-              <Bell className="h-5 w-5 text-blue-500" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-gray-900/80 rounded-lg border border-gray-800/60 p-5">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Marcos Pendentes</p>
-              <p className="text-3xl font-bold text-gray-100 mt-2">{stats.marcosPendentes}</p>
-              <p className="text-xs text-gray-500 mt-1">Próximos eventos</p>
-            </div>
-            <div className="bg-[#96110D]/30 rounded-lg p-2.5">
-              <ListTodo className="h-5 w-5 text-[#96110D]" />
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Grid Principal */}
@@ -402,25 +330,34 @@ export default function IntranetPage() {
         <div className="lg:col-span-8 space-y-5">
           
           {/* Card de Comunicados */}
-          <div className="bg-gray-900/80 rounded-lg border border-gray-800/60">
-            <div className="px-5 py-4 border-b border-gray-800/60">
-              <div className="flex items-center gap-2">
+          <div className={`bg-gray-900/80 rounded-lg border border-gray-800/60 ${cardHeight}`}>
+            <div className="px-5 py-4 border-b border-gray-800/60 flex items-center justify-between">
+              <div className="flex items-center gap-3">
                 <Megaphone className="h-5 w-5 text-gray-400" />
                 <h2 className="text-base font-semibold text-gray-100">Comunicados</h2>
               </div>
-              <p className="text-xs text-gray-500 mt-1">
-                {loading ? 'Carregando...' : `${stats.comunicadosNaoLidos} comunicados não lidos`}
-              </p>
+              {/* KPIs integrados no header */}
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 bg-blue-900/20 border border-blue-800/30 rounded-lg px-3 py-1.5">
+                  <Bell className="h-4 w-4 text-blue-400" />
+                  <span className="text-sm font-medium text-blue-400">{stats.comunicadosNaoLidos}</span>
+                  <span className="text-xs text-gray-500">não lidos</span>
+                </div>
+                <div className="flex items-center gap-2 bg-gray-800/50 border border-gray-700/30 rounded-lg px-3 py-1.5">
+                  <span className="text-sm font-medium text-gray-300">{stats.comunicadosTotal}</span>
+                  <span className="text-xs text-gray-500">total</span>
+                </div>
+              </div>
             </div>
             <div className="overflow-x-auto">
               {loading ? (
-                <div className="flex items-center justify-center py-12">
+                <div className="flex items-center justify-center py-16">
                   <Loader2 className="h-6 w-6 text-gray-400 animate-spin" />
                 </div>
               ) : error ? (
-                <div className="text-center py-10 text-gray-500 text-sm">{error}</div>
+                <div className="text-center py-12 text-gray-500 text-sm">{error}</div>
               ) : comunicados.length === 0 ? (
-                <div className="text-center py-10 text-gray-500 text-sm">Nenhum comunicado disponível</div>
+                <div className="text-center py-12 text-gray-500 text-sm">Nenhum comunicado disponível</div>
               ) : (
                 <table className="w-full">
                   <thead>
@@ -458,9 +395,7 @@ export default function IntranetPage() {
                           <span className="text-sm text-gray-400">{formatDate(comunicado.data)}</span>
                         </td>
                         <td className="px-4 py-3">
-                          <span
-                            className={`inline-flex px-2 py-1 text-[10px] font-medium rounded ${prioridadeColors[comunicado.tipo] || prioridadeColors.info}`}
-                          >
+                          <span className={`inline-flex px-2 py-1 text-[10px] font-medium rounded ${prioridadeColors[comunicado.tipo] || prioridadeColors.info}`}>
                             {comunicado.tipo === "urgente" ? "urgente" : "normal"}
                           </span>
                         </td>
@@ -473,7 +408,6 @@ export default function IntranetPage() {
                               <button 
                                 onClick={() => marcarComoLido(comunicado.id)}
                                 className="p-1.5 hover:bg-emerald-900/50 rounded transition-colors"
-                                title={comunicado.exigeConfirmacao ? "Confirmar leitura" : "Marcar como lido"}
                               >
                                 <Check className="h-3.5 w-3.5 text-emerald-500" />
                               </button>
@@ -489,15 +423,25 @@ export default function IntranetPage() {
           </div>
 
           {/* Card de Fila de Trabalho */}
-          <div className="bg-gray-900/80 rounded-lg border border-gray-800/60">
-            <div className="px-5 py-4 border-b border-gray-800/60">
-              <div className="flex items-center gap-2">
+          <div className={`bg-gray-900/80 rounded-lg border border-gray-800/60 ${cardHeight}`}>
+            <div className="px-5 py-4 border-b border-gray-800/60 flex items-center justify-between">
+              <div className="flex items-center gap-3">
                 <Clock className="h-5 w-5 text-gray-400" />
                 <h2 className="text-base font-semibold text-gray-100">Fila de Trabalho</h2>
               </div>
-              <p className="text-xs text-gray-500 mt-1">
-                {stats.tarefasPendentes} itens pendentes de aprovação
-              </p>
+              {/* KPIs integrados no header */}
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 bg-amber-900/20 border border-amber-800/30 rounded-lg px-3 py-1.5">
+                  <Clock className="h-4 w-4 text-amber-400" />
+                  <span className="text-sm font-medium text-amber-400">{stats.tarefasPendentes}</span>
+                  <span className="text-xs text-gray-500">pendentes</span>
+                </div>
+                <div className="flex items-center gap-2 bg-emerald-900/20 border border-emerald-800/30 rounded-lg px-3 py-1.5">
+                  <CheckCircle className="h-4 w-4 text-emerald-400" />
+                  <span className="text-sm font-medium text-emerald-400">{stats.tarefasConcluidas}</span>
+                  <span className="text-xs text-gray-500">concluídas</span>
+                </div>
+              </div>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -538,9 +482,7 @@ export default function IntranetPage() {
                           <span className="text-sm text-gray-400">{formatDate(tarefa.prazo)}</span>
                         </td>
                         <td className="px-4 py-3">
-                          <span
-                            className={`inline-flex px-2 py-1 text-[10px] font-medium rounded ${prioridadeColors[tarefa.prioridade]}`}
-                          >
+                          <span className={`inline-flex px-2 py-1 text-[10px] font-medium rounded ${prioridadeColors[tarefa.prioridade]}`}>
                             {tarefa.prioridade}
                           </span>
                         </td>
@@ -570,14 +512,20 @@ export default function IntranetPage() {
         <div className="lg:col-span-4">
           <div className="bg-gray-900/80 rounded-lg border border-gray-800/60 h-full">
             <div className="px-5 py-4 border-b border-gray-800/60">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-5 w-5 text-gray-400" />
-                    <h2 className="text-base font-semibold text-gray-100">Calendário</h2>
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1">Marcos e eventos da obra</p>
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  <Calendar className="h-5 w-5 text-gray-400" />
+                  <h2 className="text-base font-semibold text-gray-100">Calendário</h2>
                 </div>
+                {/* KPI integrado no header */}
+                <div className="flex items-center gap-2 bg-[#96110D]/20 border border-[#96110D]/30 rounded-lg px-3 py-1.5">
+                  <ListTodo className="h-4 w-4 text-[#96110D]" />
+                  <span className="text-sm font-medium text-[#96110D]">{stats.marcosPendentes}</span>
+                  <span className="text-xs text-gray-500">pendentes</span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <p className="text-xs text-gray-500">Marcos e eventos da obra</p>
                 <div className="flex items-center gap-1">
                   <button className="p-1.5 hover:bg-gray-800 rounded transition-colors" onClick={() => navegarMes(-1)}>
                     <ChevronLeft className="h-4 w-4 text-gray-400" />
