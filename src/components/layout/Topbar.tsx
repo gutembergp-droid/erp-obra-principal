@@ -197,15 +197,27 @@ export default function Topbar({
             >
               <Link
                 href={acao.href}
-                className="flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-200"
+                className="flex items-center h-9 rounded-lg transition-all duration-300 overflow-hidden"
                 style={{ 
                   backgroundColor: isActive ? colors.accent : isHovered ? 'rgba(150, 17, 13, 0.15)' : 'transparent',
                   color: isActive ? '#FFFFFF' : isHovered ? colors.accent : colors.textMuted,
-                  transform: isHovered && !isActive ? 'scale(1.15)' : 'scale(1)',
-                  boxShadow: isHovered && !isActive ? '0 2px 8px rgba(150, 17, 13, 0.2)' : 'none',
+                  paddingLeft: '10px',
+                  paddingRight: isHovered && !isActive ? '12px' : '10px',
+                  width: isHovered && !isActive ? 'auto' : '36px',
+                  minWidth: '36px',
                 }}
               >
-                <Icon size={20} />
+                <Icon size={20} className="flex-shrink-0" />
+                <span 
+                  className="text-xs font-medium whitespace-nowrap overflow-hidden transition-all duration-300"
+                  style={{
+                    maxWidth: isHovered && !isActive ? '80px' : '0px',
+                    opacity: isHovered && !isActive ? 1 : 0,
+                    marginLeft: isHovered && !isActive ? '8px' : '0px',
+                  }}
+                >
+                  {acao.name}
+                </span>
               </Link>
               {/* Tooltip preto */}
               {isHovered && (
@@ -274,15 +286,27 @@ export default function Topbar({
             >
               <Link
                 href={acao.href}
-                className="flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-200"
+                className="flex items-center h-9 rounded-lg transition-all duration-300 overflow-hidden"
                 style={{ 
                   backgroundColor: isActive ? colors.accent : isHovered ? 'rgba(150, 17, 13, 0.15)' : 'transparent',
                   color: isActive ? '#FFFFFF' : isHovered ? colors.accent : colors.textMuted,
-                  transform: isHovered && !isActive ? 'scale(1.15)' : 'scale(1)',
-                  boxShadow: isHovered && !isActive ? '0 2px 8px rgba(150, 17, 13, 0.2)' : 'none',
+                  paddingLeft: '10px',
+                  paddingRight: isHovered && !isActive ? '12px' : '10px',
+                  width: isHovered && !isActive ? 'auto' : '36px',
+                  minWidth: '36px',
                 }}
               >
-                <Icon size={20} />
+                <Icon size={20} className="flex-shrink-0" />
+                <span 
+                  className="text-xs font-medium whitespace-nowrap overflow-hidden transition-all duration-300"
+                  style={{
+                    maxWidth: isHovered && !isActive ? '100px' : '0px',
+                    opacity: isHovered && !isActive ? 1 : 0,
+                    marginLeft: isHovered && !isActive ? '8px' : '0px',
+                  }}
+                >
+                  {acao.name}
+                </span>
               </Link>
               {/* Tooltip preto */}
               {isHovered && (
