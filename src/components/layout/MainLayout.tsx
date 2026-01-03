@@ -25,12 +25,10 @@ interface Usuario {
   perfil: string;
 }
 
-// Espaçamento uniforme para margens laterais (29px = 1.8rem)
-const ESPACAMENTO_LATERAL = '1.8rem';
-// Margem superior reduzida em 10% (29px * 0.9 = 26px = 1.6rem)
-const MARGEM_SUPERIOR = '1.6rem';
-// Margem inferior aumentada em 10% (29px * 1.1 = 32px = 2rem)
-const MARGEM_INFERIOR = '2rem';
+// Margens ajustadas conforme especificação
+const ESPACAMENTO_LATERAL = '25px';
+const MARGEM_SUPERIOR = '20px';
+const MARGEM_INFERIOR = '38px';
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

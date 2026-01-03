@@ -1,11 +1,11 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
-  "/comercial/comparativo/page": "app/comercial/comparativo/page.js",
   "/comercial/medicao-mc/page": "app/comercial/medicao-mc/page.js",
   "/comercial/medicao-mp/page": "app/comercial/medicao-mp/page.js",
   "/login/page": "app/login/page.js",
   "/obras/[id]/page": "app/obras/[id]/page.js",
-  "/page": "app/page.js",
   "/obras/page": "app/obras/page.js",
+  "/page": "app/page.js",
+  "/comercial/comparativo/page": "app/comercial/comparativo/page.js",
   "/api/[...all]/route": "app/api/[...all]/route.js"
 }

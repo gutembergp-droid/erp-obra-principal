@@ -22,14 +22,7 @@
       "static/chunks/main-app-70a5454e0ad77fb6.js",
       "static/css/27b889b9ac703b9d.css",
       "static/chunks/42-7334c15ce7cbd11c.js",
-      "static/chunks/app/layout-39e86d252208c5ed.js"
-    ],
-    "/comercial/comparativo/page": [
-      "static/chunks/webpack-0f9d81f53d3d79c3.js",
-      "static/chunks/fd9d1056-702bfc020e6870d3.js",
-      "static/chunks/117-e438ee6ba44a3da0.js",
-      "static/chunks/main-app-70a5454e0ad77fb6.js",
-      "static/chunks/app/comercial/comparativo/page-a4dff722ee3c4098.js"
+      "static/chunks/app/layout-5b6546052b98a09e.js"
     ],
     "/comercial/medicao-mc/page": [
       "static/chunks/webpack-0f9d81f53d3d79c3.js",
@@ -62,13 +55,6 @@
       "static/chunks/591-e41aa13dc18342b8.js",
       "static/chunks/app/obras/[id]/page-d42e8efb5055b78c.js"
     ],
-    "/page": [
-      "static/chunks/webpack-0f9d81f53d3d79c3.js",
-      "static/chunks/fd9d1056-702bfc020e6870d3.js",
-      "static/chunks/117-e438ee6ba44a3da0.js",
-      "static/chunks/main-app-70a5454e0ad77fb6.js",
-      "static/chunks/app/page-f80ce8d9d71e6be7.js"
-    ],
     "/obras/page": [
       "static/chunks/webpack-0f9d81f53d3d79c3.js",
       "static/chunks/fd9d1056-702bfc020e6870d3.js",
@@ -76,6 +62,20 @@
       "static/chunks/main-app-70a5454e0ad77fb6.js",
       "static/css/366845f754fe3857.css",
       "static/chunks/app/obras/page-18c5659578120191.js"
+    ],
+    "/page": [
+      "static/chunks/webpack-0f9d81f53d3d79c3.js",
+      "static/chunks/fd9d1056-702bfc020e6870d3.js",
+      "static/chunks/117-e438ee6ba44a3da0.js",
+      "static/chunks/main-app-70a5454e0ad77fb6.js",
+      "static/chunks/app/page-f80ce8d9d71e6be7.js"
+    ],
+    "/comercial/comparativo/page": [
+      "static/chunks/webpack-0f9d81f53d3d79c3.js",
+      "static/chunks/fd9d1056-702bfc020e6870d3.js",
+      "static/chunks/117-e438ee6ba44a3da0.js",
+      "static/chunks/main-app-70a5454e0ad77fb6.js",
+      "static/chunks/app/comercial/comparativo/page-a4dff722ee3c4098.js"
     ]
   }
 }
