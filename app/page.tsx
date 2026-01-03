@@ -357,7 +357,7 @@ export default function IntranetPage() {
               {/* KPIs integrados no header - badges maiores */}
               <div className="flex items-center gap-3">
                 <div 
-                  className="flex items-center gap-2 rounded-lg px-4 py-1.5"
+                  className="flex items-center gap-2 rounded-lg px-4 py-2"
                   style={{ backgroundColor: colors.infoBg, border: `1px solid ${colors.info}50` }}
                 >
                   <Bell className="h-4 w-4" style={{ color: colors.info }} />
@@ -365,7 +365,7 @@ export default function IntranetPage() {
                   <span className="text-xs font-medium" style={{ color: colors.textMuted }}>não lidos</span>
                 </div>
                 <div 
-                  className="flex items-center gap-2 rounded-lg px-4 py-1.5"
+                  className="flex items-center gap-2 rounded-lg px-4 py-2"
                   style={{ backgroundColor: colors.bgCardHover, border: `1px solid ${colors.borderSecondary}` }}
                 >
                   <span className="text-sm font-bold" style={{ color: colors.textSecondary }}>{stats.comunicadosTotal}</span>
@@ -482,7 +482,7 @@ export default function IntranetPage() {
               {/* KPIs integrados no header - badges maiores */}
               <div className="flex items-center gap-3">
                 <div 
-                  className="flex items-center gap-2 rounded-lg px-4 py-1.5"
+                  className="flex items-center gap-2 rounded-lg px-4 py-2"
                   style={{ backgroundColor: colors.warningBg, border: `1px solid ${colors.warning}50` }}
                 >
                   <Clock className="h-4 w-4" style={{ color: colors.warning }} />
@@ -490,7 +490,7 @@ export default function IntranetPage() {
                   <span className="text-xs font-medium" style={{ color: colors.textMuted }}>pendentes</span>
                 </div>
                 <div 
-                  className="flex items-center gap-2 rounded-lg px-4 py-1.5"
+                  className="flex items-center gap-2 rounded-lg px-4 py-2"
                   style={{ backgroundColor: colors.successBg, border: `1px solid ${colors.success}50` }}
                 >
                   <CheckCircle className="h-4 w-4" style={{ color: colors.success }} />
@@ -606,7 +606,7 @@ export default function IntranetPage() {
               </div>
               {/* KPI integrado no header - badge maior */}
               <div 
-                className="flex items-center rounded-lg px-4 py-1.5"
+                className="flex items-center rounded-lg px-4 py-2"
                 style={{ 
                   backgroundColor: colors.accent, 
                   gap: '8px'
