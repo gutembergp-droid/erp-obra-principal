@@ -25,8 +25,8 @@ interface Usuario {
   perfil: string;
 }
 
-// Espaçamento uniforme para todas as margens (32px = 2rem)
-const ESPACAMENTO_UNIFORME = '2rem';
+// Espaçamento uniforme para todas as margens (29px = 1.8rem)
+const ESPACAMENTO_UNIFORME = '1.8rem';
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
