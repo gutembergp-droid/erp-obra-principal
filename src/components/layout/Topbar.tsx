@@ -1,58 +1,91 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { 
   Bell, 
   User, 
   ChevronDown, 
   CheckCircle, 
   AlertCircle,
-  Calendar,
-  DollarSign,
   Clock,
   Sun,
   Moon,
   Palette,
   Check,
+  Home,
+  ShoppingCart,
+  Calendar,
+  FileText,
+  GraduationCap,
+  HelpCircle,
+  Cloud,
+  CloudRain,
+  CloudSun,
 } from 'lucide-react';
 import { useTheme, ThemeType, themeNames } from '@/contexts/ThemeContext';
 
 interface TopbarProps {
-  competencia?: {
-    mes: number;
-    ano: number;
-  };
-  contrato?: {
-    valor: number;
-    prazo: number; // em meses
-  };
-  gateStatus?: {
-    numero: number;
-    status: 'ok' | 'pendente' | 'bloqueado';
-  };
   usuario?: {
     nome: string;
     perfil: string;
+    status?: 'online' | 'ausente' | 'ocupado' | 'offline';
   };
   notificacoes?: number;
 }
 
+// Mapeamento de rotas para breadcrumb
+const routeMap: Record<string, { modulo: string; depto?: string; setor?: string }> = {
+  '/': { modulo: 'Intranet', depto: 'Dashboard da Obra' },
+  '/comunicados': { modulo: 'Intranet', depto: 'Comunicados' },
+  '/tarefas': { modulo: 'Intranet', depto: 'Minhas Tarefas' },
+  '/agenda': { modulo: 'Intranet', depto: 'Agenda' },
+  '/clientes': { modulo: 'Corporativo', depto: 'Clientes' },
+  '/contratos': { modulo: 'Corporativo', depto: 'Contratos' },
+  '/portfolio': { modulo: 'Corporativo', depto: 'Portfólio de Obras' },
+  '/gestao-obras': { modulo: 'Obras', depto: 'Gestão de Obras' },
+  '/estruturacao': { modulo: 'Comercial', depto: 'Estruturação (EAP)' },
+  '/medicao-producao': { modulo: 'Comercial', depto: 'Medição Produção' },
+  '/medicao-cliente': { modulo: 'Comercial', depto: 'Medição Cliente' },
+  '/projetos': { modulo: 'Engenharia', depto: 'Projetos' },
+  '/cronograma': { modulo: 'Planejamento', depto: 'Cronograma' },
+  '/diario-obra': { modulo: 'Produção', depto: 'Diário de Obra' },
+  '/requisicoes': { modulo: 'Suprimentos', depto: 'Requisições' },
+  '/custos': { modulo: 'Custos', depto: 'Apropriação de Custos' },
+  '/inspecoes': { modulo: 'Qualidade', depto: 'Inspeções' },
+  '/seguranca': { modulo: 'SSMA', depto: 'Segurança do Trabalho' },
+};
+
+// Ações rápidas fixas
+const acoesRapidas = [
+  { id: 'home', icon: Home, label: 'Tela Inicial', href: '/' },
+  { id: 'suprimentos', icon: ShoppingCart, label: 'Suprimentos', href: '/requisicoes' },
+  { id: 'calendario', icon: Calendar, label: 'Calendário', href: '/agenda' },
+  { id: 'documentacao', icon: FileText, label: 'Documentação', href: '/documentos' },
+  { id: 'treinamento', icon: GraduationCap, label: 'Treinamento', href: '/treinamentos' },
+  { id: 'suporte', icon: HelpCircle, label: 'Suporte', href: '/suporte' },
+];
+
 export default function Topbar({
-  competencia,
-  contrato,
-  gateStatus,
   usuario,
   notificacoes = 0,
 }: TopbarProps) {
+  const pathname = usePathname();
   const { theme, setTheme, colors } = useTheme();
   const [showThemeMenu, setShowThemeMenu] = useState(false);
+  const [showStatusMenu, setShowStatusMenu] = useState(false);
+  const [userStatus, setUserStatus] = useState<'online' | 'ausente' | 'ocupado' | 'offline'>(usuario?.status || 'online');
   const themeMenuRef = useRef<HTMLDivElement>(null);
+  const statusMenuRef = useRef<HTMLDivElement>(null);
 
-  // Fecha o menu ao clicar fora
+  // Fecha os menus ao clicar fora
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (themeMenuRef.current && !themeMenuRef.current.contains(event.target as Node)) {
         setShowThemeMenu(false);
+      }
+      if (statusMenuRef.current && !statusMenuRef.current.contains(event.target as Node)) {
+        setShowStatusMenu(false);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
@@ -60,50 +93,34 @@ export default function Topbar({
   }, []);
 
   // Valores padrão
-  const comp = competencia || { mes: new Date().getMonth() + 1, ano: new Date().getFullYear() };
-  const contratoInfo = contrato || { valor: 0, prazo: 0 };
-  const gate = gateStatus || { numero: 1, status: 'pendente' };
-  const user = usuario || { nome: 'Usuário', perfil: 'usuario' };
+  const user = usuario || { nome: 'Usuário', perfil: 'usuario', status: 'online' };
 
-  // Formata o mês/ano
-  const mesFormatado = comp.mes.toString().padStart(2, '0');
-  
-  // Formata o valor do contrato
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(value);
+  // Obtém o breadcrumb baseado na rota atual
+  const getBreadcrumb = () => {
+    const route = pathname ? routeMap[pathname] : null;
+    return route || { modulo: 'Genesis', depto: 'Dashboard' };
   };
 
-  // Cor do status do gate
-  const getGateStatusColor = (status: string) => {
-    switch (status) {
-      case 'ok':
-        return 'bg-green-900/50 text-green-400 border-green-700';
-      case 'pendente':
-        return 'bg-yellow-900/50 text-yellow-400 border-yellow-700';
-      case 'bloqueado':
-        return 'bg-red-900/50 text-red-400 border-red-700';
-      default:
-        return 'bg-gray-800 text-gray-400 border-gray-700';
-    }
+  const breadcrumb = getBreadcrumb();
+
+  // Saudação baseada na hora do dia
+  const getSaudacao = () => {
+    const hora = new Date().getHours();
+    if (hora < 12) return 'Bom dia';
+    if (hora < 18) return 'Boa tarde';
+    return 'Boa noite';
   };
 
-  // Ícone do status do gate
-  const getGateStatusIcon = (status: string) => {
-    switch (status) {
-      case 'ok':
-        return <CheckCircle size={14} className="text-green-400" />;
-      case 'pendente':
-        return <Clock size={14} className="text-yellow-400" />;
-      case 'bloqueado':
-        return <AlertCircle size={14} className="text-red-400" />;
-      default:
-        return null;
-    }
+  // Data completa formatada
+  const getDataCompleta = () => {
+    const hoje = new Date();
+    const opcoes: Intl.DateTimeFormatOptions = { 
+      weekday: 'long', 
+      day: 'numeric', 
+      month: 'long', 
+      year: 'numeric' 
+    };
+    return hoje.toLocaleDateString('pt-BR', opcoes);
   };
 
   // Ícone do tema atual
@@ -125,63 +142,125 @@ export default function Topbar({
     vibrant: { bg: '#F0F4FF', accent: '#7C3AED' },
   };
 
+  // Cores e labels do status
+  const statusConfig = {
+    online: { color: '#22C55E', label: 'Online' },
+    ausente: { color: '#F59E0B', label: 'Ausente' },
+    ocupado: { color: '#EF4444', label: 'Ocupado' },
+    offline: { color: '#6B7280', label: 'Offline' },
+  };
+
+  // Clima placeholder (pode ser integrado com API futuramente)
+  const clima = { temp: 28, condicao: 'ensolarado' };
+  const getClimaIcon = () => {
+    switch (clima.condicao) {
+      case 'ensolarado':
+        return <Sun size={16} style={{ color: '#F59E0B' }} />;
+      case 'nublado':
+        return <Cloud size={16} style={{ color: colors.textMuted }} />;
+      case 'chuvoso':
+        return <CloudRain size={16} style={{ color: '#3B82F6' }} />;
+      default:
+        return <CloudSun size={16} style={{ color: '#F59E0B' }} />;
+    }
+  };
+
   return (
     <header 
-      className="h-14 border-b flex items-center justify-between px-6 transition-colors duration-200"
+      className="h-16 border-b flex items-center justify-between px-6 transition-colors duration-200"
       style={{ 
         backgroundColor: colors.topbarBg, 
         borderColor: colors.borderPrimary,
         color: colors.topbarText 
       }}
     >
-      {/* Lado Esquerdo - Informações da Competência e Contrato */}
-      <div className="flex items-center gap-6">
-        {/* Competência */}
-        <div className="flex items-center gap-2 text-sm">
-          <Calendar size={16} style={{ color: colors.textMuted }} />
-          <span style={{ color: colors.textSecondary }}>Competência:</span>
-          <span className="font-semibold" style={{ color: colors.textPrimary }}>{mesFormatado}/{comp.ano}</span>
-        </div>
-
-        {/* Separador */}
-        <div className="h-4 w-px" style={{ backgroundColor: colors.borderPrimary }} />
-
-        {/* Valor do Contrato */}
-        <div className="flex items-center gap-2 text-sm">
-          <DollarSign size={16} style={{ color: colors.textMuted }} />
-          <span style={{ color: colors.textSecondary }}>Contrato:</span>
-          <span className="font-semibold" style={{ color: colors.textPrimary }}>{formatCurrency(contratoInfo.valor)}</span>
-        </div>
-
-        {/* Separador */}
-        <div className="h-4 w-px" style={{ backgroundColor: colors.borderPrimary }} />
-
-        {/* Prazo */}
-        <div className="flex items-center gap-2 text-sm">
-          <Clock size={16} style={{ color: colors.textMuted }} />
-          <span style={{ color: colors.textSecondary }}>Prazo:</span>
-          <span className="font-semibold" style={{ color: colors.textPrimary }}>{contratoInfo.prazo} meses</span>
-        </div>
-
-        {/* Separador */}
-        <div className="h-4 w-px" style={{ backgroundColor: colors.borderPrimary }} />
-
-        {/* Status do Gate */}
-        <div className={`flex items-center gap-2 px-3 py-1 rounded-full border ${getGateStatusColor(gate.status)}`}>
-          {getGateStatusIcon(gate.status)}
-          <span className="text-sm font-medium">
-            Gate {gate.numero} {gate.status === 'ok' ? 'OK' : gate.status === 'pendente' ? 'Pendente' : 'Bloqueado'}
+      {/* ESQUERDA - Logo GENESIS + Breadcrumb */}
+      <div className="flex items-center gap-4">
+        {/* Logo GENESIS */}
+        <div className="flex items-center gap-2">
+          <div 
+            className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-white text-sm"
+            style={{ backgroundColor: colors.accent }}
+          >
+            G
+          </div>
+          <span className="font-bold text-lg" style={{ color: colors.textPrimary }}>
+            GENESIS
           </span>
         </div>
+
+        {/* Separador */}
+        <div className="h-6 w-px" style={{ backgroundColor: colors.borderPrimary }} />
+
+        {/* Breadcrumb */}
+        <nav className="flex items-center gap-2 text-sm">
+          <span style={{ color: colors.textMuted }}>{breadcrumb.modulo}</span>
+          {breadcrumb.depto && (
+            <>
+              <span style={{ color: colors.textMuted }}>&gt;</span>
+              <span className="font-medium" style={{ color: colors.textPrimary }}>{breadcrumb.depto}</span>
+            </>
+          )}
+          {breadcrumb.setor && (
+            <>
+              <span style={{ color: colors.textMuted }}>&gt;</span>
+              <span className="font-medium" style={{ color: colors.accent }}>{breadcrumb.setor}</span>
+            </>
+          )}
+        </nav>
       </div>
 
-      {/* Lado Direito - Tema, Notificações e Perfil */}
-      <div className="flex items-center gap-3">
+      {/* CENTRO - Card de Ações Rápidas */}
+      <div className="flex items-center gap-1">
+        {acoesRapidas.map((acao) => {
+          const Icon = acao.icon;
+          const isActive = pathname === acao.href;
+          return (
+            <a
+              key={acao.id}
+              href={acao.href}
+              className="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg transition-colors"
+              style={{ 
+                backgroundColor: isActive ? colors.bgCardHover : 'transparent',
+                color: isActive ? colors.accent : colors.textMuted 
+              }}
+              onMouseEnter={(e) => {
+                if (!isActive) {
+                  e.currentTarget.style.backgroundColor = colors.bgCardHover;
+                  e.currentTarget.style.color = colors.textPrimary;
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isActive) {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.color = colors.textMuted;
+                }
+              }}
+              title={acao.label}
+            >
+              <Icon size={20} />
+              <span className="text-[9px] font-medium">{acao.label}</span>
+            </a>
+          );
+        })}
+      </div>
+
+      {/* DIREITA - Widget de Avatar com saudação, data, clima e Badge de Status */}
+      <div className="flex items-center gap-4">
+        {/* Clima */}
+        <div className="flex items-center gap-1.5 text-sm">
+          {getClimaIcon()}
+          <span style={{ color: colors.textSecondary }}>{clima.temp}°C</span>
+        </div>
+
+        {/* Separador */}
+        <div className="h-4 w-px" style={{ backgroundColor: colors.borderPrimary }} />
+
         {/* Seletor de Tema */}
         <div className="relative" ref={themeMenuRef}>
           <button 
             onClick={() => setShowThemeMenu(!showThemeMenu)}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg transition-colors"
+            className="flex items-center gap-2 px-2 py-1.5 rounded-lg transition-colors"
             style={{ 
               backgroundColor: showThemeMenu ? colors.bgCardHover : 'transparent',
               color: colors.textSecondary 
@@ -190,7 +269,6 @@ export default function Topbar({
             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = showThemeMenu ? colors.bgCardHover : 'transparent'}
           >
             {getThemeIcon(theme)}
-            <span className="text-sm">{themeNames[theme]}</span>
             <ChevronDown size={14} className={`transition-transform ${showThemeMenu ? 'rotate-180' : ''}`} />
           </button>
 
@@ -273,25 +351,97 @@ export default function Topbar({
           )}
         </button>
 
-        {/* Perfil do Usuário */}
-        <button 
-          className="flex items-center gap-2 px-3 py-1.5 rounded-lg transition-colors"
-          style={{ color: colors.textSecondary }}
-          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.bgCardHover}
-          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-        >
-          <div 
-            className="w-8 h-8 rounded-full flex items-center justify-center"
-            style={{ backgroundColor: colors.bgCardHover }}
+        {/* Separador */}
+        <div className="h-4 w-px" style={{ backgroundColor: colors.borderPrimary }} />
+
+        {/* Widget de Avatar Completo */}
+        <div className="relative" ref={statusMenuRef}>
+          <button 
+            onClick={() => setShowStatusMenu(!showStatusMenu)}
+            className="flex items-center gap-3 px-3 py-1.5 rounded-lg transition-colors"
+            style={{ color: colors.textSecondary }}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.bgCardHover}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
           >
-            <User size={16} style={{ color: colors.textMuted }} />
-          </div>
-          <div className="text-left">
-            <p className="text-sm font-medium" style={{ color: colors.textPrimary }}>{user.nome}</p>
-            <p className="text-xs capitalize" style={{ color: colors.textMuted }}>{user.perfil}</p>
-          </div>
-          <ChevronDown size={14} style={{ color: colors.textMuted }} />
-        </button>
+            {/* Avatar com Badge de Status */}
+            <div className="relative">
+              <div 
+                className="w-9 h-9 rounded-full flex items-center justify-center"
+                style={{ backgroundColor: colors.bgCardHover }}
+              >
+                <User size={18} style={{ color: colors.textMuted }} />
+              </div>
+              {/* Badge de Status */}
+              <div 
+                className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2"
+                style={{ 
+                  backgroundColor: statusConfig[userStatus].color,
+                  borderColor: colors.topbarBg
+                }}
+              />
+            </div>
+            
+            {/* Informações do Usuário */}
+            <div className="text-left">
+              <p className="text-sm font-medium" style={{ color: colors.textPrimary }}>
+                {getSaudacao()}, {user.nome.split(' ')[0]}
+              </p>
+              <p className="text-[10px]" style={{ color: colors.textMuted }}>
+                {getDataCompleta()}
+              </p>
+            </div>
+            
+            <ChevronDown size={14} style={{ color: colors.textMuted }} />
+          </button>
+
+          {/* Menu de Status */}
+          {showStatusMenu && (
+            <div 
+              className="absolute right-0 top-full mt-2 w-56 rounded-lg border shadow-lg overflow-hidden z-50"
+              style={{ 
+                backgroundColor: colors.bgCard, 
+                borderColor: colors.borderPrimary 
+              }}
+            >
+              <div className="p-3 border-b" style={{ borderColor: colors.borderPrimary }}>
+                <p className="text-sm font-medium" style={{ color: colors.textPrimary }}>{user.nome}</p>
+                <p className="text-xs capitalize" style={{ color: colors.textMuted }}>{user.perfil}</p>
+              </div>
+              
+              <div className="p-2">
+                <p className="text-xs font-semibold uppercase tracking-wider px-2 py-1" style={{ color: colors.textMuted }}>
+                  Alterar Status
+                </p>
+                
+                {(Object.keys(statusConfig) as Array<keyof typeof statusConfig>).map((status) => (
+                  <button
+                    key={status}
+                    onClick={() => {
+                      setUserStatus(status);
+                      setShowStatusMenu(false);
+                    }}
+                    className="w-full flex items-center gap-3 px-2 py-2 rounded-md transition-colors"
+                    style={{ 
+                      backgroundColor: userStatus === status ? colors.bgCardHover : 'transparent',
+                      color: colors.textPrimary 
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.bgCardHover}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = userStatus === status ? colors.bgCardHover : 'transparent'}
+                  >
+                    <div 
+                      className="w-3 h-3 rounded-full"
+                      style={{ backgroundColor: statusConfig[status].color }}
+                    />
+                    <span className="flex-1 text-left text-sm">{statusConfig[status].label}</span>
+                    {userStatus === status && (
+                      <Check size={16} style={{ color: colors.accent }} />
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );

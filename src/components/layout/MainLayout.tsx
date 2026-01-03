@@ -15,14 +15,10 @@ interface ObraAtiva {
   orcamento_total?: number;
 }
 
-interface CompetenciaAtiva {
-  mes: number;
-  ano: number;
-}
-
 interface Usuario {
   nome: string;
   perfil: string;
+  status?: 'online' | 'ausente' | 'ocupado' | 'offline';
 }
 
 // Margens ajustadas conforme especificação
@@ -36,12 +32,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   
   // Estados para dados globais
   const [obraAtiva, setObraAtiva] = useState<ObraAtiva | null>(null);
-  const [competencia, setCompetencia] = useState<CompetenciaAtiva>({
-    mes: new Date().getMonth() + 1,
-    ano: new Date().getFullYear(),
-  });
   const [usuario, setUsuario] = useState<Usuario | null>(null);
-  const [gateStatus, setGateStatus] = useState({ numero: 1, status: 'pendente' as const });
   const [isClient, setIsClient] = useState(false);
 
   // Marca que estamos no cliente
@@ -60,6 +51,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         setUsuario({
           nome: userData.nome || 'Usuário',
           perfil: userData.perfil || 'usuario',
+          status: 'online',
         });
       } catch (e) {
         console.error('Erro ao parsear dados do usuário:', e);
@@ -86,11 +78,6 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     return <>{children}</>;
   }
 
-  // Dados para a Topbar
-  const contratoInfo = obraAtiva?.orcamento_total 
-    ? { valor: Number(obraAtiva.orcamento_total), prazo: 36 }
-    : { valor: 0, prazo: 0 };
-
   return (
     <div 
       className="flex h-screen transition-colors duration-200"
@@ -109,11 +96,8 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 
       {/* Área Principal */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Topbar */}
+        {/* Topbar com estrutura de 3 partes */}
         <Topbar
-          competencia={competencia}
-          contrato={contratoInfo}
-          gateStatus={gateStatus}
           usuario={usuario || undefined}
           notificacoes={3}
         />
