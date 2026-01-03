@@ -594,29 +594,27 @@ export default function IntranetPage() {
             className="rounded-lg border h-full transition-colors duration-200"
             style={{ backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }}
           >
-            {/* Header do Calendário - +10% */}
+            {/* Header do Calendário - padronizado com Comunicados */}
             <div 
               className="border-b flex items-center justify-between"
-              style={{ borderColor: colors.borderPrimary, padding: '22px 26px' }}
+              style={{ borderColor: colors.borderPrimary, padding: '18px 22px' }}
             >
-              <div className="flex items-center gap-2.5">
-                <Calendar className="h-5 w-5" style={{ color: colors.textMuted }} />
-                <h2 className="text-sm font-semibold" style={{ color: colors.textPrimary }}>Calendário</h2>
+              <div className="flex items-center gap-1.5">
+                <Calendar className="h-3.5 w-3.5" style={{ color: colors.textMuted }} />
+                <h2 className="text-xs font-semibold" style={{ color: colors.textPrimary }}>Calendário</h2>
               </div>
-              {/* KPI integrado no header - com ênfase */}
+              {/* KPI integrado no header - com ênfase reduzida 10% */}
               <div 
-                className="flex items-center rounded-lg shadow-sm"
+                className="flex items-center rounded"
                 style={{ 
                   backgroundColor: colors.accent, 
-                  padding: '10px 16px',
-                  gap: '10px'
+                  padding: '6px 12px',
+                  gap: '6px'
                 }}
               >
-                <ListTodo className="h-5 w-5" style={{ color: '#fff' }} />
-                <div className="flex items-center" style={{ gap: '6px' }}>
-                  <span className="text-lg font-bold" style={{ color: '#fff' }}>{stats.marcosPendentes}</span>
-                  <span className="text-xs font-medium" style={{ color: 'rgba(255,255,255,0.85)' }}>pendentes</span>
-                </div>
+                <ListTodo className="h-3.5 w-3.5" style={{ color: '#fff' }} />
+                <span className="text-sm font-bold" style={{ color: '#fff' }}>{stats.marcosPendentes}</span>
+                <span className="text-[9px]" style={{ color: 'rgba(255,255,255,0.85)' }}>pendentes</span>
               </div>
             </div>
             
