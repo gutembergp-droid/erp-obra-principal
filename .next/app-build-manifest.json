@@ -20,10 +20,10 @@
       "static/chunks/fd9d1056-85db25c1d06814bd.js",
       "static/chunks/117-dfa1287ad30fd871.js",
       "static/chunks/main-app-70a5454e0ad77fb6.js",
-      "static/css/fab806ae7b67c3af.css",
+      "static/css/48bcc3d817522b47.css",
       "static/chunks/216-c126542d025c5b8a.js",
       "static/chunks/862-a3340a0ffa3cf839.js",
-      "static/chunks/app/layout-24a0e520c860d02a.js"
+      "static/chunks/app/layout-a67ad21188eabfbe.js"
     ],
     "/comercial/comparativo/page": [
       "static/chunks/webpack-e351973c235000be.js",
@@ -32,27 +32,12 @@
       "static/chunks/main-app-70a5454e0ad77fb6.js",
       "static/chunks/app/comercial/comparativo/page-c30e74d271e1722c.js"
     ],
-    "/comercial/medicao-mc/page": [
-      "static/chunks/webpack-e351973c235000be.js",
-      "static/chunks/fd9d1056-85db25c1d06814bd.js",
-      "static/chunks/117-dfa1287ad30fd871.js",
-      "static/chunks/main-app-70a5454e0ad77fb6.js",
-      "static/chunks/app/comercial/medicao-mc/page-45b3e06708fc7b54.js"
-    ],
     "/comercial/medicao-mp/page": [
       "static/chunks/webpack-e351973c235000be.js",
       "static/chunks/fd9d1056-85db25c1d06814bd.js",
       "static/chunks/117-dfa1287ad30fd871.js",
       "static/chunks/main-app-70a5454e0ad77fb6.js",
       "static/chunks/app/comercial/medicao-mp/page-7b5824d70505ead0.js"
-    ],
-    "/financeiro/contas-pagar/page": [
-      "static/chunks/webpack-e351973c235000be.js",
-      "static/chunks/fd9d1056-85db25c1d06814bd.js",
-      "static/chunks/117-dfa1287ad30fd871.js",
-      "static/chunks/main-app-70a5454e0ad77fb6.js",
-      "static/chunks/216-c126542d025c5b8a.js",
-      "static/chunks/app/financeiro/contas-pagar/page-85f0ff2314e78571.js"
     ],
     "/financeiro/page": [
       "static/chunks/webpack-e351973c235000be.js",
@@ -70,6 +55,21 @@
       "static/css/a2570ede0a548d98.css",
       "static/chunks/app/login/page-0d3a46794a95404e.js"
     ],
+    "/comercial/medicao-mc/page": [
+      "static/chunks/webpack-e351973c235000be.js",
+      "static/chunks/fd9d1056-85db25c1d06814bd.js",
+      "static/chunks/117-dfa1287ad30fd871.js",
+      "static/chunks/main-app-70a5454e0ad77fb6.js",
+      "static/chunks/app/comercial/medicao-mc/page-45b3e06708fc7b54.js"
+    ],
+    "/financeiro/contas-pagar/page": [
+      "static/chunks/webpack-e351973c235000be.js",
+      "static/chunks/fd9d1056-85db25c1d06814bd.js",
+      "static/chunks/117-dfa1287ad30fd871.js",
+      "static/chunks/main-app-70a5454e0ad77fb6.js",
+      "static/chunks/216-c126542d025c5b8a.js",
+      "static/chunks/app/financeiro/contas-pagar/page-85f0ff2314e78571.js"
+    ],
     "/obras/page": [
       "static/chunks/webpack-e351973c235000be.js",
       "static/chunks/fd9d1056-85db25c1d06814bd.js",
@@ -77,21 +77,6 @@
       "static/chunks/main-app-70a5454e0ad77fb6.js",
       "static/css/366845f754fe3857.css",
       "static/chunks/app/obras/page-2f3f9be3310edf33.js"
-    ],
-    "/page": [
-      "static/chunks/webpack-e351973c235000be.js",
-      "static/chunks/fd9d1056-85db25c1d06814bd.js",
-      "static/chunks/117-dfa1287ad30fd871.js",
-      "static/chunks/main-app-70a5454e0ad77fb6.js",
-      "static/chunks/app/page-5544a810b0fd8d29.js"
-    ],
-    "/rh/colaboradores/[id]/page": [
-      "static/chunks/webpack-e351973c235000be.js",
-      "static/chunks/fd9d1056-85db25c1d06814bd.js",
-      "static/chunks/117-dfa1287ad30fd871.js",
-      "static/chunks/main-app-70a5454e0ad77fb6.js",
-      "static/chunks/216-c126542d025c5b8a.js",
-      "static/chunks/app/rh/colaboradores/[id]/page-52a0aa951604507c.js"
     ],
     "/obras/[id]/page": [
       "static/chunks/webpack-e351973c235000be.js",
@@ -110,13 +95,20 @@
       "static/chunks/216-c126542d025c5b8a.js",
       "static/chunks/app/rh/colaboradores/page-224c78c07ef2ff9b.js"
     ],
-    "/rh/page": [
+    "/page": [
+      "static/chunks/webpack-e351973c235000be.js",
+      "static/chunks/fd9d1056-85db25c1d06814bd.js",
+      "static/chunks/117-dfa1287ad30fd871.js",
+      "static/chunks/main-app-70a5454e0ad77fb6.js",
+      "static/chunks/app/page-5544a810b0fd8d29.js"
+    ],
+    "/rh/colaboradores/[id]/page": [
       "static/chunks/webpack-e351973c235000be.js",
       "static/chunks/fd9d1056-85db25c1d06814bd.js",
       "static/chunks/117-dfa1287ad30fd871.js",
       "static/chunks/main-app-70a5454e0ad77fb6.js",
       "static/chunks/216-c126542d025c5b8a.js",
-      "static/chunks/app/rh/page-b654692408308b7c.js"
+      "static/chunks/app/rh/colaboradores/[id]/page-52a0aa951604507c.js"
     ],
     "/rh/folha-pagamento/page": [
       "static/chunks/webpack-e351973c235000be.js",
@@ -125,6 +117,14 @@
       "static/chunks/main-app-70a5454e0ad77fb6.js",
       "static/chunks/216-c126542d025c5b8a.js",
       "static/chunks/app/rh/folha-pagamento/page-ea62ad14b44ab458.js"
+    ],
+    "/rh/page": [
+      "static/chunks/webpack-e351973c235000be.js",
+      "static/chunks/fd9d1056-85db25c1d06814bd.js",
+      "static/chunks/117-dfa1287ad30fd871.js",
+      "static/chunks/main-app-70a5454e0ad77fb6.js",
+      "static/chunks/216-c126542d025c5b8a.js",
+      "static/chunks/app/rh/page-b654692408308b7c.js"
     ],
     "/suprimentos/page": [
       "static/chunks/webpack-e351973c235000be.js",

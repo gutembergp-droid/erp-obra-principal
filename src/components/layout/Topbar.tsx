@@ -330,61 +330,32 @@ export default function Topbar({
                 <Icon size={20} />
               </Link>
               
-              {/* Tooltip Rico (Card) */}
+              {/* Tooltip Compacto */}
               <div 
-                className="absolute left-1/2 -translate-x-1/2 top-full mt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50"
-                style={{ minWidth: '220px' }}
+                className="absolute left-1/2 -translate-x-1/2 top-full mt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 pointer-events-none"
               >
                 <div 
-                  className="rounded-xl shadow-xl overflow-hidden border"
+                  className="px-3 py-2 rounded-lg shadow-lg border whitespace-nowrap"
                   style={{ backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }}
                 >
-                  {/* Cabeçalho do Card */}
-                  <div 
-                    className="p-3 flex items-center gap-3"
-                    style={{ background: `linear-gradient(135deg, ${colors.accent}, ${colors.accent}dd)` }}
-                  >
+                  <div className="flex items-center gap-2">
                     <div 
-                      className="w-10 h-10 rounded-lg flex items-center justify-center"
-                      style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}
+                      className="w-6 h-6 rounded flex items-center justify-center"
+                      style={{ backgroundColor: colors.accent }}
                     >
-                      <Icon size={22} className="text-white" />
+                      <Icon size={14} className="text-white" />
                     </div>
                     <div>
-                      <div className="text-white font-semibold text-sm">{acao.name}</div>
-                      <div className="text-white/70 text-xs">{acao.subtitle}</div>
-                    </div>
-                  </div>
-                  
-                  {/* Corpo do Card */}
-                  <div className="p-3">
-                    <p 
-                      className="text-xs leading-relaxed mb-3"
-                      style={{ color: colors.textSecondary }}
-                    >
-                      {acao.description}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <span 
-                        className="text-[10px] font-mono px-2 py-1 rounded"
-                        style={{ backgroundColor: colors.bgCardHover, color: colors.textMuted }}
-                      >
-                        {acao.shortcut}
-                      </span>
-                      <span 
-                        className="text-xs font-medium"
-                        style={{ color: colors.accent }}
-                      >
-                        Abrir →
-                      </span>
+                      <div className="text-xs font-semibold" style={{ color: colors.textPrimary }}>{acao.name}</div>
+                      <div className="text-[10px]" style={{ color: colors.textMuted }}>{acao.shortcut}</div>
                     </div>
                   </div>
                 </div>
                 
-                {/* Seta do Tooltip (apontando para cima) */}
+                {/* Seta do Tooltip */}
                 <div 
-                  className="absolute left-1/2 -translate-x-1/2 -top-1.5 w-3 h-3 rotate-45 border-l border-t"
-                  style={{ backgroundColor: colors.accent, borderColor: colors.accent }}
+                  className="absolute left-1/2 -translate-x-1/2 -top-1 w-2 h-2 rotate-45 border-l border-t"
+                  style={{ backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }}
                 />
               </div>
             </div>
