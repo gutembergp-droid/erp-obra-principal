@@ -20,10 +20,16 @@
       "static/chunks/fd9d1056-910b65e5faa7ca51.js",
       "static/chunks/117-1ab3572d320539fc.js",
       "static/chunks/main-app-70a5454e0ad77fb6.js",
-      "static/css/44df3c424f012fec.css",
-      "static/chunks/847-a611766473e108b8.js",
-      "static/chunks/572-59dbd1508b93c7a8.js",
-      "static/chunks/app/layout-13e04516eee684a9.js"
+      "static/css/04e332c3dfc82439.css",
+      "static/chunks/384-d0aad69a93df29d5.js",
+      "static/chunks/app/layout-4e616672a8a7da7a.js"
+    ],
+    "/comercial/comparativo/page": [
+      "static/chunks/webpack-0f9d81f53d3d79c3.js",
+      "static/chunks/fd9d1056-910b65e5faa7ca51.js",
+      "static/chunks/117-1ab3572d320539fc.js",
+      "static/chunks/main-app-70a5454e0ad77fb6.js",
+      "static/chunks/app/comercial/comparativo/page-538be06550d14518.js"
     ],
     "/comercial/medicao-mc/page": [
       "static/chunks/webpack-0f9d81f53d3d79c3.js",
@@ -31,13 +37,6 @@
       "static/chunks/117-1ab3572d320539fc.js",
       "static/chunks/main-app-70a5454e0ad77fb6.js",
       "static/chunks/app/comercial/medicao-mc/page-8c8d8563d4c87c5b.js"
-    ],
-    "/comercial/comparativo/page": [
-      "static/chunks/webpack-0f9d81f53d3d79c3.js",
-      "static/chunks/fd9d1056-910b65e5faa7ca51.js",
-      "static/chunks/117-1ab3572d320539fc.js",
-      "static/chunks/main-app-70a5454e0ad77fb6.js",
-      "static/chunks/app/comercial/comparativo/page-7308bb31b7e612d7.js"
     ],
     "/comercial/medicao-mp/page": [
       "static/chunks/webpack-0f9d81f53d3d79c3.js",
@@ -60,7 +59,7 @@
       "static/chunks/117-1ab3572d320539fc.js",
       "static/chunks/main-app-70a5454e0ad77fb6.js",
       "static/css/490e5d2be8134767.css",
-      "static/chunks/591-7fd38bab881853bb.js",
+      "static/chunks/591-6de74a24dc7077a9.js",
       "static/chunks/app/obras/[id]/page-ba8d566262875809.js"
     ],
     "/page": [
@@ -68,8 +67,7 @@
       "static/chunks/fd9d1056-910b65e5faa7ca51.js",
       "static/chunks/117-1ab3572d320539fc.js",
       "static/chunks/main-app-70a5454e0ad77fb6.js",
-      "static/chunks/847-a611766473e108b8.js",
-      "static/chunks/app/page-d85a1233db715026.js"
+      "static/chunks/app/page-f61746a909500575.js"
     ],
     "/obras/page": [
       "static/chunks/webpack-0f9d81f53d3d79c3.js",
