@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { api } from '../../../src/lib/api';
 import { 
   Calendar,
   TrendingUp,
@@ -70,23 +71,13 @@ export default function ComparativoMPMCPage() {
     setLoading(true);
     try {
       // Carrega itens da EAP
-      const resEap = await fetch(`/api/eap/obra/${obraId}`);
-      let eapData: EapItem[] = [];
-      if (resEap.ok) {
-        eapData = await resEap.json();
-        setEapItems(eapData);
-      }
+      const eapData = await api.get<EapItem[]>(`/eap/obra/${obraId}`);
+      setEapItems(eapData);
 
-      // Carrega medições MP
-      const resMp = await fetch(`/api/medicoes/obra/${obraId}?periodo_referencia=${competencia}`);
-      let medicoesMP: any[] = [];
-      let medicoesMC: any[] = [];
-      
-      if (resMp.ok) {
-        const data = await resMp.json();
-        medicoesMP = data.filter((m: any) => m.tipo === 'MP' && m.status === 'aprovada');
-        medicoesMC = data.filter((m: any) => m.tipo === 'MC' && m.status === 'aprovada');
-      }
+      // Carrega medições
+      const medicoesData = await api.get<any[]>(`/medicoes/obra/${obraId}?periodo_referencia=${competencia}`);
+      const medicoesMP = medicoesData.filter((m: any) => m.tipo === 'MP' && m.status === 'aprovada');
+      const medicoesMC = medicoesData.filter((m: any) => m.tipo === 'MC' && m.status === 'aprovada');
 
       // Agrupa por EAP e calcula comparativo
       const comparativoMap = new Map<string, ComparativoItem>();
