@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { api } from '../../../src/lib/api';
 import { 
   Plus, 
   Search, 
@@ -91,29 +92,23 @@ export default function MedicaoProducaoPage() {
     setLoading(true);
     try {
       // Carrega medições MP
-      const resMedicoes = await fetch(`/api/medicoes/obra/${obraId}?tipo=MP&periodo_referencia=${competencia}`);
-      if (resMedicoes.ok) {
-        const data = await resMedicoes.json();
-        setMedicoes(data.filter((m: any) => m.tipo === 'MP'));
-      }
+      const medicoesData = await api.get<any[]>(`/medicoes/obra/${obraId}?tipo=MP&periodo_referencia=${competencia}`);
+      setMedicoes(medicoesData.filter((m: any) => m.tipo === 'MP'));
 
       // Carrega itens da EAP (apenas folhas - itens medíveis)
-      const resEap = await fetch(`/api/eap/obra/${obraId}`);
-      if (resEap.ok) {
-        const data = await resEap.json();
-        // Filtra apenas EAPs folha e mapeia para o formato esperado
-        const eapsFolha = data
-          .filter((e: any) => e.is_folha === true)
-          .map((e: any) => ({
-            id: e.id,
-            codigo: e.codigo,
-            descricao: e.descricao,
-            unidade: e.unidade_medida || '-',
-            quantidade_total: parseFloat(e.quantidade) || 0,
-            valor_unitario: parseFloat(e.valor_unitario) || 0,
-          }));
-        setEapItems(eapsFolha);
-      }
+      const eapData = await api.get<any[]>(`/eap/obra/${obraId}`);
+      // Filtra apenas EAPs folha e mapeia para o formato esperado
+      const eapsFolha = eapData
+        .filter((e: any) => e.is_folha === true)
+        .map((e: any) => ({
+          id: e.id,
+          codigo: e.codigo,
+          descricao: e.descricao,
+          unidade: e.unidade_medida || '-',
+          quantidade_total: parseFloat(e.quantidade) || 0,
+          valor_unitario: parseFloat(e.valor_unitario) || 0,
+        }));
+      setEapItems(eapsFolha);
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
     } finally {
@@ -156,20 +151,16 @@ export default function MedicaoProducaoPage() {
       for (const linha of novasMedicoes) {
         if (linha.eap_id && linha.quantidade_medida > 0) {
           const eap = eapItems.find(e => e.id === linha.eap_id);
-          await fetch('/api/medicoes', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              obra_id: obraId,
-              eap_id: linha.eap_id,
-              tipo: 'MP',
-              periodo_referencia: competencia,
-              data_medicao: new Date().toISOString(),
-              quantidade_medida: linha.quantidade_medida,
-              valor_medido: calcularValor(linha.eap_id, linha.quantidade_medida),
-              observacoes: linha.observacoes,
-              status: 'rascunho',
-            }),
+          await api.post('/medicoes', {
+            obra_id: obraId,
+            eap_id: linha.eap_id,
+            tipo: 'MP',
+            periodo_referencia: competencia,
+            data_medicao: new Date().toISOString(),
+            quantidade_medida: linha.quantidade_medida,
+            valor_medido: calcularValor(linha.eap_id, linha.quantidade_medida),
+            observacoes: linha.observacoes,
+            status: 'rascunho',
           });
         }
       }
@@ -186,11 +177,7 @@ export default function MedicaoProducaoPage() {
   // Envia medição para aprovação
   const enviarParaAprovacao = async (id: string) => {
     try {
-      await fetch(`/api/medicoes/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'enviada' }),
-      });
+      await api.put(`/medicoes/${id}`, { status: 'enviada' });
       carregarDados();
     } catch (error) {
       console.error('Erro ao enviar medição:', error);
