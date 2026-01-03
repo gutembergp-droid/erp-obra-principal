@@ -499,17 +499,18 @@ export default function IntranetPage() {
                 </div>
               </div>
             </div>
-            <div className="overflow-x-auto p-4">
+            {/* Conteúdo com respiro igual ao Calendário */}
+            <div className="overflow-x-auto" style={{ padding: '24px 28px' }}>
               <table className="w-full">
                 <thead>
                   <tr style={{ borderBottom: `1px solid ${colors.borderPrimary}` }}>
-                    <th className="text-left text-[10px] font-semibold uppercase tracking-wider px-4 py-3" style={{ color: colors.textMuted }}>Tipo</th>
-                    <th className="text-left text-[10px] font-semibold uppercase tracking-wider px-4 py-3" style={{ color: colors.textMuted }}>Título</th>
-                    <th className="text-left text-[10px] font-semibold uppercase tracking-wider px-4 py-3" style={{ color: colors.textMuted }}>Solicitante</th>
-                    <th className="text-left text-[10px] font-semibold uppercase tracking-wider px-4 py-3" style={{ color: colors.textMuted }}>Valor</th>
-                    <th className="text-left text-[10px] font-semibold uppercase tracking-wider px-4 py-3" style={{ color: colors.textMuted }}>Prazo</th>
-                    <th className="text-left text-[10px] font-semibold uppercase tracking-wider px-4 py-3" style={{ color: colors.textMuted }}>Prioridade</th>
-                    <th className="text-right text-[10px] font-semibold uppercase tracking-wider px-4 py-3" style={{ color: colors.textMuted }}>Ações</th>
+                    <th className="text-left text-[10px] font-semibold uppercase tracking-wider px-5 py-4" style={{ color: colors.textMuted }}>Tipo</th>
+                    <th className="text-left text-[10px] font-semibold uppercase tracking-wider px-5 py-4" style={{ color: colors.textMuted }}>Título</th>
+                    <th className="text-left text-[10px] font-semibold uppercase tracking-wider px-5 py-4" style={{ color: colors.textMuted }}>Solicitante</th>
+                    <th className="text-left text-[10px] font-semibold uppercase tracking-wider px-5 py-4" style={{ color: colors.textMuted }}>Valor</th>
+                    <th className="text-left text-[10px] font-semibold uppercase tracking-wider px-5 py-4" style={{ color: colors.textMuted }}>Prazo</th>
+                    <th className="text-left text-[10px] font-semibold uppercase tracking-wider px-5 py-4" style={{ color: colors.textMuted }}>Prioridade</th>
+                    <th className="text-right text-[10px] font-semibold uppercase tracking-wider px-5 py-4" style={{ color: colors.textMuted }}>Ações</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -523,27 +524,27 @@ export default function IntranetPage() {
                         onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.bgCardHover}
                         onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                       >
-                        <td className="px-4 py-3">
+                        <td className="px-5 py-4">
                           <Icon className="h-4 w-4" style={{ color: colors.textMuted } as React.CSSProperties} />
                         </td>
-                        <td className="px-4 py-3">
+                        <td className="px-5 py-4">
                           <span className="text-sm font-medium" style={{ color: colors.textPrimary }}>{tarefa.titulo}</span>
                         </td>
-                        <td className="px-4 py-3">
+                        <td className="px-5 py-4">
                           <div>
                             <span className="text-sm" style={{ color: colors.textSecondary }}>{tarefa.solicitante}</span>
                             <p className="text-xs" style={{ color: colors.textMuted }}>{tarefa.departamento}</p>
                           </div>
                         </td>
-                        <td className="px-4 py-3">
+                        <td className="px-5 py-4">
                           <span className="text-sm" style={{ color: colors.textSecondary }}>
                             {tarefa.valor ? formatCurrency(tarefa.valor) : "-"}
                           </span>
                         </td>
-                        <td className="px-4 py-3">
+                        <td className="px-5 py-4">
                           <span className="text-sm" style={{ color: colors.textSecondary }}>{formatDate(tarefa.prazo)}</span>
                         </td>
-                        <td className="px-4 py-3">
+                        <td className="px-5 py-4">
                           <span 
                             className="inline-flex px-2 py-1 text-[10px] font-medium rounded"
                             style={getPrioridadeStyle(tarefa.prioridade)}
@@ -551,7 +552,7 @@ export default function IntranetPage() {
                             {tarefa.prioridade}
                           </span>
                         </td>
-                        <td className="px-4 py-3">
+                        <td className="px-5 py-4">
                           <div className="flex items-center justify-end gap-1">
                             <button 
                               className="p-1.5 rounded transition-colors"
