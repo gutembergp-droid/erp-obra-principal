@@ -35,14 +35,17 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   });
   const [usuario, setUsuario] = useState<Usuario | null>(null);
   const [gateStatus, setGateStatus] = useState({ numero: 1, status: 'pendente' as const });
+  const [isClient, setIsClient] = useState(false);
 
-  // Não exibe o layout na página de login
-  if (pathname === '/login') {
-    return <>{children}</>;
-  }
+  // Marca que estamos no cliente
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // Carrega dados do usuário do localStorage
   useEffect(() => {
+    if (!isClient) return;
+    
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       try {
@@ -55,10 +58,12 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         console.error('Erro ao parsear dados do usuário:', e);
       }
     }
-  }, []);
+  }, [isClient]);
 
   // Carrega obra ativa do localStorage ou contexto
   useEffect(() => {
+    if (!isClient) return;
+    
     const storedObra = localStorage.getItem('obraAtiva');
     if (storedObra) {
       try {
@@ -67,7 +72,12 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         console.error('Erro ao parsear obra ativa:', e);
       }
     }
-  }, []);
+  }, [isClient]);
+
+  // Não exibe o layout na página de login
+  if (pathname === '/login') {
+    return <>{children}</>;
+  }
 
   // Dados para a Topbar
   const contratoInfo = obraAtiva?.orcamento_total 
