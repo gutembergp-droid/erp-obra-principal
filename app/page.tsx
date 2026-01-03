@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { Clock, CheckCircle, Bell, ListTodo, Eye, Check, X, FileCheck, ShoppingCart, Receipt, FileText, Megaphone, AlertTriangle, Calendar, ChevronLeft, ChevronRight, Circle, Loader2 } from "lucide-react"
+import { useTheme } from "@/contexts/ThemeContext"
 
 // ============================================================================
 // TIPOS
@@ -163,6 +164,7 @@ function mapPrioridadeToTipo(prioridade: string): string {
 // ============================================================================
 
 export default function IntranetPage() {
+  const { colors, theme } = useTheme()
   const [mesAtual, setMesAtual] = useState(new Date(2025, 0, 1))
   const [tarefas] = useState<Tarefa[]>(tarefasMock)
   const [comunicados, setComunicados] = useState<Comunicado[]>([])
@@ -272,7 +274,7 @@ export default function IntranetPage() {
     return dataMarco.getMonth() === mesAtual.getMonth() && dataMarco.getFullYear() === mesAtual.getFullYear()
   })
 
-  const tipoIcons: Record<string, React.ComponentType<{ className?: string }>> = {
+  const tipoIcons: Record<string, React.ComponentType<{ className?: string; style?: React.CSSProperties }>> = {
     aprovacao: FileCheck,
     requisicao: ShoppingCart,
     medicao: Receipt,
@@ -280,20 +282,27 @@ export default function IntranetPage() {
     contrato: FileText,
   }
 
-  const prioridadeColors: Record<string, string> = {
-    urgente: "bg-[#96110D]/20 text-[#96110D] border border-[#96110D]/30",
-    alta: "bg-orange-900/30 text-orange-400 border border-orange-700/30",
-    media: "bg-yellow-900/30 text-yellow-400 border border-yellow-700/30",
-    baixa: "bg-gray-700/30 text-gray-400 border border-gray-600/30",
-    normal: "bg-blue-900/30 text-blue-400 border border-blue-700/30",
-    info: "bg-blue-900/30 text-blue-400 border border-blue-700/30",
+  // Cores de prioridade baseadas no tema
+  const getPrioridadeStyle = (prioridade: string) => {
+    switch (prioridade) {
+      case 'urgente':
+        return { backgroundColor: colors.errorBg, color: colors.error, border: `1px solid ${colors.error}30` }
+      case 'alta':
+        return { backgroundColor: colors.warningBg, color: colors.warning, border: `1px solid ${colors.warning}30` }
+      case 'media':
+        return { backgroundColor: colors.warningBg, color: colors.warning, border: `1px solid ${colors.warning}30` }
+      case 'baixa':
+        return { backgroundColor: colors.bgCardHover, color: colors.textMuted, border: `1px solid ${colors.borderSecondary}` }
+      default:
+        return { backgroundColor: colors.infoBg, color: colors.info, border: `1px solid ${colors.info}30` }
+    }
   }
 
   const tipoMarcoColors: Record<string, string> = {
-    medicao: "bg-emerald-500",
-    entrega: "bg-blue-500",
-    marco: "bg-amber-500",
-    reuniao: "bg-purple-500",
+    medicao: colors.success,
+    entrega: colors.info,
+    marco: colors.warning,
+    reuniao: theme === 'vibrant' ? '#A855F7' : '#8B5CF6',
   }
 
   const marcarComoLido = async (id: string) => {
@@ -317,11 +326,11 @@ export default function IntranetPage() {
   const cardHeight = "min-h-[320px]"
 
   return (
-    <div className="min-h-screen w-[90%] mx-auto py-6">
+    <div className="min-h-screen w-[90%] mx-auto py-6 transition-colors duration-200">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-100 tracking-tight">Intranet</h1>
-        <p className="text-sm text-gray-400 mt-1">Visão geral da obra e tarefas pendentes</p>
+        <h1 className="text-2xl font-bold tracking-tight" style={{ color: colors.textPrimary }}>Intranet</h1>
+        <p className="text-sm mt-1" style={{ color: colors.textMuted }}>Visão geral da obra e tarefas pendentes</p>
       </div>
 
       {/* Grid Principal */}
@@ -330,86 +339,118 @@ export default function IntranetPage() {
         <div className="lg:col-span-8 space-y-5">
           
           {/* Card de Comunicados */}
-          <div className={`bg-gray-900/80 rounded-lg border border-gray-800/60 ${cardHeight}`}>
-            <div className="px-5 py-4 border-b border-gray-800/60 flex items-center justify-between">
+          <div 
+            className={`rounded-lg border ${cardHeight} transition-colors duration-200`}
+            style={{ backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }}
+          >
+            <div 
+              className="px-5 py-4 border-b flex items-center justify-between"
+              style={{ borderColor: colors.borderPrimary }}
+            >
               <div className="flex items-center gap-3">
-                <Megaphone className="h-5 w-5 text-gray-400" />
-                <h2 className="text-base font-semibold text-gray-100">Comunicados</h2>
+                <Megaphone className="h-5 w-5" style={{ color: colors.textMuted }} />
+                <h2 className="text-base font-semibold" style={{ color: colors.textPrimary }}>Comunicados</h2>
               </div>
               {/* KPIs integrados no header */}
               <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2 bg-blue-900/20 border border-blue-800/30 rounded-lg px-3 py-1.5">
-                  <Bell className="h-4 w-4 text-blue-400" />
-                  <span className="text-sm font-medium text-blue-400">{stats.comunicadosNaoLidos}</span>
-                  <span className="text-xs text-gray-500">não lidos</span>
+                <div 
+                  className="flex items-center gap-2 rounded-lg px-3 py-1.5"
+                  style={{ backgroundColor: colors.infoBg, border: `1px solid ${colors.info}30` }}
+                >
+                  <Bell className="h-4 w-4" style={{ color: colors.info }} />
+                  <span className="text-sm font-medium" style={{ color: colors.info }}>{stats.comunicadosNaoLidos}</span>
+                  <span className="text-xs" style={{ color: colors.textMuted }}>não lidos</span>
                 </div>
-                <div className="flex items-center gap-2 bg-gray-800/50 border border-gray-700/30 rounded-lg px-3 py-1.5">
-                  <span className="text-sm font-medium text-gray-300">{stats.comunicadosTotal}</span>
-                  <span className="text-xs text-gray-500">total</span>
+                <div 
+                  className="flex items-center gap-2 rounded-lg px-3 py-1.5"
+                  style={{ backgroundColor: colors.bgCardHover, border: `1px solid ${colors.borderSecondary}` }}
+                >
+                  <span className="text-sm font-medium" style={{ color: colors.textSecondary }}>{stats.comunicadosTotal}</span>
+                  <span className="text-xs" style={{ color: colors.textMuted }}>total</span>
                 </div>
               </div>
             </div>
             <div className="overflow-x-auto">
               {loading ? (
                 <div className="flex items-center justify-center py-16">
-                  <Loader2 className="h-6 w-6 text-gray-400 animate-spin" />
+                  <Loader2 className="h-6 w-6 animate-spin" style={{ color: colors.textMuted }} />
                 </div>
               ) : error ? (
-                <div className="text-center py-12 text-gray-500 text-sm">{error}</div>
+                <div className="text-center py-12 text-sm" style={{ color: colors.textMuted }}>{error}</div>
               ) : comunicados.length === 0 ? (
-                <div className="text-center py-12 text-gray-500 text-sm">Nenhum comunicado disponível</div>
+                <div className="text-center py-12 text-sm" style={{ color: colors.textMuted }}>Nenhum comunicado disponível</div>
               ) : (
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-gray-800/60">
-                      <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-4 py-3">Status</th>
-                      <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-4 py-3">Título</th>
-                      <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-4 py-3">Origem</th>
-                      <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-4 py-3">Data</th>
-                      <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-4 py-3">Prioridade</th>
-                      <th className="text-right text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-4 py-3">Ações</th>
+                    <tr style={{ borderBottom: `1px solid ${colors.borderPrimary}` }}>
+                      <th className="text-left text-[10px] font-semibold uppercase tracking-wider px-4 py-3" style={{ color: colors.textMuted }}>Status</th>
+                      <th className="text-left text-[10px] font-semibold uppercase tracking-wider px-4 py-3" style={{ color: colors.textMuted }}>Título</th>
+                      <th className="text-left text-[10px] font-semibold uppercase tracking-wider px-4 py-3" style={{ color: colors.textMuted }}>Origem</th>
+                      <th className="text-left text-[10px] font-semibold uppercase tracking-wider px-4 py-3" style={{ color: colors.textMuted }}>Data</th>
+                      <th className="text-left text-[10px] font-semibold uppercase tracking-wider px-4 py-3" style={{ color: colors.textMuted }}>Prioridade</th>
+                      <th className="text-right text-[10px] font-semibold uppercase tracking-wider px-4 py-3" style={{ color: colors.textMuted }}>Ações</th>
                     </tr>
                   </thead>
                   <tbody>
                     {comunicados.map((comunicado) => (
-                      <tr key={comunicado.id} className={`border-b border-gray-800/40 hover:bg-gray-800/40 transition-colors ${!comunicado.lido ? 'bg-blue-900/5' : ''}`}>
+                      <tr 
+                        key={comunicado.id} 
+                        className="transition-colors"
+                        style={{ 
+                          borderBottom: `1px solid ${colors.borderSecondary}`,
+                          backgroundColor: !comunicado.lido ? `${colors.info}08` : 'transparent'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.bgCardHover}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = !comunicado.lido ? `${colors.info}08` : 'transparent'}
+                      >
                         <td className="px-4 py-3">
                           {comunicado.tipo === "urgente" ? (
-                            <AlertTriangle className="h-4 w-4 text-[#96110D]" />
+                            <AlertTriangle className="h-4 w-4" style={{ color: colors.error }} />
                           ) : (
-                            <Megaphone className="h-4 w-4 text-blue-400" />
+                            <Megaphone className="h-4 w-4" style={{ color: colors.info }} />
                           )}
                         </td>
                         <td className="px-4 py-3">
                           <div>
-                            <span className={`text-sm text-gray-200 ${!comunicado.lido ? 'font-semibold' : ''}`}>
+                            <span className={`text-sm ${!comunicado.lido ? 'font-semibold' : ''}`} style={{ color: colors.textPrimary }}>
                               {comunicado.titulo}
                             </span>
-                            <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{comunicado.conteudo}</p>
+                            <p className="text-xs mt-0.5 line-clamp-1" style={{ color: colors.textMuted }}>{comunicado.conteudo}</p>
                           </div>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-sm text-gray-400">{comunicado.autor}</span>
+                          <span className="text-sm" style={{ color: colors.textSecondary }}>{comunicado.autor}</span>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-sm text-gray-400">{formatDate(comunicado.data)}</span>
+                          <span className="text-sm" style={{ color: colors.textSecondary }}>{formatDate(comunicado.data)}</span>
                         </td>
                         <td className="px-4 py-3">
-                          <span className={`inline-flex px-2 py-1 text-[10px] font-medium rounded ${prioridadeColors[comunicado.tipo] || prioridadeColors.info}`}>
+                          <span 
+                            className="inline-flex px-2 py-1 text-[10px] font-medium rounded"
+                            style={getPrioridadeStyle(comunicado.tipo === "urgente" ? "urgente" : "info")}
+                          >
                             {comunicado.tipo === "urgente" ? "urgente" : "normal"}
                           </span>
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex items-center justify-end gap-1">
-                            <button className="p-1.5 hover:bg-gray-700 rounded transition-colors">
-                              <Eye className="h-3.5 w-3.5 text-gray-400" />
+                            <button 
+                              className="p-1.5 rounded transition-colors"
+                              style={{ color: colors.textMuted }}
+                              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.bgCardHover}
+                              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                            >
+                              <Eye className="h-3.5 w-3.5" />
                             </button>
                             {!comunicado.lido && (
                               <button 
                                 onClick={() => marcarComoLido(comunicado.id)}
-                                className="p-1.5 hover:bg-emerald-900/50 rounded transition-colors"
+                                className="p-1.5 rounded transition-colors"
+                                style={{ color: colors.success }}
+                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.successBg}
+                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                               >
-                                <Check className="h-3.5 w-3.5 text-emerald-500" />
+                                <Check className="h-3.5 w-3.5" />
                               </button>
                             )}
                           </div>
@@ -423,79 +464,115 @@ export default function IntranetPage() {
           </div>
 
           {/* Card de Fila de Trabalho */}
-          <div className={`bg-gray-900/80 rounded-lg border border-gray-800/60 ${cardHeight}`}>
-            <div className="px-5 py-4 border-b border-gray-800/60 flex items-center justify-between">
+          <div 
+            className={`rounded-lg border ${cardHeight} transition-colors duration-200`}
+            style={{ backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }}
+          >
+            <div 
+              className="px-5 py-4 border-b flex items-center justify-between"
+              style={{ borderColor: colors.borderPrimary }}
+            >
               <div className="flex items-center gap-3">
-                <Clock className="h-5 w-5 text-gray-400" />
-                <h2 className="text-base font-semibold text-gray-100">Fila de Trabalho</h2>
+                <Clock className="h-5 w-5" style={{ color: colors.textMuted }} />
+                <h2 className="text-base font-semibold" style={{ color: colors.textPrimary }}>Fila de Trabalho</h2>
               </div>
               {/* KPIs integrados no header */}
               <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2 bg-amber-900/20 border border-amber-800/30 rounded-lg px-3 py-1.5">
-                  <Clock className="h-4 w-4 text-amber-400" />
-                  <span className="text-sm font-medium text-amber-400">{stats.tarefasPendentes}</span>
-                  <span className="text-xs text-gray-500">pendentes</span>
+                <div 
+                  className="flex items-center gap-2 rounded-lg px-3 py-1.5"
+                  style={{ backgroundColor: colors.warningBg, border: `1px solid ${colors.warning}30` }}
+                >
+                  <Clock className="h-4 w-4" style={{ color: colors.warning }} />
+                  <span className="text-sm font-medium" style={{ color: colors.warning }}>{stats.tarefasPendentes}</span>
+                  <span className="text-xs" style={{ color: colors.textMuted }}>pendentes</span>
                 </div>
-                <div className="flex items-center gap-2 bg-emerald-900/20 border border-emerald-800/30 rounded-lg px-3 py-1.5">
-                  <CheckCircle className="h-4 w-4 text-emerald-400" />
-                  <span className="text-sm font-medium text-emerald-400">{stats.tarefasConcluidas}</span>
-                  <span className="text-xs text-gray-500">concluídas</span>
+                <div 
+                  className="flex items-center gap-2 rounded-lg px-3 py-1.5"
+                  style={{ backgroundColor: colors.successBg, border: `1px solid ${colors.success}30` }}
+                >
+                  <CheckCircle className="h-4 w-4" style={{ color: colors.success }} />
+                  <span className="text-sm font-medium" style={{ color: colors.success }}>{stats.tarefasConcluidas}</span>
+                  <span className="text-xs" style={{ color: colors.textMuted }}>concluídas</span>
                 </div>
               </div>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-gray-800/60">
-                    <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-4 py-3">Tipo</th>
-                    <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-4 py-3">Título</th>
-                    <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-4 py-3">Solicitante</th>
-                    <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-4 py-3">Valor</th>
-                    <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-4 py-3">Prazo</th>
-                    <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-4 py-3">Prioridade</th>
-                    <th className="text-right text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-4 py-3">Ações</th>
+                  <tr style={{ borderBottom: `1px solid ${colors.borderPrimary}` }}>
+                    <th className="text-left text-[10px] font-semibold uppercase tracking-wider px-4 py-3" style={{ color: colors.textMuted }}>Tipo</th>
+                    <th className="text-left text-[10px] font-semibold uppercase tracking-wider px-4 py-3" style={{ color: colors.textMuted }}>Título</th>
+                    <th className="text-left text-[10px] font-semibold uppercase tracking-wider px-4 py-3" style={{ color: colors.textMuted }}>Solicitante</th>
+                    <th className="text-left text-[10px] font-semibold uppercase tracking-wider px-4 py-3" style={{ color: colors.textMuted }}>Valor</th>
+                    <th className="text-left text-[10px] font-semibold uppercase tracking-wider px-4 py-3" style={{ color: colors.textMuted }}>Prazo</th>
+                    <th className="text-left text-[10px] font-semibold uppercase tracking-wider px-4 py-3" style={{ color: colors.textMuted }}>Prioridade</th>
+                    <th className="text-right text-[10px] font-semibold uppercase tracking-wider px-4 py-3" style={{ color: colors.textMuted }}>Ações</th>
                   </tr>
                 </thead>
                 <tbody>
                   {tarefas.map((tarefa) => {
                     const Icon = tipoIcons[tarefa.tipo] || FileText
                     return (
-                      <tr key={tarefa.id} className="border-b border-gray-800/40 hover:bg-gray-800/40 transition-colors">
+                      <tr 
+                        key={tarefa.id} 
+                        className="transition-colors"
+                        style={{ borderBottom: `1px solid ${colors.borderSecondary}` }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.bgCardHover}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                      >
                         <td className="px-4 py-3">
-                          <Icon className="h-4 w-4 text-gray-500" />
+                          <Icon className="h-4 w-4" style={{ color: colors.textMuted } as React.CSSProperties} />
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-sm font-medium text-gray-200">{tarefa.titulo}</span>
+                          <span className="text-sm font-medium" style={{ color: colors.textPrimary }}>{tarefa.titulo}</span>
                         </td>
                         <td className="px-4 py-3">
                           <div>
-                            <span className="text-sm text-gray-400">{tarefa.solicitante}</span>
-                            <p className="text-xs text-gray-500">{tarefa.departamento}</p>
+                            <span className="text-sm" style={{ color: colors.textSecondary }}>{tarefa.solicitante}</span>
+                            <p className="text-xs" style={{ color: colors.textMuted }}>{tarefa.departamento}</p>
                           </div>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-sm text-gray-400">
+                          <span className="text-sm" style={{ color: colors.textSecondary }}>
                             {tarefa.valor ? formatCurrency(tarefa.valor) : "-"}
                           </span>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-sm text-gray-400">{formatDate(tarefa.prazo)}</span>
+                          <span className="text-sm" style={{ color: colors.textSecondary }}>{formatDate(tarefa.prazo)}</span>
                         </td>
                         <td className="px-4 py-3">
-                          <span className={`inline-flex px-2 py-1 text-[10px] font-medium rounded ${prioridadeColors[tarefa.prioridade]}`}>
+                          <span 
+                            className="inline-flex px-2 py-1 text-[10px] font-medium rounded"
+                            style={getPrioridadeStyle(tarefa.prioridade)}
+                          >
                             {tarefa.prioridade}
                           </span>
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex items-center justify-end gap-1">
-                            <button className="p-1.5 hover:bg-gray-700 rounded transition-colors">
-                              <Eye className="h-3.5 w-3.5 text-gray-400" />
+                            <button 
+                              className="p-1.5 rounded transition-colors"
+                              style={{ color: colors.textMuted }}
+                              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.bgCardHover}
+                              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                            >
+                              <Eye className="h-3.5 w-3.5" />
                             </button>
-                            <button className="p-1.5 hover:bg-emerald-900/50 rounded transition-colors">
-                              <Check className="h-3.5 w-3.5 text-emerald-500" />
+                            <button 
+                              className="p-1.5 rounded transition-colors"
+                              style={{ color: colors.success }}
+                              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.successBg}
+                              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                            >
+                              <Check className="h-3.5 w-3.5" />
                             </button>
-                            <button className="p-1.5 hover:bg-red-900/50 rounded transition-colors">
-                              <X className="h-3.5 w-3.5 text-red-500" />
+                            <button 
+                              className="p-1.5 rounded transition-colors"
+                              style={{ color: colors.error }}
+                              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.errorBg}
+                              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                            >
+                              <X className="h-3.5 w-3.5" />
                             </button>
                           </div>
                         </td>
@@ -510,29 +587,50 @@ export default function IntranetPage() {
 
         {/* Coluna Direita - Calendário */}
         <div className="lg:col-span-4">
-          <div className="bg-gray-900/80 rounded-lg border border-gray-800/60 h-full">
-            <div className="px-5 py-4 border-b border-gray-800/60">
+          <div 
+            className="rounded-lg border h-full transition-colors duration-200"
+            style={{ backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }}
+          >
+            <div 
+              className="px-5 py-4 border-b"
+              style={{ borderColor: colors.borderPrimary }}
+            >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
-                  <Calendar className="h-5 w-5 text-gray-400" />
-                  <h2 className="text-base font-semibold text-gray-100">Calendário</h2>
+                  <Calendar className="h-5 w-5" style={{ color: colors.textMuted }} />
+                  <h2 className="text-base font-semibold" style={{ color: colors.textPrimary }}>Calendário</h2>
                 </div>
                 {/* KPI integrado no header */}
-                <div className="flex items-center gap-2 bg-[#96110D]/20 border border-[#96110D]/30 rounded-lg px-3 py-1.5">
-                  <ListTodo className="h-4 w-4 text-[#96110D]" />
-                  <span className="text-sm font-medium text-[#96110D]">{stats.marcosPendentes}</span>
-                  <span className="text-xs text-gray-500">pendentes</span>
+                <div 
+                  className="flex items-center gap-2 rounded-lg px-3 py-1.5"
+                  style={{ backgroundColor: colors.accentBg, border: `1px solid ${colors.accent}30` }}
+                >
+                  <ListTodo className="h-4 w-4" style={{ color: colors.accent }} />
+                  <span className="text-sm font-medium" style={{ color: colors.accent }}>{stats.marcosPendentes}</span>
+                  <span className="text-xs" style={{ color: colors.textMuted }}>pendentes</span>
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <p className="text-xs text-gray-500">Marcos e eventos da obra</p>
+                <p className="text-xs" style={{ color: colors.textMuted }}>Marcos e eventos da obra</p>
                 <div className="flex items-center gap-1">
-                  <button className="p-1.5 hover:bg-gray-800 rounded transition-colors" onClick={() => navegarMes(-1)}>
-                    <ChevronLeft className="h-4 w-4 text-gray-400" />
+                  <button 
+                    className="p-1.5 rounded transition-colors" 
+                    onClick={() => navegarMes(-1)}
+                    style={{ color: colors.textMuted }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.bgCardHover}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
                   </button>
-                  <span className="text-xs font-medium min-w-[100px] text-center capitalize text-gray-300">{nomeMes}</span>
-                  <button className="p-1.5 hover:bg-gray-800 rounded transition-colors" onClick={() => navegarMes(1)}>
-                    <ChevronRight className="h-4 w-4 text-gray-400" />
+                  <span className="text-xs font-medium min-w-[100px] text-center capitalize" style={{ color: colors.textSecondary }}>{nomeMes}</span>
+                  <button 
+                    className="p-1.5 rounded transition-colors" 
+                    onClick={() => navegarMes(1)}
+                    style={{ color: colors.textMuted }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.bgCardHover}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                  >
+                    <ChevronRight className="h-4 w-4" />
                   </button>
                 </div>
               </div>
@@ -540,21 +638,30 @@ export default function IntranetPage() {
             <div className="p-5">
               {/* Marcos do Mês */}
               <div className="space-y-3 mb-6">
-                <h4 className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Marcos do Mês</h4>
+                <h4 className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: colors.textMuted }}>Marcos do Mês</h4>
                 {marcosDoMes.length === 0 ? (
-                  <p className="text-sm text-gray-500 text-center py-4">Nenhum marco neste mês</p>
+                  <p className="text-sm text-center py-4" style={{ color: colors.textMuted }}>Nenhum marco neste mês</p>
                 ) : (
                   marcosDoMes.map((marco) => (
-                    <div key={marco.id} className="flex items-center justify-between p-3 rounded-lg border border-gray-700/40 bg-gray-800/20">
+                    <div 
+                      key={marco.id} 
+                      className="flex items-center justify-between p-3 rounded-lg border"
+                      style={{ backgroundColor: colors.bgCardHover, borderColor: colors.borderSecondary }}
+                    >
                       <div className="flex items-center gap-3">
-                        <div className={`h-2.5 w-2.5 rounded-full ${tipoMarcoColors[marco.tipo]}`} />
+                        <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: tipoMarcoColors[marco.tipo] }} />
                         <div>
-                          <span className="text-sm font-medium text-gray-200">{marco.titulo}</span>
-                          <p className="text-xs text-gray-500">{formatDateShort(marco.data)}</p>
+                          <span className="text-sm font-medium" style={{ color: colors.textPrimary }}>{marco.titulo}</span>
+                          <p className="text-xs" style={{ color: colors.textMuted }}>{formatDateShort(marco.data)}</p>
                         </div>
                       </div>
                       {!marco.concluido && (
-                        <button className="text-xs text-[#96110D] hover:text-[#b81510] font-semibold transition-colors">
+                        <button 
+                          className="text-xs font-semibold transition-colors"
+                          style={{ color: colors.accent }}
+                          onMouseEnter={(e) => e.currentTarget.style.color = colors.accentHover}
+                          onMouseLeave={(e) => e.currentTarget.style.color = colors.accent}
+                        >
                           Concluir
                         </button>
                       )}
@@ -564,38 +671,38 @@ export default function IntranetPage() {
               </div>
 
               {/* Próximos Marcos */}
-              <div className="border-t border-gray-800/60 pt-5">
-                <h4 className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-3">Próximos Marcos</h4>
+              <div className="border-t pt-5" style={{ borderColor: colors.borderPrimary }}>
+                <h4 className="text-[10px] font-semibold uppercase tracking-wider mb-3" style={{ color: colors.textMuted }}>Próximos Marcos</h4>
                 <div className="space-y-3">
                   {marcos.filter((m) => !m.concluido).map((marco) => (
                     <div key={marco.id} className="flex items-center gap-3 text-sm">
-                      <Circle className="h-2.5 w-2.5 text-gray-600 flex-shrink-0" />
-                      <span className="flex-1 text-gray-400 text-sm">{marco.titulo}</span>
-                      <span className="text-xs text-gray-500">{formatDateShort(marco.data)}</span>
+                      <Circle className="h-2.5 w-2.5 flex-shrink-0" style={{ color: colors.textMuted }} />
+                      <span className="flex-1 text-sm" style={{ color: colors.textSecondary }}>{marco.titulo}</span>
+                      <span className="text-xs" style={{ color: colors.textMuted }}>{formatDateShort(marco.data)}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Legenda */}
-              <div className="border-t border-gray-800/60 pt-5 mt-6">
-                <h4 className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-3">Legenda</h4>
+              <div className="border-t pt-5 mt-6" style={{ borderColor: colors.borderPrimary }}>
+                <h4 className="text-[10px] font-semibold uppercase tracking-wider mb-3" style={{ color: colors.textMuted }}>Legenda</h4>
                 <div className="grid grid-cols-2 gap-2">
                   <div className="flex items-center gap-2">
-                    <div className="h-2.5 w-2.5 rounded-full bg-amber-500" />
-                    <span className="text-xs text-gray-400">Marco</span>
+                    <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: tipoMarcoColors.marco }} />
+                    <span className="text-xs" style={{ color: colors.textSecondary }}>Marco</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
-                    <span className="text-xs text-gray-400">Medição</span>
+                    <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: tipoMarcoColors.medicao }} />
+                    <span className="text-xs" style={{ color: colors.textSecondary }}>Medição</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="h-2.5 w-2.5 rounded-full bg-blue-500" />
-                    <span className="text-xs text-gray-400">Entrega</span>
+                    <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: tipoMarcoColors.entrega }} />
+                    <span className="text-xs" style={{ color: colors.textSecondary }}>Entrega</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="h-2.5 w-2.5 rounded-full bg-purple-500" />
-                    <span className="text-xs text-gray-400">Reunião</span>
+                    <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: tipoMarcoColors.reuniao }} />
+                    <span className="text-xs" style={{ color: colors.textSecondary }}>Reunião</span>
                   </div>
                 </div>
               </div>

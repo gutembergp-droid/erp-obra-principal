@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface ObraAtiva {
   id: string;
@@ -26,6 +27,7 @@ interface Usuario {
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const { colors } = useTheme();
   
   // Estados para dados globais
   const [obraAtiva, setObraAtiva] = useState<ObraAtiva | null>(null);
@@ -85,7 +87,10 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     : { valor: 0, prazo: 0 };
 
   return (
-    <div className="flex h-screen bg-gray-950">
+    <div 
+      className="flex h-screen transition-colors duration-200"
+      style={{ backgroundColor: colors.bgPrimary }}
+    >
       {/* Sidebar */}
       <Sidebar 
         obraAtiva={obraAtiva ? {
@@ -109,7 +114,10 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         />
 
         {/* Conteúdo */}
-        <main className="flex-1 overflow-y-auto bg-gray-950">
+        <main 
+          className="flex-1 overflow-y-auto transition-colors duration-200"
+          style={{ backgroundColor: colors.bgPrimary }}
+        >
           {children}
         </main>
       </div>

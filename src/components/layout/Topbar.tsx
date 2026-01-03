@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   Bell, 
   User, 
@@ -10,7 +10,12 @@ import {
   Calendar,
   DollarSign,
   Clock,
+  Sun,
+  Moon,
+  Palette,
+  Check,
 } from 'lucide-react';
+import { useTheme, ThemeType, themeNames } from '@/contexts/ThemeContext';
 
 interface TopbarProps {
   competencia?: {
@@ -39,6 +44,21 @@ export default function Topbar({
   usuario,
   notificacoes = 0,
 }: TopbarProps) {
+  const { theme, setTheme, colors } = useTheme();
+  const [showThemeMenu, setShowThemeMenu] = useState(false);
+  const themeMenuRef = useRef<HTMLDivElement>(null);
+
+  // Fecha o menu ao clicar fora
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (themeMenuRef.current && !themeMenuRef.current.contains(event.target as Node)) {
+        setShowThemeMenu(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   // Valores padrão
   const comp = competencia || { mes: new Date().getMonth() + 1, ano: new Date().getFullYear() };
   const contratoInfo = contrato || { valor: 0, prazo: 0 };
@@ -86,39 +106,65 @@ export default function Topbar({
     }
   };
 
+  // Ícone do tema atual
+  const getThemeIcon = (themeType: ThemeType) => {
+    switch (themeType) {
+      case 'light':
+        return <Sun size={16} />;
+      case 'dark':
+        return <Moon size={16} />;
+      case 'vibrant':
+        return <Palette size={16} />;
+    }
+  };
+
+  // Cores de preview dos temas
+  const themePreviewColors: Record<ThemeType, { bg: string; accent: string }> = {
+    light: { bg: '#F8F9FA', accent: '#96110D' },
+    dark: { bg: '#0A0A0A', accent: '#96110D' },
+    vibrant: { bg: '#F0F4FF', accent: '#7C3AED' },
+  };
+
   return (
-    <header className="h-14 bg-gray-900 border-b border-gray-800 flex items-center justify-between px-6">
+    <header 
+      className="h-14 border-b flex items-center justify-between px-6 transition-colors duration-200"
+      style={{ 
+        backgroundColor: colors.topbarBg, 
+        borderColor: colors.borderPrimary,
+        color: colors.topbarText 
+      }}
+    >
       {/* Lado Esquerdo - Informações da Competência e Contrato */}
       <div className="flex items-center gap-6">
         {/* Competência */}
         <div className="flex items-center gap-2 text-sm">
-          <Calendar size={16} className="text-gray-500" />
-          <span className="text-gray-400">Competência:</span>
-          <span className="text-white font-semibold">{mesFormatado}/{comp.ano}</span>
+          <Calendar size={16} style={{ color: colors.textMuted }} />
+          <span style={{ color: colors.textSecondary }}>Competência:</span>
+          <span className="font-semibold" style={{ color: colors.textPrimary }}>{mesFormatado}/{comp.ano}</span>
         </div>
 
         {/* Separador */}
-        <div className="h-4 w-px bg-gray-700" />
+        <div className="h-4 w-px" style={{ backgroundColor: colors.borderPrimary }} />
 
         {/* Valor do Contrato */}
         <div className="flex items-center gap-2 text-sm">
-          <DollarSign size={16} className="text-gray-500" />
-          <span className="text-gray-400">Contrato:</span>
-          <span className="text-white font-semibold">{formatCurrency(contratoInfo.valor)}</span>
+          <DollarSign size={16} style={{ color: colors.textMuted }} />
+          <span style={{ color: colors.textSecondary }}>Contrato:</span>
+          <span className="font-semibold" style={{ color: colors.textPrimary }}>{formatCurrency(contratoInfo.valor)}</span>
         </div>
 
         {/* Separador */}
-        <div className="h-4 w-px bg-gray-700" />
+        <div className="h-4 w-px" style={{ backgroundColor: colors.borderPrimary }} />
 
         {/* Prazo */}
         <div className="flex items-center gap-2 text-sm">
-          <Clock size={16} className="text-gray-500" />
-          <span className="text-gray-400">Prazo:</span>
-          <span className="text-white font-semibold">{contratoInfo.prazo} meses</span>
+          <Clock size={16} style={{ color: colors.textMuted }} />
+          <span style={{ color: colors.textSecondary }}>Prazo:</span>
+          <span className="font-semibold" style={{ color: colors.textPrimary }}>{contratoInfo.prazo} meses</span>
         </div>
 
         {/* Separador */}
-        <div className="h-4 w-px bg-gray-700" />
+        <div className="h-4 w-px" style={{ backgroundColor: colors.borderPrimary }} />
 
         {/* Status do Gate */}
         <div className={`flex items-center gap-2 px-3 py-1 rounded-full border ${getGateStatusColor(gate.status)}`}>
@@ -129,28 +175,122 @@ export default function Topbar({
         </div>
       </div>
 
-      {/* Lado Direito - Notificações e Perfil */}
-      <div className="flex items-center gap-4">
+      {/* Lado Direito - Tema, Notificações e Perfil */}
+      <div className="flex items-center gap-3">
+        {/* Seletor de Tema */}
+        <div className="relative" ref={themeMenuRef}>
+          <button 
+            onClick={() => setShowThemeMenu(!showThemeMenu)}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg transition-colors"
+            style={{ 
+              backgroundColor: showThemeMenu ? colors.bgCardHover : 'transparent',
+              color: colors.textSecondary 
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.bgCardHover}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = showThemeMenu ? colors.bgCardHover : 'transparent'}
+          >
+            {getThemeIcon(theme)}
+            <span className="text-sm">{themeNames[theme]}</span>
+            <ChevronDown size={14} className={`transition-transform ${showThemeMenu ? 'rotate-180' : ''}`} />
+          </button>
+
+          {/* Menu dropdown de temas */}
+          {showThemeMenu && (
+            <div 
+              className="absolute right-0 top-full mt-2 w-48 rounded-lg border shadow-lg overflow-hidden z-50"
+              style={{ 
+                backgroundColor: colors.bgCard, 
+                borderColor: colors.borderPrimary 
+              }}
+            >
+              <div className="p-2">
+                <p className="text-xs font-semibold uppercase tracking-wider px-2 py-1" style={{ color: colors.textMuted }}>
+                  Escolha o tema
+                </p>
+                
+                {(['light', 'dark', 'vibrant'] as ThemeType[]).map((themeOption) => (
+                  <button
+                    key={themeOption}
+                    onClick={() => {
+                      setTheme(themeOption);
+                      setShowThemeMenu(false);
+                    }}
+                    className="w-full flex items-center gap-3 px-2 py-2 rounded-md transition-colors"
+                    style={{ 
+                      backgroundColor: theme === themeOption ? colors.bgCardHover : 'transparent',
+                      color: colors.textPrimary 
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.bgCardHover}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = theme === themeOption ? colors.bgCardHover : 'transparent'}
+                  >
+                    {/* Preview do tema */}
+                    <div 
+                      className="w-6 h-6 rounded-md border flex items-center justify-center"
+                      style={{ 
+                        backgroundColor: themePreviewColors[themeOption].bg,
+                        borderColor: colors.borderPrimary
+                      }}
+                    >
+                      <div 
+                        className="w-2 h-2 rounded-full"
+                        style={{ backgroundColor: themePreviewColors[themeOption].accent }}
+                      />
+                    </div>
+                    
+                    <span className="flex-1 text-left text-sm">{themeNames[themeOption]}</span>
+                    
+                    {theme === themeOption && (
+                      <Check size={16} style={{ color: colors.accent }} />
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
         {/* Notificações */}
-        <button className="relative p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors">
+        <button 
+          className="relative p-2 rounded-lg transition-colors"
+          style={{ color: colors.textSecondary }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = colors.bgCardHover;
+            e.currentTarget.style.color = colors.textPrimary;
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'transparent';
+            e.currentTarget.style.color = colors.textSecondary;
+          }}
+        >
           <Bell size={20} />
           {notificacoes > 0 && (
-            <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-600 text-white text-xs rounded-full flex items-center justify-center">
+            <span 
+              className="absolute -top-1 -right-1 w-5 h-5 text-white text-xs rounded-full flex items-center justify-center"
+              style={{ backgroundColor: colors.error }}
+            >
               {notificacoes > 9 ? '9+' : notificacoes}
             </span>
           )}
         </button>
 
         {/* Perfil do Usuário */}
-        <button className="flex items-center gap-2 px-3 py-1.5 text-gray-300 hover:bg-gray-800 rounded-lg transition-colors">
-          <div className="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center">
-            <User size={16} className="text-gray-400" />
+        <button 
+          className="flex items-center gap-2 px-3 py-1.5 rounded-lg transition-colors"
+          style={{ color: colors.textSecondary }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.bgCardHover}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+        >
+          <div 
+            className="w-8 h-8 rounded-full flex items-center justify-center"
+            style={{ backgroundColor: colors.bgCardHover }}
+          >
+            <User size={16} style={{ color: colors.textMuted }} />
           </div>
           <div className="text-left">
-            <p className="text-sm font-medium text-white">{user.nome}</p>
-            <p className="text-xs text-gray-500 capitalize">{user.perfil}</p>
+            <p className="text-sm font-medium" style={{ color: colors.textPrimary }}>{user.nome}</p>
+            <p className="text-xs capitalize" style={{ color: colors.textMuted }}>{user.perfil}</p>
           </div>
-          <ChevronDown size={14} className="text-gray-500" />
+          <ChevronDown size={14} style={{ color: colors.textMuted }} />
         </button>
       </div>
     </header>

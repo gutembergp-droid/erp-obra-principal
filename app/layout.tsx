@@ -1,5 +1,6 @@
 import './globals.css';
 import { MainLayout } from '../src/components/layout';
+import { ThemeProvider } from '../src/contexts/ThemeContext';
 
 export const metadata = {
   title: 'ERP G-NESIS',
@@ -14,9 +15,11 @@ export default function RootLayout({
   return (
     <html lang="pt-br">
       <body className="antialiased">
-        <MainLayout>
-          {children}
-        </MainLayout>
+        <ThemeProvider>
+          <MainLayout>
+            {children}
+          </MainLayout>
+        </ThemeProvider>
       </body>
     </html>
   );
