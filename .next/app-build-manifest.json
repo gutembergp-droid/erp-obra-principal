@@ -1,7 +1,7 @@
 {
   "pages": {
     "/not-found": [
-      "static/chunks/webpack-e351973c235000be.js",
+      "static/chunks/webpack-0f9d81f53d3d79c3.js",
       "static/chunks/fd9d1056-910b65e5faa7ca51.js",
       "static/chunks/117-1ab3572d320539fc.js",
       "static/chunks/main-app-70a5454e0ad77fb6.js",
@@ -9,73 +9,75 @@
       "static/chunks/app/not-found-d096714aa34bc82f.js"
     ],
     "/_not-found/page": [
-      "static/chunks/webpack-e351973c235000be.js",
+      "static/chunks/webpack-0f9d81f53d3d79c3.js",
       "static/chunks/fd9d1056-910b65e5faa7ca51.js",
       "static/chunks/117-1ab3572d320539fc.js",
       "static/chunks/main-app-70a5454e0ad77fb6.js",
       "static/chunks/app/_not-found/page-887a6b78f334643d.js"
     ],
     "/layout": [
-      "static/chunks/webpack-e351973c235000be.js",
+      "static/chunks/webpack-0f9d81f53d3d79c3.js",
       "static/chunks/fd9d1056-910b65e5faa7ca51.js",
       "static/chunks/117-1ab3572d320539fc.js",
       "static/chunks/main-app-70a5454e0ad77fb6.js",
-      "static/css/3d1213c62a1dc7b9.css",
-      "static/chunks/384-ea3ded670b1df7cb.js",
-      "static/chunks/app/layout-ac61fa7de24ae508.js"
-    ],
-    "/comercial/comparativo/page": [
-      "static/chunks/webpack-e351973c235000be.js",
-      "static/chunks/fd9d1056-910b65e5faa7ca51.js",
-      "static/chunks/117-1ab3572d320539fc.js",
-      "static/chunks/main-app-70a5454e0ad77fb6.js",
-      "static/chunks/app/comercial/comparativo/page-538be06550d14518.js"
+      "static/css/44df3c424f012fec.css",
+      "static/chunks/847-a611766473e108b8.js",
+      "static/chunks/572-59dbd1508b93c7a8.js",
+      "static/chunks/app/layout-13e04516eee684a9.js"
     ],
     "/comercial/medicao-mc/page": [
-      "static/chunks/webpack-e351973c235000be.js",
+      "static/chunks/webpack-0f9d81f53d3d79c3.js",
       "static/chunks/fd9d1056-910b65e5faa7ca51.js",
       "static/chunks/117-1ab3572d320539fc.js",
       "static/chunks/main-app-70a5454e0ad77fb6.js",
       "static/chunks/app/comercial/medicao-mc/page-8c8d8563d4c87c5b.js"
     ],
+    "/comercial/comparativo/page": [
+      "static/chunks/webpack-0f9d81f53d3d79c3.js",
+      "static/chunks/fd9d1056-910b65e5faa7ca51.js",
+      "static/chunks/117-1ab3572d320539fc.js",
+      "static/chunks/main-app-70a5454e0ad77fb6.js",
+      "static/chunks/app/comercial/comparativo/page-7308bb31b7e612d7.js"
+    ],
     "/comercial/medicao-mp/page": [
-      "static/chunks/webpack-e351973c235000be.js",
+      "static/chunks/webpack-0f9d81f53d3d79c3.js",
       "static/chunks/fd9d1056-910b65e5faa7ca51.js",
       "static/chunks/117-1ab3572d320539fc.js",
       "static/chunks/main-app-70a5454e0ad77fb6.js",
       "static/chunks/app/comercial/medicao-mp/page-c2d08a3d7ee8fcd1.js"
     ],
     "/login/page": [
-      "static/chunks/webpack-e351973c235000be.js",
+      "static/chunks/webpack-0f9d81f53d3d79c3.js",
       "static/chunks/fd9d1056-910b65e5faa7ca51.js",
       "static/chunks/117-1ab3572d320539fc.js",
       "static/chunks/main-app-70a5454e0ad77fb6.js",
       "static/css/a2570ede0a548d98.css",
       "static/chunks/app/login/page-8f8ca73a0fb60c53.js"
     ],
-    "/obras/page": [
-      "static/chunks/webpack-e351973c235000be.js",
-      "static/chunks/fd9d1056-910b65e5faa7ca51.js",
-      "static/chunks/117-1ab3572d320539fc.js",
-      "static/chunks/main-app-70a5454e0ad77fb6.js",
-      "static/css/366845f754fe3857.css",
-      "static/chunks/app/obras/page-04c550b853d874e2.js"
-    ],
-    "/page": [
-      "static/chunks/webpack-e351973c235000be.js",
-      "static/chunks/fd9d1056-910b65e5faa7ca51.js",
-      "static/chunks/117-1ab3572d320539fc.js",
-      "static/chunks/main-app-70a5454e0ad77fb6.js",
-      "static/chunks/app/page-4885d27b5ec52de2.js"
-    ],
     "/obras/[id]/page": [
-      "static/chunks/webpack-e351973c235000be.js",
+      "static/chunks/webpack-0f9d81f53d3d79c3.js",
       "static/chunks/fd9d1056-910b65e5faa7ca51.js",
       "static/chunks/117-1ab3572d320539fc.js",
       "static/chunks/main-app-70a5454e0ad77fb6.js",
       "static/css/490e5d2be8134767.css",
       "static/chunks/591-7fd38bab881853bb.js",
       "static/chunks/app/obras/[id]/page-ba8d566262875809.js"
+    ],
+    "/page": [
+      "static/chunks/webpack-0f9d81f53d3d79c3.js",
+      "static/chunks/fd9d1056-910b65e5faa7ca51.js",
+      "static/chunks/117-1ab3572d320539fc.js",
+      "static/chunks/main-app-70a5454e0ad77fb6.js",
+      "static/chunks/847-a611766473e108b8.js",
+      "static/chunks/app/page-d85a1233db715026.js"
+    ],
+    "/obras/page": [
+      "static/chunks/webpack-0f9d81f53d3d79c3.js",
+      "static/chunks/fd9d1056-910b65e5faa7ca51.js",
+      "static/chunks/117-1ab3572d320539fc.js",
+      "static/chunks/main-app-70a5454e0ad77fb6.js",
+      "static/css/366845f754fe3857.css",
+      "static/chunks/app/obras/page-04c550b853d874e2.js"
     ]
   }
 }
