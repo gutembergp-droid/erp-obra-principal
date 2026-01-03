@@ -99,104 +99,107 @@ const routeMap: Record<string, { depto: string; pagina: string }> = {
   '/custos': { depto: 'Custos', pagina: 'Apropriação de Custos' },
   
   // Qualidade
-  '/inspecoes': { depto: 'Qualidade', pagina: 'Inspeções' },
+  '/qualidade': { depto: 'Qualidade', pagina: 'Inspeções' },
   
   // SSMA
-  '/seguranca': { depto: 'SSMA', pagina: 'Segurança do Trabalho' },
-  '/treinamentos': { depto: 'SSMA', pagina: 'Treinamentos' },
+  '/ssma': { depto: 'SSMA', pagina: 'Segurança' },
+  
+  // Meio Ambiente
+  '/meio-ambiente': { depto: 'Meio Ambiente', pagina: 'Licenças' },
   
   // Administrativo
-  '/documentos': { depto: 'Administrativo', pagina: 'Documentos' },
-  
-  // Sistema
-  '/suporte': { depto: 'Sistema', pagina: 'Suporte' },
-  '/assistente': { depto: 'Sistema', pagina: 'Assistente IA' },
+  '/administrativo': { depto: 'Administrativo', pagina: 'RH / Pessoal' },
 };
 
-// Interface para ações rápidas com tooltip rico
+// Interface para ações rápidas
 interface AcaoRapida {
   id: string;
   icon: React.ElementType;
   name: string;
-  subtitle: string;
-  description: string;
+  shortName: string;
   shortcut: string;
   href: string;
+  group: 'left' | 'center' | 'right';
 }
 
-// Ações rápidas permanentes (8 ícones com tooltip rico)
+// Ações rápidas organizadas: ESQUERDA (Tarefas) | CENTRO (Home) | DIREITA (Apoio)
 const acoesRapidas: AcaoRapida[] = [
-  { 
-    id: 'home', 
-    icon: Home, 
-    name: 'Tela Inicial', 
-    subtitle: 'Dashboard',
-    description: 'Acesse o painel principal com resumo da obra, tarefas e indicadores.',
-    shortcut: 'Ctrl+H',
-    href: '/' 
-  },
-  { 
-    id: 'chat', 
-    icon: MessageSquare, 
-    name: 'Chat', 
-    subtitle: 'Comunicados',
-    description: 'Visualize comunicados, avisos e mensagens importantes da obra.',
-    shortcut: 'Ctrl+M',
-    href: '/comunicados' 
-  },
+  // ESQUERDA - Executam Tarefas
   { 
     id: 'requisicao', 
     icon: ClipboardList, 
     name: 'Requisição', 
-    subtitle: 'Solicitações',
-    description: 'Crie e acompanhe requisições de materiais, serviços e equipamentos.',
+    shortName: 'Requisição',
     shortcut: 'Ctrl+R',
-    href: '/suprimentos/requisicoes' 
+    href: '/suprimentos/requisicoes',
+    group: 'left'
   },
   { 
     id: 'calendario', 
     icon: Calendar, 
     name: 'Calendário', 
-    subtitle: 'Agenda',
-    description: 'Consulte marcos, reuniões, medições e eventos programados.',
+    shortName: 'Calendário',
     shortcut: 'Ctrl+A',
-    href: '/agenda' 
+    href: '/agenda',
+    group: 'left'
   },
+  { 
+    id: 'chat', 
+    icon: MessageSquare, 
+    name: 'Chat', 
+    shortName: 'Chat',
+    shortcut: 'Ctrl+M',
+    href: '/comunicados',
+    group: 'left'
+  },
+  
+  // CENTRO - Home
+  { 
+    id: 'home', 
+    icon: Home, 
+    name: 'Início', 
+    shortName: 'Início',
+    shortcut: 'Ctrl+H',
+    href: '/',
+    group: 'center'
+  },
+  
+  // DIREITA - Apoio/Suporte
   { 
     id: 'documentacao', 
     icon: FileText, 
     name: 'Documentação', 
-    subtitle: 'Arquivos',
-    description: 'Acesse documentos, manuais, procedimentos e arquivos da obra.',
+    shortName: 'Docs',
     shortcut: 'Ctrl+D',
-    href: '/documentos' 
+    href: '/documentos',
+    group: 'right'
   },
   { 
     id: 'treinamento', 
     icon: GraduationCap, 
     name: 'Treinamento', 
-    subtitle: 'Capacitação',
-    description: 'Acesse cursos, treinamentos e materiais de capacitação.',
+    shortName: 'Treinar',
     shortcut: 'Ctrl+T',
-    href: '/treinamentos' 
+    href: '/treinamentos',
+    group: 'right'
   },
   { 
     id: 'suporte', 
     icon: Headphones, 
     name: 'Suporte', 
-    subtitle: 'Atendimento',
-    description: 'Entre em contato com o suporte técnico para dúvidas e problemas.',
+    shortName: 'Suporte',
     shortcut: 'Ctrl+S',
-    href: '/suporte' 
+    href: '/suporte',
+    group: 'right'
   },
   { 
     id: 'ia', 
     icon: Bot, 
     name: 'Assistente IA', 
-    subtitle: 'Inteligência Artificial',
-    description: 'Converse com a IA para tirar dúvidas, gerar relatórios e obter insights.',
+    shortName: 'IA',
     shortcut: 'Ctrl+I',
-    href: '/assistente' 
+    href: '/assistente',
+    group: 'right'
   },
 ];
 
@@ -226,29 +229,10 @@ export default function Topbar({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Valores padrão
-  const user = usuario || { nome: 'Usuário', perfil: 'usuario', status: 'online' };
-
-  // Obtém as iniciais do nome do usuário
-  const getIniciais = (nome: string) => {
-    const partes = nome.trim().split(' ');
-    if (partes.length >= 2) {
-      return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
-    }
-    return nome.substring(0, 2).toUpperCase();
-  };
-
-  // Ícone do tema atual
-  const getThemeIcon = (themeType: ThemeType) => {
-    switch (themeType) {
-      case 'light':
-        return <Sun size={16} />;
-      case 'dark':
-        return <Moon size={16} />;
-      case 'vibrant':
-        return <Palette size={16} />;
-    }
-  };
+  // Dados do usuário
+  const user = usuario || { nome: 'Usuário', perfil: 'Colaborador' };
+  const initials = user.nome.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+  const badgeCount = notificacoes || 3;
 
   // Cores de preview dos temas
   const themePreviewColors: Record<ThemeType, { bg: string; accent: string }> = {
@@ -280,6 +264,101 @@ export default function Topbar({
     }
   };
 
+  // Separar ações por grupo
+  const leftActions = acoesRapidas.filter(a => a.group === 'left');
+  const centerAction = acoesRapidas.find(a => a.group === 'center');
+  const rightActions = acoesRapidas.filter(a => a.group === 'right');
+
+  // Componente de botão de ação com expansão ao hover
+  const ActionButton = ({ acao, isCenter = false }: { acao: AcaoRapida; isCenter?: boolean }) => {
+    const Icon = acao.icon;
+    const isActive = pathname === acao.href;
+    
+    if (isCenter) {
+      // Home sempre com label visível
+      return (
+        <div className="relative group">
+          <Link
+            href={acao.href}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200"
+            style={{ 
+              backgroundColor: colors.accent,
+              color: '#FFFFFF',
+            }}
+          >
+            <Icon size={20} />
+            <span className="text-sm font-medium">{acao.shortName}</span>
+          </Link>
+          
+          {/* Tooltip */}
+          <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 pointer-events-none">
+            <div className="px-3 py-1.5 rounded-md shadow-lg whitespace-nowrap flex items-center gap-2" style={{ backgroundColor: '#1a1a1a' }}>
+              <span className="text-xs font-medium text-white">{acao.name}</span>
+              <span className="text-xs text-gray-400">•</span>
+              <span className="text-xs text-gray-400">{acao.shortcut}</span>
+            </div>
+            <div className="absolute left-1/2 -translate-x-1/2 -top-1 w-2 h-2 rotate-45" style={{ backgroundColor: '#1a1a1a' }} />
+          </div>
+        </div>
+      );
+    }
+
+    // Ícones normais com expansão ao hover
+    return (
+      <div className="relative group">
+        <Link
+          href={acao.href}
+          className="flex items-center gap-1.5 px-2.5 py-2 rounded-lg transition-all duration-300 overflow-hidden"
+          style={{ 
+            backgroundColor: isActive ? colors.accent : 'transparent',
+            color: isActive ? '#FFFFFF' : colors.textMuted,
+          }}
+        >
+          <Icon size={18} className="flex-shrink-0" />
+          <span 
+            className="text-xs font-medium whitespace-nowrap transition-all duration-300 overflow-hidden"
+            style={{
+              maxWidth: '0px',
+              opacity: 0,
+            }}
+            onMouseEnter={(e) => {
+              const parent = e.currentTarget.parentElement;
+              if (parent && !isActive) {
+                parent.style.backgroundColor = colors.borderPrimary;
+                parent.style.color = colors.textPrimary;
+              }
+              e.currentTarget.style.maxWidth = '80px';
+              e.currentTarget.style.opacity = '1';
+              e.currentTarget.style.marginLeft = '4px';
+            }}
+            onMouseLeave={(e) => {
+              const parent = e.currentTarget.parentElement;
+              if (parent && !isActive) {
+                parent.style.backgroundColor = 'transparent';
+                parent.style.color = colors.textMuted;
+              }
+              e.currentTarget.style.maxWidth = '0px';
+              e.currentTarget.style.opacity = '0';
+              e.currentTarget.style.marginLeft = '0px';
+            }}
+          >
+            {acao.shortName}
+          </span>
+        </Link>
+        
+        {/* Tooltip */}
+        <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 pointer-events-none">
+          <div className="px-3 py-1.5 rounded-md shadow-lg whitespace-nowrap flex items-center gap-2" style={{ backgroundColor: '#1a1a1a' }}>
+            <span className="text-xs font-medium text-white">{acao.name}</span>
+            <span className="text-xs text-gray-400">•</span>
+            <span className="text-xs text-gray-400">{acao.shortcut}</span>
+          </div>
+          <div className="absolute left-1/2 -translate-x-1/2 -top-1 w-2 h-2 rotate-45" style={{ backgroundColor: '#1a1a1a' }} />
+        </div>
+      </div>
+    );
+  };
+
   return (
     <header 
       className="h-14 border-b flex items-center justify-between px-6 transition-colors duration-200"
@@ -294,63 +373,33 @@ export default function Topbar({
         <BreadcrumbDinamico separator="slash" maxItems={4} />
       </div>
 
-      {/* CENTRO - Card de Ações Rápidas Permanentes (8 ícones com Tooltip Rico) */}
+      {/* CENTRO - Card de Ações Rápidas (Opção 2: Expansível com Label ao Hover) */}
       <div 
         className="flex items-center gap-1 px-3 py-1.5 rounded-xl"
         style={{ backgroundColor: colors.bgCardHover }}
       >
-        {acoesRapidas.map((acao) => {
-          const Icon = acao.icon;
-          const isActive = pathname === acao.href;
-          return (
-            <div key={acao.id} className="relative group">
-              <Link
-                href={acao.href}
-                className="flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-200"
-                style={{ 
-                  backgroundColor: isActive ? colors.accent : 'transparent',
-                  color: isActive ? '#FFFFFF' : colors.textMuted,
-                  transform: isActive ? 'scale(1.1)' : 'scale(1)',
-                }}
-                onMouseEnter={(e) => {
-                  if (!isActive) {
-                    e.currentTarget.style.backgroundColor = colors.borderPrimary;
-                    e.currentTarget.style.color = colors.textPrimary;
-                    e.currentTarget.style.transform = 'scale(1.05)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!isActive) {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = colors.textMuted;
-                    e.currentTarget.style.transform = 'scale(1)';
-                  }
-                }}
-              >
-                <Icon size={20} />
-              </Link>
-              
-              {/* Tooltip Simples - Apenas Nome + Atalho */}
-              <div 
-                className="absolute left-1/2 -translate-x-1/2 top-full mt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 pointer-events-none"
-              >
-                <div 
-                  className="px-3 py-1.5 rounded-lg shadow-lg border whitespace-nowrap text-center"
-                  style={{ backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }}
-                >
-                  <div className="text-xs font-semibold" style={{ color: colors.textPrimary }}>{acao.name}</div>
-                  <div className="text-[10px]" style={{ color: colors.textMuted }}>{acao.shortcut}</div>
-                </div>
-                
-                {/* Seta do Tooltip */}
-                <div 
-                  className="absolute left-1/2 -translate-x-1/2 -top-1 w-2 h-2 rotate-45 border-l border-t"
-                  style={{ backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }}
-                />
-              </div>
-            </div>
-          );
-        })}
+        {/* Grupo Esquerda - Tarefas */}
+        <div className="flex items-center gap-0.5">
+          {leftActions.map((acao) => (
+            <ActionButton key={acao.id} acao={acao} />
+          ))}
+        </div>
+        
+        {/* Separador */}
+        <div className="w-px h-6 mx-2" style={{ backgroundColor: colors.borderPrimary }} />
+        
+        {/* Grupo Centro - Home */}
+        {centerAction && <ActionButton acao={centerAction} isCenter />}
+        
+        {/* Separador */}
+        <div className="w-px h-6 mx-2" style={{ backgroundColor: colors.borderPrimary }} />
+        
+        {/* Grupo Direita - Apoio */}
+        <div className="flex items-center gap-0.5">
+          {rightActions.map((acao) => (
+            <ActionButton key={acao.id} acao={acao} />
+          ))}
+        </div>
       </div>
 
       {/* DIREITA - Clima, Tema, Notificações, Avatar com iniciais e nome */}
@@ -368,64 +417,44 @@ export default function Topbar({
         <div className="relative" ref={themeMenuRef}>
           <button 
             onClick={() => setShowThemeMenu(!showThemeMenu)}
-            className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg transition-colors"
-            style={{ 
-              backgroundColor: showThemeMenu ? colors.bgCardHover : 'transparent',
-              color: colors.textSecondary 
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.bgCardHover}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = showThemeMenu ? colors.bgCardHover : 'transparent'}
+            className="p-2 rounded-lg transition-colors duration-200 hover:opacity-80"
+            style={{ backgroundColor: colors.bgCardHover }}
+            title="Alterar tema"
           >
-            {getThemeIcon(theme)}
-            <ChevronDown size={12} className={`transition-transform ${showThemeMenu ? 'rotate-180' : ''}`} />
+            {theme === 'light' && <Sun size={18} style={{ color: colors.textSecondary }} />}
+            {theme === 'dark' && <Moon size={18} style={{ color: colors.textSecondary }} />}
+            {theme === 'vibrant' && <Palette size={18} style={{ color: colors.textSecondary }} />}
           </button>
-
-          {/* Menu dropdown de temas */}
+          
+          {/* Menu de Temas */}
           {showThemeMenu && (
             <div 
-              className="absolute right-0 top-full mt-2 w-44 rounded-lg border shadow-lg overflow-hidden z-50"
-              style={{ 
-                backgroundColor: colors.bgCard, 
-                borderColor: colors.borderPrimary 
-              }}
+              className="absolute right-0 top-full mt-2 w-44 rounded-xl shadow-xl border overflow-hidden z-50"
+              style={{ backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }}
             >
               <div className="p-2">
-                <p className="text-xs font-semibold uppercase tracking-wider px-2 py-1" style={{ color: colors.textMuted }}>
-                  Tema
-                </p>
-                
-                {(['light', 'dark', 'vibrant'] as ThemeType[]).map((themeOption) => (
+                <div className="text-xs font-semibold px-2 py-1.5 mb-1" style={{ color: colors.textMuted }}>
+                  Selecionar Tema
+                </div>
+                {(['light', 'dark', 'vibrant'] as ThemeType[]).map((t) => (
                   <button
-                    key={themeOption}
-                    onClick={() => {
-                      setTheme(themeOption);
-                      setShowThemeMenu(false);
-                    }}
-                    className="w-full flex items-center gap-3 px-2 py-2 rounded-md transition-colors"
+                    key={t}
+                    onClick={() => { setTheme(t); setShowThemeMenu(false); }}
+                    className="w-full flex items-center gap-3 px-2 py-2 rounded-lg transition-colors duration-150"
                     style={{ 
-                      backgroundColor: theme === themeOption ? colors.bgCardHover : 'transparent',
+                      backgroundColor: theme === t ? colors.bgCardHover : 'transparent',
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.bgCardHover}
-                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = theme === themeOption ? colors.bgCardHover : 'transparent'}
                   >
                     <div 
-                      className="w-6 h-6 rounded-md flex items-center justify-center"
+                      className="w-6 h-6 rounded-md border flex items-center justify-center"
                       style={{ 
-                        backgroundColor: themePreviewColors[themeOption].bg,
-                        border: `1px solid ${colors.borderPrimary}`
+                        backgroundColor: themePreviewColors[t].bg,
+                        borderColor: themePreviewColors[t].accent,
                       }}
                     >
-                      <div 
-                        className="w-2 h-2 rounded-full"
-                        style={{ backgroundColor: themePreviewColors[themeOption].accent }}
-                      />
+                      {theme === t && <Check size={14} style={{ color: themePreviewColors[t].accent }} />}
                     </div>
-                    <span className="text-sm flex-1 text-left" style={{ color: colors.textPrimary }}>
-                      {themeNames[themeOption]}
-                    </span>
-                    {theme === themeOption && (
-                      <Check size={14} style={{ color: colors.accent }} />
-                    )}
+                    <span className="text-sm" style={{ color: colors.textPrimary }}>{themeNames[t]}</span>
                   </button>
                 ))}
               </div>
@@ -433,89 +462,73 @@ export default function Topbar({
           )}
         </div>
 
-        {/* Separador */}
-        <div className="h-4 w-px" style={{ backgroundColor: colors.borderPrimary }} />
-
         {/* Notificações */}
         <button 
-          className="relative p-2 rounded-lg transition-colors"
-          style={{ color: colors.textSecondary }}
-          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.bgCardHover}
-          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+          className="relative p-2 rounded-lg transition-colors duration-200 hover:opacity-80"
+          style={{ backgroundColor: colors.bgCardHover }}
+          title="Notificações"
         >
-          <Bell size={18} />
-          {notificacoes > 0 && (
+          <Bell size={18} style={{ color: colors.textSecondary }} />
+          {badgeCount > 0 && (
             <span 
-              className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] text-[10px] font-bold rounded-full flex items-center justify-center px-1"
-              style={{ backgroundColor: colors.accent, color: '#FFFFFF' }}
+              className="absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center text-[10px] font-bold text-white rounded-full px-1"
+              style={{ backgroundColor: colors.accent }}
             >
-              {notificacoes > 9 ? '9+' : notificacoes}
+              {badgeCount > 9 ? '9+' : badgeCount}
             </span>
           )}
         </button>
 
-        {/* Avatar com iniciais, nome e status */}
+        {/* Avatar com Status e Nome */}
         <div className="relative" ref={statusMenuRef}>
           <button 
             onClick={() => setShowStatusMenu(!showStatusMenu)}
-            className="flex items-center gap-2 px-2 py-1.5 rounded-lg transition-colors"
-            style={{ backgroundColor: showStatusMenu ? colors.bgCardHover : 'transparent' }}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.bgCardHover}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = showStatusMenu ? colors.bgCardHover : 'transparent'}
+            className="flex items-center gap-2 px-2 py-1.5 rounded-lg transition-colors duration-200 hover:opacity-80"
+            style={{ backgroundColor: colors.bgCardHover }}
           >
-            {/* Avatar com iniciais e badge de status */}
+            {/* Avatar com Badge de Status */}
             <div className="relative">
               <div 
-                className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold"
-                style={{ backgroundColor: colors.accent, color: '#FFFFFF' }}
+                className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold text-white"
+                style={{ backgroundColor: colors.accent }}
               >
-                {getIniciais(user.nome)}
+                {initials}
               </div>
-              {/* Badge de status */}
               <div 
                 className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2"
                 style={{ 
                   backgroundColor: statusConfig[userStatus].color,
-                  borderColor: colors.topbarBg
+                  borderColor: colors.topbarBg 
                 }}
               />
             </div>
             
-            {/* Nome do usuário */}
+            {/* Nome do Usuário */}
             <span className="text-sm font-medium" style={{ color: colors.textPrimary }}>
               {user.nome}
             </span>
             
-            <ChevronDown size={14} style={{ color: colors.textMuted }} className={`transition-transform ${showStatusMenu ? 'rotate-180' : ''}`} />
+            <ChevronDown size={14} style={{ color: colors.textMuted }} />
           </button>
-
-          {/* Menu de status */}
+          
+          {/* Menu de Status */}
           {showStatusMenu && (
             <div 
-              className="absolute right-0 top-full mt-2 w-48 rounded-lg border shadow-lg overflow-hidden z-50"
-              style={{ 
-                backgroundColor: colors.bgCard, 
-                borderColor: colors.borderPrimary 
-              }}
+              className="absolute right-0 top-full mt-2 w-48 rounded-xl shadow-xl border overflow-hidden z-50"
+              style={{ backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }}
             >
               <div className="p-2">
-                <p className="text-xs font-semibold uppercase tracking-wider px-2 py-1" style={{ color: colors.textMuted }}>
-                  Status
-                </p>
-                
+                <div className="text-xs font-semibold px-2 py-1.5 mb-1" style={{ color: colors.textMuted }}>
+                  Alterar Status
+                </div>
                 {(Object.keys(statusConfig) as Array<keyof typeof statusConfig>).map((status) => (
                   <button
                     key={status}
-                    onClick={() => {
-                      setUserStatus(status);
-                      setShowStatusMenu(false);
-                    }}
-                    className="w-full flex items-center gap-3 px-2 py-2 rounded-md transition-colors"
+                    onClick={() => { setUserStatus(status); setShowStatusMenu(false); }}
+                    className="w-full flex items-center gap-3 px-2 py-2 rounded-lg transition-colors duration-150"
                     style={{ 
                       backgroundColor: userStatus === status ? colors.bgCardHover : 'transparent',
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.bgCardHover}
-                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = userStatus === status ? colors.bgCardHover : 'transparent'}
                   >
                     <div 
                       className="w-3 h-3 rounded-full"
@@ -525,7 +538,7 @@ export default function Topbar({
                       {statusConfig[status].label}
                     </span>
                     {userStatus === status && (
-                      <Check size={14} className="ml-auto" style={{ color: colors.accent }} />
+                      <Check size={14} style={{ color: colors.accent }} className="ml-auto" />
                     )}
                   </button>
                 ))}
