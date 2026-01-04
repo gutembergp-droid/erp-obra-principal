@@ -20,17 +20,17 @@
       "static/chunks/fd9d1056-85db25c1d06814bd.js",
       "static/chunks/117-dfa1287ad30fd871.js",
       "static/chunks/main-app-70a5454e0ad77fb6.js",
-      "static/css/fc17316728f30e2b.css",
+      "static/css/bc469a3847bccd06.css",
       "static/chunks/216-c126542d025c5b8a.js",
       "static/chunks/725-8e4c7e78ac3852fb.js",
       "static/chunks/app/layout-e49e0d3fc09e01bf.js"
     ],
-    "/comercial/comparativo/page": [
+    "/chat/page": [
       "static/chunks/webpack-0f9d81f53d3d79c3.js",
       "static/chunks/fd9d1056-85db25c1d06814bd.js",
       "static/chunks/117-dfa1287ad30fd871.js",
       "static/chunks/main-app-70a5454e0ad77fb6.js",
-      "static/chunks/app/comercial/comparativo/page-c30e74d271e1722c.js"
+      "static/chunks/app/chat/page-ff4d5b774c9d0714.js"
     ],
     "/comercial/medicao-mc/page": [
       "static/chunks/webpack-0f9d81f53d3d79c3.js",
@@ -38,6 +38,13 @@
       "static/chunks/117-dfa1287ad30fd871.js",
       "static/chunks/main-app-70a5454e0ad77fb6.js",
       "static/chunks/app/comercial/medicao-mc/page-45b3e06708fc7b54.js"
+    ],
+    "/comercial/comparativo/page": [
+      "static/chunks/webpack-0f9d81f53d3d79c3.js",
+      "static/chunks/fd9d1056-85db25c1d06814bd.js",
+      "static/chunks/117-dfa1287ad30fd871.js",
+      "static/chunks/main-app-70a5454e0ad77fb6.js",
+      "static/chunks/app/comercial/comparativo/page-c30e74d271e1722c.js"
     ],
     "/comercial/medicao-mp/page": [
       "static/chunks/webpack-0f9d81f53d3d79c3.js",
@@ -94,6 +101,14 @@
       "static/chunks/main-app-70a5454e0ad77fb6.js",
       "static/chunks/app/page-bf25c13f0b326461.js"
     ],
+    "/rh/colaboradores/[id]/page": [
+      "static/chunks/webpack-0f9d81f53d3d79c3.js",
+      "static/chunks/fd9d1056-85db25c1d06814bd.js",
+      "static/chunks/117-dfa1287ad30fd871.js",
+      "static/chunks/main-app-70a5454e0ad77fb6.js",
+      "static/chunks/216-c126542d025c5b8a.js",
+      "static/chunks/app/rh/colaboradores/[id]/page-51b45a8ea116471a.js"
+    ],
     "/rh/colaboradores/page": [
       "static/chunks/webpack-0f9d81f53d3d79c3.js",
       "static/chunks/fd9d1056-85db25c1d06814bd.js",
@@ -101,14 +116,6 @@
       "static/chunks/main-app-70a5454e0ad77fb6.js",
       "static/chunks/216-c126542d025c5b8a.js",
       "static/chunks/app/rh/colaboradores/page-224c78c07ef2ff9b.js"
-    ],
-    "/rh/colaboradores/[id]/page": [
-      "static/chunks/webpack-0f9d81f53d3d79c3.js",
-      "static/chunks/fd9d1056-85db25c1d06814bd.js",
-      "static/chunks/117-dfa1287ad30fd871.js",
-      "static/chunks/main-app-70a5454e0ad77fb6.js",
-      "static/chunks/216-c126542d025c5b8a.js",
-      "static/chunks/app/rh/colaboradores/[id]/page-52a0aa951604507c.js"
     ],
     "/rh/folha-pagamento/page": [
       "static/chunks/webpack-0f9d81f53d3d79c3.js",
