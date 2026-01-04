@@ -24,6 +24,10 @@ import {
   Star,
   ShoppingCart,
   Video,
+  User,
+  Settings,
+  LogOut,
+  Mail,
 } from 'lucide-react';
 import { useTheme, ThemeType, themeNames } from '@/contexts/ThemeContext';
 
@@ -31,6 +35,10 @@ interface TopbarProps {
   usuario?: {
     nome: string;
     perfil: string;
+    cargo?: string;
+    setor?: string;
+    email?: string;
+    foto?: string;
     status?: 'online' | 'ausente' | 'ocupado' | 'offline';
   };
   notificacoes?: number;
@@ -137,7 +145,14 @@ export default function Topbar({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const user = usuario || { nome: 'Usuário', perfil: 'Colaborador' };
+  const user = usuario || { 
+    nome: 'João Carlos Silva', 
+    perfil: 'Colaborador',
+    cargo: 'Engenheiro Civil',
+    setor: 'Engenharia',
+    email: 'joao.carlos@empresa.com',
+    foto: ''
+  };
   const initials = user.nome.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
   const badgeCount = notificacoes || 3;
 
@@ -403,50 +418,155 @@ export default function Topbar({
           )}
         </button>
 
-        {/* Avatar com Status e Nome */}
-        <div className="relative" ref={statusMenuRef}>
+        {/* Avatar com Status, Nome e Cargo */}
+        <div className="relative group" ref={statusMenuRef}>
           <button 
             onClick={() => setShowStatusMenu(!showStatusMenu)}
-            className="flex items-center gap-2 px-2 py-1.5 rounded-lg transition-colors duration-200 hover:opacity-80"
+            className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl transition-all duration-200 hover:shadow-md"
             style={{ backgroundColor: colors.bgCardHover }}
           >
             <div className="relative">
+              {user.foto ? (
+                <img 
+                  src={user.foto} 
+                  alt={user.nome}
+                  className="w-9 h-9 rounded-full object-cover"
+                />
+              ) : (
+                <div 
+                  className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold text-white"
+                  style={{ backgroundColor: colors.accent }}
+                >
+                  {initials}
+                </div>
+              )}
               <div 
-                className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold text-white"
-                style={{ backgroundColor: colors.accent }}
-              >
-                {initials}
-              </div>
-              <div 
-                className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2"
+                className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2"
                 style={{ backgroundColor: statusConfig[userStatus].color, borderColor: colors.topbarBg }}
               />
             </div>
-            <span className="text-sm font-medium" style={{ color: colors.textPrimary }}>{user.nome}</span>
+            <div className="flex flex-col items-start">
+              <span className="text-sm font-semibold leading-tight" style={{ color: colors.textPrimary }}>
+                {user.nome.split(' ').slice(0, 2).join(' ')}
+              </span>
+              <span className="text-[11px] leading-tight" style={{ color: colors.textMuted }}>
+                {user.cargo || user.perfil}
+              </span>
+            </div>
             <ChevronDown size={14} style={{ color: colors.textMuted }} />
           </button>
+
+          {/* Tooltip no hover */}
+          <div 
+            className="absolute right-0 bottom-full mb-3 px-4 py-3 rounded-lg shadow-lg border opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50 whitespace-nowrap"
+            style={{ backgroundColor: '#1a1a1a', borderColor: '#333' }}
+          >
+            <div className="flex flex-col gap-1 text-xs">
+              <div className="flex items-center gap-2">
+                <span className="text-gray-400">Nome:</span>
+                <span className="text-white font-medium">{user.nome}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-gray-400">Cargo:</span>
+                <span className="text-white font-medium">{user.cargo || user.perfil}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-gray-400">Setor:</span>
+                <span className="text-white font-medium">{user.setor || 'N/A'}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-gray-400">Status:</span>
+                <span className="font-medium" style={{ color: statusConfig[userStatus].color }}>
+                  ● {statusConfig[userStatus].label}
+                </span>
+              </div>
+            </div>
+            <div 
+              className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0"
+              style={{ borderLeft: '6px solid transparent', borderRight: '6px solid transparent', borderTop: '6px solid #1a1a1a' }}
+            />
+          </div>
           
+          {/* Menu Dropdown */}
           {showStatusMenu && (
             <div 
-              className="absolute right-0 top-full mt-2 w-48 rounded-xl shadow-xl border overflow-hidden z-50"
+              className="absolute right-0 top-full mt-2 w-56 rounded-xl shadow-2xl border overflow-hidden z-50"
               style={{ backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }}
             >
+              {/* Cabeçalho com info do usuário */}
+              <div className="p-4 border-b" style={{ borderColor: colors.borderPrimary }}>
+                <div className="flex items-center gap-3">
+                  {user.foto ? (
+                    <img 
+                      src={user.foto} 
+                      alt={user.nome}
+                      className="w-11 h-11 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div 
+                      className="w-11 h-11 rounded-full flex items-center justify-center text-base font-semibold text-white"
+                      style={{ backgroundColor: colors.accent }}
+                    >
+                      {initials}
+                    </div>
+                  )}
+                  <div className="flex flex-col">
+                    <span className="text-sm font-semibold" style={{ color: colors.textPrimary }}>{user.nome}</span>
+                    <span className="text-xs" style={{ color: colors.textMuted }}>{user.cargo || user.perfil}</span>
+                    <span className="text-[11px]" style={{ color: colors.textMuted }}>{user.email}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Opções do menu */}
               <div className="p-2">
-                <div className="text-xs font-semibold px-2 py-1.5 mb-1" style={{ color: colors.textMuted }}>
+                <button
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors duration-150 hover:bg-opacity-50"
+                  style={{ backgroundColor: 'transparent' }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.bgCardHover}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                >
+                  <User size={18} style={{ color: colors.textMuted }} />
+                  <span className="text-sm" style={{ color: colors.textPrimary }}>Meu Perfil</span>
+                </button>
+                <button
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors duration-150"
+                  style={{ backgroundColor: 'transparent' }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.bgCardHover}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                >
+                  <Settings size={18} style={{ color: colors.textMuted }} />
+                  <span className="text-sm" style={{ color: colors.textPrimary }}>Configurações</span>
+                </button>
+              </div>
+
+              {/* Status */}
+              <div className="p-2 border-t" style={{ borderColor: colors.borderPrimary }}>
+                <div className="text-[11px] font-semibold uppercase px-3 py-1.5" style={{ color: colors.textMuted }}>
                   Alterar Status
                 </div>
                 {(Object.keys(statusConfig) as Array<keyof typeof statusConfig>).map((status) => (
                   <button
                     key={status}
                     onClick={() => { setUserStatus(status); setShowStatusMenu(false); }}
-                    className="w-full flex items-center gap-3 px-2 py-2 rounded-lg transition-colors duration-150"
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors duration-150"
                     style={{ backgroundColor: userStatus === status ? colors.bgCardHover : 'transparent' }}
                   >
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: statusConfig[status].color }} />
+                    <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: statusConfig[status].color }} />
                     <span className="text-sm" style={{ color: colors.textPrimary }}>{statusConfig[status].label}</span>
                     {userStatus === status && <Check size={14} style={{ color: colors.accent }} className="ml-auto" />}
                   </button>
                 ))}
+              </div>
+
+              {/* Sair */}
+              <div className="p-2 border-t" style={{ borderColor: colors.borderPrimary }}>
+                <button
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors duration-150 text-red-500 hover:bg-red-50"
+                >
+                  <LogOut size={18} />
+                  <span className="text-sm font-medium">Sair do Sistema</span>
+                </button>
               </div>
             </div>
           )}

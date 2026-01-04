@@ -522,28 +522,7 @@ export default function Sidebar({ obraAtiva }: SidebarProps) {
         ))}
       </nav>
 
-      {/* Rodapé - Logout */}
-      <div 
-        className="p-3 border-t"
-        style={{ borderColor: colors.borderPrimary }}
-      >
-        <button
-          onClick={() => logout()}
-          className="flex items-center gap-3 px-3 py-2.5 w-full rounded-xl transition-all duration-200"
-          style={{ color: colors.textMuted }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = '#EF444415';
-            e.currentTarget.style.color = '#EF4444';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'transparent';
-            e.currentTarget.style.color = colors.textMuted;
-          }}
-        >
-          <LogOut size={18} />
-          <span className="text-sm font-medium">Sair do Sistema</span>
-        </button>
-      </div>
+
     </aside>
   );
 }
