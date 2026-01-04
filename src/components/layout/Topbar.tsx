@@ -490,82 +490,127 @@ export default function Topbar({
           {/* Menu Dropdown */}
           {showStatusMenu && (
             <div 
-              className="absolute right-0 top-full mt-3 w-72 rounded-2xl shadow-2xl border overflow-hidden z-50"
-              style={{ backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }}
+              className="absolute right-0 top-full mt-2 rounded-xl shadow-lg border overflow-hidden z-50"
+              style={{ 
+                backgroundColor: colors.bgCard, 
+                borderColor: colors.borderPrimary,
+                width: '220px',
+                boxShadow: '0 10px 40px rgba(0,0,0,0.15)'
+              }}
             >
               {/* Cabeçalho com info do usuário */}
-              <div className="p-5 border-b" style={{ borderColor: colors.borderPrimary }}>
-                <div className="flex items-center gap-4">
+              <div className="border-b" style={{ borderColor: colors.borderPrimary, padding: '16px' }}>
+                <div className="flex items-center" style={{ gap: '12px' }}>
                   {user.foto ? (
                     <img 
                       src={user.foto} 
                       alt={user.nome}
-                      className="w-14 h-14 rounded-full object-cover"
+                      className="rounded-full object-cover"
+                      style={{ width: '44px', height: '44px' }}
                     />
                   ) : (
                     <div 
-                      className="w-14 h-14 rounded-full flex items-center justify-center text-lg font-semibold text-white"
-                      style={{ backgroundColor: colors.accent }}
+                      className="rounded-full flex items-center justify-center font-semibold text-white"
+                      style={{ 
+                        backgroundColor: colors.accent,
+                        width: '44px',
+                        height: '44px',
+                        fontSize: '16px'
+                      }}
                     >
                       {initials}
                     </div>
                   )}
-                  <div className="flex flex-col gap-1">
-                    <span className="text-base font-semibold" style={{ color: colors.textPrimary }}>{user.nome}</span>
-                    <span className="text-sm" style={{ color: colors.textMuted }}>{user.cargo || user.perfil}</span>
-                    <span className="text-xs" style={{ color: colors.textMuted }}>{user.email}</span>
+                  <div className="flex flex-col" style={{ gap: '2px' }}>
+                    <span className="font-semibold" style={{ color: colors.textPrimary, fontSize: '14px' }}>{user.nome}</span>
+                    <span style={{ color: colors.textMuted, fontSize: '12px' }}>{user.cargo || user.perfil}</span>
+                    <span style={{ color: '#999', fontSize: '11px' }}>{user.email}</span>
                   </div>
                 </div>
               </div>
 
               {/* Opções do menu */}
-              <div className="p-3">
+              <div style={{ padding: '8px' }}>
                 <button
-                  className="w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-colors duration-150"
-                  style={{ backgroundColor: 'transparent' }}
-                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.bgCardHover}
+                  className="w-full flex items-center rounded-lg transition-colors duration-150"
+                  style={{ 
+                    backgroundColor: 'transparent',
+                    gap: '12px',
+                    padding: '10px 12px',
+                    fontSize: '13px'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#F5F5F5'}
                   onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                 >
-                  <User size={20} style={{ color: colors.textMuted }} />
-                  <span className="text-sm font-medium" style={{ color: colors.textPrimary }}>Meu Perfil</span>
+                  <User size={18} style={{ color: '#666' }} />
+                  <span style={{ color: colors.textPrimary }}>Meu Perfil</span>
                 </button>
                 <button
-                  className="w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-colors duration-150"
-                  style={{ backgroundColor: 'transparent' }}
-                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.bgCardHover}
+                  className="w-full flex items-center rounded-lg transition-colors duration-150"
+                  style={{ 
+                    backgroundColor: 'transparent',
+                    gap: '12px',
+                    padding: '10px 12px',
+                    fontSize: '13px'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#F5F5F5'}
                   onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                 >
-                  <Settings size={20} style={{ color: colors.textMuted }} />
-                  <span className="text-sm font-medium" style={{ color: colors.textPrimary }}>Configurações</span>
+                  <Settings size={18} style={{ color: '#666' }} />
+                  <span style={{ color: colors.textPrimary }}>Configurações</span>
                 </button>
               </div>
 
               {/* Status */}
-              <div className="p-3 border-t" style={{ borderColor: colors.borderPrimary }}>
-                <div className="text-xs font-semibold uppercase px-4 py-2 mb-1" style={{ color: colors.textMuted }}>
+              <div className="border-t" style={{ borderColor: colors.borderPrimary, padding: '8px' }}>
+                <div className="font-semibold uppercase" style={{ 
+                  color: '#999', 
+                  fontSize: '11px',
+                  padding: '8px 12px 4px'
+                }}>
                   Alterar Status
                 </div>
                 {(Object.keys(statusConfig) as Array<keyof typeof statusConfig>).map((status) => (
                   <button
                     key={status}
                     onClick={() => { setUserStatus(status); setShowStatusMenu(false); }}
-                    className="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-colors duration-150"
-                    style={{ backgroundColor: userStatus === status ? colors.bgCardHover : 'transparent' }}
+                    className="w-full flex items-center rounded-lg transition-colors duration-150"
+                    style={{ 
+                      backgroundColor: userStatus === status ? '#F0F0F0' : 'transparent',
+                      gap: '10px',
+                      padding: '8px 12px',
+                      fontSize: '13px'
+                    }}
+                    onMouseEnter={(e) => { if (userStatus !== status) e.currentTarget.style.backgroundColor = '#F5F5F5'; }}
+                    onMouseLeave={(e) => { if (userStatus !== status) e.currentTarget.style.backgroundColor = 'transparent'; }}
                   >
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: statusConfig[status].color }} />
-                    <span className="text-sm font-medium" style={{ color: colors.textPrimary }}>{statusConfig[status].label}</span>
-                    {userStatus === status && <Check size={16} style={{ color: colors.accent }} className="ml-auto" />}
+                    <div className="rounded-full" style={{ 
+                      backgroundColor: statusConfig[status].color,
+                      width: '10px',
+                      height: '10px'
+                    }} />
+                    <span style={{ color: colors.textPrimary }}>{statusConfig[status].label}</span>
+                    {userStatus === status && <Check size={14} style={{ color: colors.accent }} className="ml-auto" />}
                   </button>
                 ))}
               </div>
 
               {/* Sair */}
-              <div className="p-3 border-t" style={{ borderColor: colors.borderPrimary }}>
+              <div className="border-t" style={{ borderColor: colors.borderPrimary, padding: '8px' }}>
                 <button
-                  className="w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-colors duration-150 text-red-500 hover:bg-red-50"
+                  className="w-full flex items-center rounded-lg transition-colors duration-150"
+                  style={{ 
+                    backgroundColor: 'transparent',
+                    gap: '12px',
+                    padding: '10px 12px',
+                    fontSize: '13px',
+                    color: '#EF4444'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#FEF2F2'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                 >
-                  <LogOut size={20} />
-                  <span className="text-sm font-semibold">Sair do Sistema</span>
+                  <LogOut size={18} />
+                  <span>Sair do Sistema</span>
                 </button>
               </div>
             </div>
