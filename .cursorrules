@@ -1,0 +1,98 @@
+# Cursor Rules - ERP GENESIS
+
+## 🔒 DOCUMENTOS OFICIAIS TRAVADOS
+
+### DOCUMENTO CONCEITUAL OFICIAL
+
+**SEMPRE que o usuário perguntar sobre:**
+- Conceito do ERP GENESIS
+- Documento padrão
+- Referência oficial
+- Conceito travado
+- Estrutura do sistema
+- Governança e regras de negócio
+
+**VOCÊ DEVE SEMPRE USAR:**
+
+**Arquivo:** `MEMORIAL_DESCRITIVO_OFICIAL_VALIDADO.md`
+
+**Versão:** 2.1 (Conceito Refinado e Governança Ajustada)  
+**Status:** 🟢 DOCUMENTO OFICIAL DE REFERÊNCIA TRAVADO
+
+---
+
+### DOCUMENTO DE DIRETRIZES UI/UX E NAVEGAÇÃO
+
+**SEMPRE que o usuário perguntar sobre:**
+- Interface do usuário (UI)
+- Experiência do usuário (UX)
+- Navegação e fluxos
+- Padrões de tela
+- Sidebar/Topbar
+- Redirecionamento pós-login
+- Níveis operacional/tático/estratégico
+- Workflows
+
+**VOCÊ DEVE SEMPRE USAR:**
+
+**Arquivo:** `DIRETRIZES_UI_UX_NAVEGACAO.md`
+
+**Versão:** 1.0  
+**Status:** 🟢 DOCUMENTO OFICIAL DE REFERÊNCIA PARA UI/UX
+
+---
+
+## REGRAS
+
+1. **SEMPRE** usar `MEMORIAL_DESCRITIVO_OFICIAL_VALIDADO.md` como referência principal para conceitos
+2. **SEMPRE** usar `DIRETRIZES_UI_UX_NAVEGACAO.md` como referência para UI/UX e navegação
+3. **NUNCA** usar outros documentos conceituais sem autorização
+4. **SEMPRE** referenciar o documento apropriado quando o usuário perguntar
+5. **SEMPRE** seguir os documentos oficiais em todas as implementações
+6. **EM CASO DE CONFLITO:** o conceito oficial (`MEMORIAL_DESCRITIVO_OFICIAL_VALIDADO.md`) prevalece
+
+---
+
+## CONCEITO FUNDAMENTAL
+
+**Princípio:**
+**"O CORPORATIVO GOVERNA. A OBRA EXECUTA."**
+
+**Regras estruturantes:**
+- Nada nasce na obra sem origem corporativa
+- Nada é validado no corporativo sem evidência da obra
+- Estratégia é corporativa, execução é da obra
+
+---
+
+## DOCUMENTOS OFICIAIS
+
+1. **`MEMORIAL_DESCRITIVO_OFICIAL_VALIDADO.md`** - Conceito fundamental e estrutura do sistema
+2. **`DIRETRIZES_UI_UX_NAVEGACAO.md`** - Regras de UI/UX, navegação e workflows
+3. **`CONTRATO_CANONICO_API_MVP.md`** - Contrato canônico de API (v1.0 - CONGELADO)
+
+---
+
+## CONTRATO DE API
+
+**SEMPRE que implementar ou modificar endpoints da API:**
+
+**VOCÊ DEVE SEMPRE USAR:**
+
+**Arquivo:** `CONTRATO_CANONICO_API_MVP.md`
+
+**Versão:** v1.0 (CONGELADO)  
+**Status:** 🟢 DOCUMENTO OFICIAL TRAVADO
+
+**Regras:**
+- API/Contrato só muda com ordem do Gutemberg
+- UI/UX pode mudar livremente
+- Seguir formato canônico de resposta: `{ "data": {...} }`
+- Seguir códigos de erro canônicos
+- Seguir modelos (shapes) canônicos exatamente
+
+---
+
+**Este arquivo garante que a IA sempre use os documentos corretos.**
+
+
