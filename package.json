@@ -8,8 +8,12 @@
     "start:api": "tsx src/api/server.ts",
     "postinstall": "prisma generate",
     "build": "prisma generate && next build",
+    "build:api": "prisma generate && prisma migrate deploy",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "seed": "ts-node prisma/seed.ts",
+    "migrate:deploy": "prisma migrate deploy",
+    "migrate:dev": "prisma migrate dev"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"

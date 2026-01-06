@@ -1,12 +1,11 @@
 import { Router } from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../libs/prisma';
 import { GateService } from '../../services/GateService';
 import { CreateGateDto, UpdateGateDto } from '../../types/gates';
-import { validateObraAccess } from '../middleware/validateObra';
-import { authMiddleware } from '../middleware/authMiddleware';
+import { validateObraAccess } from '../middlewares/validateObra';
+import { authMiddleware } from '../middlewares/authMiddleware';
 
 const router = Router();
-const prisma = new PrismaClient();
 const gateService = new GateService(prisma);
 
 /**

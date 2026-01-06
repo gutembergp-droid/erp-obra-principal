@@ -1,11 +1,11 @@
 import { Router } from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../libs/prisma';
 import { generateAccessToken, generateRefreshToken } from '../../utils/jwt';
 import { comparePassword } from '../../utils/bcrypt';
-import { authMiddleware } from '../middleware/authMiddleware';
+import { authMiddleware } from '../middlewares/authMiddleware';
+import { ok, fail } from '../utils/http';
 
 const router = Router();
-const prisma = new PrismaClient();
 
 /**
  * POST /api/auth/login
@@ -35,10 +35,7 @@ router.post('/login', async (req, res, next) => {
 
     // Validação de campos obrigatórios
     if (!email || !senha) {
-      return res.status(400).json({
-        error: 'Campos obrigatórios',
-        message: 'Email e senha são obrigatórios',
-      });
+      return fail(res, 'VALIDATION_ERROR', 'Email e senha são obrigatórios', 400);
     }
 
     // Busca o usuário pelo email
@@ -48,36 +45,24 @@ router.post('/login', async (req, res, next) => {
 
     // Valida se o usuário existe
     if (!usuario) {
-      return res.status(401).json({
-        error: 'Credenciais inválidas',
-        message: 'Email ou senha incorretos',
-      });
+      return fail(res, 'AUTH_INVALID', 'Email ou senha incorretos', 401);
     }
 
     // Valida se o usuário está ativo
     if (!usuario.is_ativo) {
-      return res.status(403).json({
-        error: 'Usuário inativo',
-        message: 'Usuário está inativo e não pode fazer login',
-      });
+      return fail(res, 'FORBIDDEN', 'Usuário está inativo e não pode fazer login', 403);
     }
 
     // Valida se o usuário não foi deletado
     if (usuario.deleted_at) {
-      return res.status(403).json({
-        error: 'Usuário deletado',
-        message: 'Usuário foi deletado e não pode fazer login',
-      });
+      return fail(res, 'FORBIDDEN', 'Usuário foi deletado e não pode fazer login', 403);
     }
 
     // Compara a senha fornecida com o hash armazenado
     const senhaValida = await comparePassword(senha, usuario.senha_hash);
 
     if (!senhaValida) {
-      return res.status(401).json({
-        error: 'Credenciais inválidas',
-        message: 'Email ou senha incorretos',
-      });
+      return fail(res, 'AUTH_INVALID', 'Email ou senha incorretos', 401);
     }
 
     // Gera tokens JWT
@@ -93,17 +78,10 @@ router.post('/login', async (req, res, next) => {
       perfil: usuario.perfil,
     });
 
-    // Retorna tokens e dados do usuário (sem senha_hash)
-    res.json({
-      access_token: accessToken,
-      refresh_token: refreshToken,
-      usuario: {
-        id: usuario.id,
-        email: usuario.email,
-        nome: usuario.nome,
-        perfil: usuario.perfil,
-        is_ativo: usuario.is_ativo,
-      },
+    // Retorna tokens no formato canônico
+    return ok(res, {
+      accessToken: accessToken,
+      refreshToken: refreshToken,
     });
   } catch (error) {
     next(error);
@@ -124,10 +102,7 @@ router.post('/refresh', async (req, res, next) => {
     const { refresh_token } = req.body;
 
     if (!refresh_token) {
-      return res.status(400).json({
-        error: 'Refresh token obrigatório',
-        message: 'O refresh_token é obrigatório',
-      });
+      return fail(res, 'VALIDATION_ERROR', 'O refresh_token é obrigatório', 400);
     }
 
     // Verifica o refresh token
@@ -147,10 +122,7 @@ router.post('/refresh', async (req, res, next) => {
     });
 
     if (!usuario || !usuario.is_ativo || usuario.deleted_at) {
-      return res.status(401).json({
-        error: 'Refresh token inválido',
-        message: 'Usuário associado ao token não existe ou está inativo',
-      });
+      return fail(res, 'AUTH_INVALID', 'Usuário associado ao token não existe ou está inativo', 401);
     }
 
     // Gera novo access token
@@ -160,15 +132,13 @@ router.post('/refresh', async (req, res, next) => {
       perfil: usuario.perfil,
     });
 
-    res.json({
-      access_token: accessToken,
+    return ok(res, {
+      accessToken: accessToken,
+      refreshToken: refresh_token,
     });
   } catch (error: any) {
     if (error.message.includes('expirado') || error.message.includes('inválido')) {
-      return res.status(401).json({
-        error: 'Refresh token inválido',
-        message: error.message,
-      });
+      return fail(res, 'AUTH_INVALID', error.message || 'Refresh token inválido', 401);
     }
     next(error);
   }
@@ -176,41 +146,113 @@ router.post('/refresh', async (req, res, next) => {
 
 /**
  * GET /api/auth/me
- * Retorna informações do usuário autenticado
+ * Retorna informações do usuário autenticado com contexto completo
  * Requer autenticação
  */
-router.get('/me', authMiddleware, async (req, res, next) => {
+router.get('/me', authMiddleware, async (req: any, res, next) => {
   try {
-    const usuarioId = (req as any).user?.id;
-
-    if (!usuarioId) {
-      return res.status(401).json({
-        error: 'Não autenticado',
-        message: 'Usuário não autenticado',
-      });
+    const userId = req.user?.id;
+    if (!userId) {
+      return fail(res, 'AUTH_REQUIRED', 'Token não informado', 401);
     }
 
     const usuario = await prisma.usuario.findUnique({
-      where: { id: usuarioId },
+      where: { id: userId },
       select: {
         id: true,
         email: true,
         nome: true,
         perfil: true,
+        obra_ativa_id: true,
         is_ativo: true,
-        created_at: true,
-        updated_at: true,
       },
     });
 
     if (!usuario) {
-      return res.status(404).json({
-        error: 'Usuário não encontrado',
-        message: 'Usuário não existe',
+      return fail(res, 'NOT_FOUND', 'Usuário não encontrado', 404);
+    }
+
+    // Obras permitidas do usuário
+    const obrasPerm = await prisma.usuarioObra.findMany({
+      where: { usuario_id: userId, is_ativo: true },
+      select: {
+        permissao: true,
+        obra: {
+          select: {
+            id: true,
+            codigo: true,
+            nome: true,
+            cliente: true,
+            status: true,
+            orcamento_total: true,
+            created_at: true,
+            updated_at: true,
+          },
+        },
+      },
+    });
+
+    // Define obra ativa: se não existir, tenta setar a primeira obra permitida
+    let obraAtivaId = usuario.obra_ativa_id;
+
+    if (!obraAtivaId && obrasPerm.length > 0) {
+      obraAtivaId = obrasPerm[0].obra.id;
+
+      await prisma.usuario.update({
+        where: { id: userId },
+        data: { obra_ativa_id: obraAtivaId },
       });
     }
 
-    res.json(usuario);
+    const obraAtiva = obraAtivaId
+      ? obrasPerm.find((x) => x.obra.id === obraAtivaId)?.obra ?? null
+      : null;
+
+    const permissaoNaObraAtiva = obraAtivaId
+      ? (obrasPerm.find((x) => x.obra.id === obraAtivaId)?.permissao ?? null)
+      : null;
+
+    // Transforma obras para formato canônico (camelCase)
+    const obrasPermitidas = obrasPerm.map((x) => ({
+      permissao: x.permissao,
+      obra: {
+        id: x.obra.id,
+        codigo: x.obra.codigo,
+        nome: x.obra.nome,
+        cliente: x.obra.cliente,
+        status: x.obra.status,
+        orcamentoTotal: x.obra.orcamento_total?.toString() ?? null,
+        createdAt: x.obra.created_at,
+        updatedAt: x.obra.updated_at,
+      },
+    }));
+
+    const obraAtivaResumo = obraAtiva
+      ? {
+          id: obraAtiva.id,
+          codigo: obraAtiva.codigo,
+          nome: obraAtiva.nome,
+          cliente: obraAtiva.cliente,
+          status: obraAtiva.status,
+          orcamentoTotal: obraAtiva.orcamento_total?.toString() ?? null,
+          createdAt: obraAtiva.created_at,
+          updatedAt: obraAtiva.updated_at,
+        }
+      : null;
+
+    return ok(res, {
+      usuario: {
+        id: usuario.id,
+        email: usuario.email,
+        nome: usuario.nome,
+        perfil: usuario.perfil,
+        isAtivo: usuario.is_ativo,
+      },
+      obraAtiva: obraAtivaResumo,
+      permissaoNaObraAtiva,
+      obrasPermitidas,
+      // departamentoDefault: null (por enquanto)
+    });
   } catch (error) {
     next(error);
   }
@@ -224,9 +266,7 @@ router.get('/me', authMiddleware, async (req, res, next) => {
 router.post('/logout', authMiddleware, async (req, res) => {
   // JWT é stateless, então logout é apenas uma confirmação
   // Em produção, pode-se implementar blacklist de tokens
-  res.json({
-    message: 'Logout realizado com sucesso',
-  });
+  return ok(res, { ok: true });
 });
 
 export default router;

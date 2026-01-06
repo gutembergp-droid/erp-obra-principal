@@ -1,10 +1,9 @@
 import { Router } from 'express';
-import { PrismaClient } from '@prisma/client';
-import { validateObraAccess } from '../middleware/validateObra';
-import { authMiddleware } from '../middleware/authMiddleware';
+import prisma from '../../libs/prisma';
+import { validateObraAccess } from '../middlewares/validateObra';
+import { authMiddleware } from '../middlewares/authMiddleware';
 
 const router = Router();
-const prisma = new PrismaClient();
 
 /**
  * GET /api/dashboard/obra/:obra_id

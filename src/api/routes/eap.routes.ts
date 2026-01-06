@@ -1,13 +1,12 @@
 import { Router } from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../libs/prisma';
 import { EapService } from '../../services/EapService';
 import { CreateEapDto, UpdateEapDto } from '../../types/eap';
 import { CreateEapFatorConversaoDto, UpdateEapFatorConversaoDto } from '../../types/eap-fator-conversao';
-import { validateObraAccess } from '../middleware/validateObra';
-import { authMiddleware } from '../middleware/authMiddleware';
+import { validateObraAccess } from '../middlewares/validateObra';
+import { authMiddleware } from '../middlewares/authMiddleware';
 
 const router = Router();
-const prisma = new PrismaClient();
 const eapService = new EapService(prisma);
 
 /**

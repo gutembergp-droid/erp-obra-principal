@@ -1,10 +1,9 @@
 import { Router, Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../libs/prisma';
 import { MedicaoService } from '../../services/MedicaoService';
 import { CreateMedicaoProducaoDto, CreateMedicaoClienteDto } from '../../types/medicao';
 
 const router = Router();
-const prisma = new PrismaClient();
 const medicaoService = new MedicaoService(prisma);
 
 /**
@@ -136,4 +135,9 @@ router.get('/comparativo/obra/:obra_id', async (req: Request, res: Response) => 
 });
 
 export default router;
+
+
+
+
+
 
