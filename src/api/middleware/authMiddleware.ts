@@ -159,3 +159,16 @@ export async function optionalAuthMiddleware(
 
 
 
+
+/**
+ * Interface para Request com usuário autenticado
+ */
+export interface AuthenticatedRequest extends Request {
+  user?: {
+    id: string;
+    email: string;
+    nome: string;
+    perfil: string;
+    is_ativo?: boolean;
+  };
+}

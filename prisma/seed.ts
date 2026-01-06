@@ -8,6 +8,8 @@ async function main() {
 
   // Limpar o banco de dados (em ordem reversa de dependências)
   console.log('🧹 Limpando banco de dados...');
+  await prisma.confirmacaoLeitura.deleteMany();
+  await prisma.comunicado.deleteMany();
   await prisma.medicao.deleteMany();
   await prisma.eapFatorConversao.deleteMany();
   await prisma.eap.deleteMany();
@@ -324,6 +326,91 @@ async function main() {
 
   console.log('✅ Medições criadas');
 
+  // Criar Comunicados para a Intranet
+  console.log('📢 Criando comunicados...');
+
+  // Comunicado 1: Informativo - Início das Operações
+  const comunicado1 = await prisma.comunicado.create({
+    data: {
+      titulo: 'Início das Operações - Duplicação BR-101',
+      conteudo: 'Comunicamos o início oficial das operações da obra Duplicação BR-101 - Lote 2 a partir de 15/01/2025. Todas as equipes devem seguir o cronograma de mobilização conforme plano aprovado. Reunião de kick-off será realizada no canteiro de obras às 08h00.',
+      escopo: 'obra',
+      prioridade: 'normal',
+      status: 'publicado',
+      categoria: 'Institucional',
+      setor_origem: 'Diretoria de Operações',
+      obra_id: obra.id,
+      fixado: true,
+      exige_confirmacao: true,
+      autor_id: admin.id,
+      publicador_id: admin.id,
+      publicado_em: new Date('2025-01-10'),
+      data_publicacao: new Date('2025-01-10'),
+    },
+  });
+
+  // Comunicado 2: Urgente - Prazo Gate 1
+  const comunicado2 = await prisma.comunicado.create({
+    data: {
+      titulo: 'URGENTE: Prazo para Estruturação Comercial (Gate 1)',
+      conteudo: 'Lembramos que o prazo para conclusão da estruturação comercial (Gate 1) é 31/01/2025. Todos os responsáveis devem finalizar suas etapas até esta data. A homologação da baseline comercial é pré-requisito para início das medições.',
+      escopo: 'obra',
+      prioridade: 'urgente',
+      status: 'publicado',
+      categoria: 'Comercial',
+      setor_origem: 'Gerência Comercial',
+      obra_id: obra.id,
+      fixado: false,
+      exige_confirmacao: true,
+      autor_id: admin.id,
+      publicador_id: admin.id,
+      publicado_em: new Date('2025-01-15'),
+      data_publicacao: new Date('2025-01-15'),
+    },
+  });
+
+  // Comunicado 3: Geral - Treinamento
+  const comunicado3 = await prisma.comunicado.create({
+    data: {
+      titulo: 'Treinamento Sistema GENESIS',
+      conteudo: 'Será realizado treinamento do módulo Comercial do GENESIS nos dias 20 e 21/01. Participação obrigatória para equipe comercial e gestores de obra. Local: Sala de Treinamentos - Escritório Central. Horário: 09h00 às 17h00.',
+      escopo: 'global',
+      prioridade: 'normal',
+      status: 'publicado',
+      categoria: 'TI',
+      setor_origem: 'TI Corporativo',
+      obra_id: null,
+      fixado: false,
+      exige_confirmacao: false,
+      autor_id: admin.id,
+      publicador_id: admin.id,
+      publicado_em: new Date('2025-01-12'),
+      data_publicacao: new Date('2025-01-12'),
+    },
+  });
+
+  // Comunicado 4: SSMA
+  const comunicado4 = await prisma.comunicado.create({
+    data: {
+      titulo: 'Normas de Segurança - Área de Terraplanagem',
+      conteudo: 'Reforçamos as normas de segurança para trabalhos na área de terraplanagem. Uso obrigatório de EPIs: capacete, colete refletivo, botas de segurança e protetor auricular. Máquinas em operação: manter distância mínima de 10 metros.',
+      escopo: 'obra',
+      prioridade: 'critico',
+      status: 'publicado',
+      categoria: 'SSMA',
+      setor_origem: 'Segurança do Trabalho',
+      obra_id: obra.id,
+      fixado: false,
+      exige_confirmacao: true,
+      autor_id: admin.id,
+      publicador_id: admin.id,
+      publicado_em: new Date('2025-01-08'),
+      data_publicacao: new Date('2025-01-08'),
+    },
+  });
+
+  console.log('✅ Comunicados criados');
+
   console.log('\n🎉 Seed concluído com sucesso!');
   console.log('\n📊 Resumo:');
   console.log(`   - Obra: ${obra.nome}`);
@@ -331,6 +418,7 @@ async function main() {
   console.log(`   - Usuários: ${admin.email} (admin) e ${engenheiro.email} (engenheiro)`);
   console.log(`   - EAP: 8 itens criados`);
   console.log(`   - Medições: 2 medições aprovadas`);
+  console.log(`   - Comunicados: 4 comunicados publicados`);
   console.log('\n🔑 Credenciais de acesso:');
   console.log(`   Admin: ${admin.email} / 123456`);
   console.log(`   Engenheiro: ${engenheiro.email} / 123456`);

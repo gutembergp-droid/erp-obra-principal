@@ -1,4 +1,4 @@
-// File: C:\Users\gpontes\Documents\ERP G-NESIS\app\obras\[id]\page.tsx
+// File: /home/ubuntu/erp-obra-principal/app/obras/[id]/page.tsx
 import * as entry from '../../../../../app/obras/[id]/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
